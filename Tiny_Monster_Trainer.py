@@ -708,7 +708,7 @@ class Monster:
         self.statBlock['name'] = self.makeName()
         self.statBlock['given_name'] = self.statBlock['name']
         self.statBlock['level'] = 1
-        self.statBlock['trainingPoints'] = 20
+        self.statBlock['trainingPoints'] = 5
         self.statBlock['Type1'] = self.makeType()
         randoNum = random.randint(1,3)
         if randoNum == 1:
