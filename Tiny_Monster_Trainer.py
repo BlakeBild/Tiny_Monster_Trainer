@@ -978,8 +978,8 @@ def processStatusEffects(monsterInfo):
     return statusCheck
 
 
-def attackAnimation(playerBod, nmeBod, nmeAttk, missFlag):
-    for x in range(0, 3):
+def attackAnimation(playerBod, nmeBod, nmeAttk, missFlag, hpBefore, amountOfDmg, attackerHP):
+    for x in range(0, 4):
         playerX = 8
         nmeX = 42
         y = 0
@@ -996,14 +996,28 @@ def attackAnimation(playerBod, nmeBod, nmeAttk, missFlag):
         thumby.display.drawSprite(nmeBod['head'], nmeX - nmeY, 0, 20, 9, 1, 0, 0)
         thumby.display.drawSprite(nmeBod['body'], nmeX - nmeY, 9, 20, 9, 1, 0, 0)
         thumby.display.drawSprite(nmeBod['legs'], nmeX - nmeY, 18, 20, 9, 1, 0, 0)
+        thumby.display.fillRect(0, 29, 72, 9, 1)
+        if nmeAttk == 0:
+            thumby.display.drawText(str(attackerHP), 0, 30, 0)
+            thumby.display.drawText(str(hpBefore), 72 - len(str(attackerHP) * 8), 30, 0)
+        else:
+            thumby.display.drawText(str(attackerHP), 72 - len(str(attackerHP) * 8), 30, 0)
+            thumby.display.drawText(str(hpBefore), 0, 30, 0)
+        thumby.display.update()
         if missFlag == 1 and x > 1 and nmeAttk == 0:
-            thumby.display.drawText("Miss", 20, 30, 1)
+            thumby.display.drawText("Miss", 20, 30, 0)
         if missFlag == 0 and x > 1 and nmeAttk == 0:
-            thumby.display.drawText("Hit!", 20, 30, 1)
+            thumby.display.fillRect(0, 29, 72, 9, 1)
+            thumby.display.drawText("Hit!", 20, 30, 0)
+            thumby.display.drawText(str(attackerHP), 0, 30, 0)
+            thumby.display.drawText(str(hpBefore - amountOfDmg), 72 - len(str(hpBefore - amountOfDmg) * 8), 30, 0)
         if missFlag == 1 and x > 1 and nmeAttk == 1:
-            thumby.display.drawText("Miss", 20, 30, 1)
+            thumby.display.drawText("Miss", 20, 30, 0)
         if missFlag == 0 and x > 1 and nmeAttk == 1:
-            thumby.display.drawText("Hit!", 20, 30, 1)
+            thumby.display.fillRect(0, 29, 72, 9, 1)
+            thumby.display.drawText("Hit!", 20, 30, 0)
+            thumby.display.drawText(str(attackerHP), 0, 72 - len(str(hpBefore - amountOfDmg) * 8), 0)
+            thumby.display.drawText(str(hpBefore - amountOfDmg), 0, 30, 0)
             
         thumby.display.update()
         time.sleep(1)
@@ -1046,7 +1060,6 @@ def attackOptionMenu(playerMon, npcMon, scrollerTxt, playerTrainLevel, npcTrainL
         
     while(currentSelect != 15):
         thumby.display.fill(0)
-        
         tempSelect = currentSelect
         currentSelect = showOptions(playerOptionList, currentSelect, "Vigor: " + str(playerMon.attackList[currentSelect].currentUses))
         thumby.display.update()
@@ -1056,66 +1069,63 @@ def attackOptionMenu(playerMon, npcMon, scrollerTxt, playerTrainLevel, npcTrainL
             if playerMon.statBlock['currentHealth'] < 1:
                 return 0 
             if npcMon.statBlock ['currentHealth'] < 1:
-                return 3 # player wins
-            # check if monsters are the same speed, randomly let one go first
+                return 3
             agileTie = 0
             if (playerMon.statBlock['Agility'] + playerTrainLevel) == (npcMon.statBlock['Agility'] + npcTrainLevel):
                 agileTie = random.randint(-2,1)
             if (playerMon.statBlock['Agility'] + playerTrainLevel + agileTie) >= (npcMon.statBlock['Agility'] + npcTrainLevel): # check for player to attack first
-                if playerStatusEffCheck < 3: 
+                if playerStatusEffCheck < 3: #check if too many effects to attack
                     if playerMon.attackList[tempSelect].statusEffect > 0:
                         npcMon.statusEffectList.append(makeStatusEffect(playerMon.attackList[tempSelect].statusEffect))
-                    amntOfDmg = npcMon.statBlock['currentHealth']
+                    hpBeforeDmg = npcMon.statBlock['currentHealth']
                     attack(playerMon, npcMon, playerMon.attackList[tempSelect], playerTrainLevel, npcTrainLevel)
-                    amntOfDmg = amntOfDmg - npcMon.statBlock['currentHealth'] 
+                    amntOfDmg = hpBeforeDmg - npcMon.statBlock['currentHealth'] 
                     if amntOfDmg >= 1:
+                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 0, hpBeforeDmg, amntOfDmg, playerMon.statBlock['currentHealth'])
                         scrollerTxt.scrollingText = (playerMon.statBlock['given_name'] + " did " + str(amntOfDmg) + " points of damage!")
-                        scrollerTxt.getScrollerLength()
-                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 0)
                     else:
-                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 1)
+                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 1, hpBeforeDmg, amntOfDmg, playerMon.statBlock['currentHealth'])
                         scrollerTxt.scrollingText = (playerMon.statBlock['given_name'] + "'s " + playerMon.attackList[tempSelect].name + " attack missed!" )
-                        scrollerTxt.getScrollerLength()
+                    scrollerTxt.getScrollerLength()                        
                 if npcMon.statBlock['currentHealth'] >= 1:
-                    if npcStatusEffCheck < 3: 
-                        amntOfDmg = playerMon.statBlock['currentHealth']
+                    if npcStatusEffCheck < 3: #check if too many effects to attack
+                        hpBeforeDmg = playerMon.statBlock['currentHealth']
                         attack(npcMon, playerMon, npcMon.attackList[random.randint(0, len(npcMon.attackList) -1)], npcTrainLevel, playerTrainLevel)
-                        amntOfDmg = amntOfDmg - playerMon.statBlock['currentHealth']
+                        amntOfDmg = hpBeforeDmg - playerMon.statBlock['currentHealth']
                         if amntOfDmg >= 1:
-                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 0)
+                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 0, hpBeforeDmg, amntOfDmg, npcMon.statBlock['currentHealth'])
                         else:
-                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 1)
+                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 1, hpBeforeDmg, amntOfDmg, npcMon.statBlock['currentHealth'])
                 if npcMon.statBlock['currentHealth'] <= 0:
-                    return 3 
+                    return 3
             else: 
-                if npcStatusEffCheck < 3: 
-                    amntOfDmg = playerMon.statBlock['currentHealth']
+                if npcStatusEffCheck < 3: #check if too many effects to attack
+                    hpBeforeDmg = playerMon.statBlock['currentHealth']
                     attack(npcMon, playerMon, npcMon.attackList[random.randint(0, len(npcMon.attackList) -1)], npcTrainLevel, playerTrainLevel)
-                    amntOfDmg = amntOfDmg - playerMon.statBlock['currentHealth']
+                    amntOfDmg = hpBeforeDmg - playerMon.statBlock['currentHealth']
                     if amntOfDmg >= 1:
-                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 0)
+                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 0, hpBeforeDmg, amntOfDmg, npcMon.statBlock['currentHealth'])
                     else:
-                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 1)
+                        attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 1, 1, hpBeforeDmg, amntOfDmg, npcMon.statBlock['currentHealth'])
                 if playerMon.statBlock['currentHealth'] >= 1:
-                    if playerStatusEffCheck < 3: 
+                    if playerStatusEffCheck < 3: #check if too many effects to attack
                         if playerMon.attackList[tempSelect].statusEffect > 0:
                             npcMon.statusEffectList.append(makeStatusEffect(playerMon.attackList[tempSelect].statusEffect))
-                        amntOfDmg = npcMon.statBlock['currentHealth']
+                        hpBeforeDmg = npcMon.statBlock['currentHealth']
                         attack(playerMon, npcMon, playerMon.attackList[tempSelect], playerTrainLevel, npcTrainLevel)
-                        amntOfDmg = amntOfDmg - npcMon.statBlock['currentHealth']
+                        amntOfDmg = hpBeforeDmg - npcMon.statBlock['currentHealth']
                         if amntOfDmg >= 1:
-                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 0)
+                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 0, hpBeforeDmg, amntOfDmg, playerMon.statBlock['currentHealth'])
                             scrollerTxt.scrollingText = ("You did " + str(amntOfDmg) + " points of damage!")
-                            scrollerTxt.getScrollerLength()
                         else:
-                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 1)
+                            attackAnimation(playerMon.bodyBlock, npcMon.bodyBlock, 0, 1, hpBeforeDmg, amntOfDmg, playerMon.statBlock['currentHealth'])
                             scrollerTxt.scrollingText = (playerMon.statBlock['given_name'] + "'s " + playerMon.attackList[tempSelect].name + " attack missed!" )
-                            scrollerTxt.getScrollerLength()
+                        scrollerTxt.getScrollerLength()
                 if npcMon.statBlock['currentHealth'] <= 0:
-                    return 3 
+                    return 3
             waitingForSelect = 0
         if currentSelect == 14:
-            return 1 # cancel go back
+            return 1
         elif currentSelect == 12 or currentSelect == 13:
             currentSelect = tempSelect
     return 0
