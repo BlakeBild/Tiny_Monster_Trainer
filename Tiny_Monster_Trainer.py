@@ -1015,7 +1015,7 @@ def attackAnimation(playerBod, nmeBod, nmeAttk, missFlag, hpBefore, amountOfDmg,
         if missFlag == 0 and x > 1 and nmeAttk == 1:
             thumby.display.fillRect(0, 29, 72, 9, 1)
             thumby.display.drawText("Hit!", 20, 30, 0)
-            thumby.display.drawText(str(attackerHP), 0, 72 - len(str(hpBefore - amountOfDmg) * 8), 30, 0)
+            thumby.display.drawText(str(attackerHP), 72 - len(str(hpBefore - amountOfDmg) * 8), 30, 0)
             thumby.display.drawText(str(hpBefore - amountOfDmg), 0, 30, 0)
             
         thumby.display.update()
