@@ -22,7 +22,7 @@ learn an attack - lets you learn a new attack, it picks one at random if there a
                             screen asking you to lose one)
                  - it cost 2 tp to learn a new attack
                  -if you don't have enough tp then nothing happens when you select the option
-                    -if you already know all the moves available to you then nothing happens with you select the option
+                    -if you already know all the moves available to you then nothing happens when you select the option
                 -most moves do the same amount of damage right now 
                  -vigor = move uses left, but this doesn't go down right now
                  -"burn" and "freeze" might break the game right now, I haven't tried them recently
