@@ -133,7 +133,7 @@ Monster Type | Attack Name | Element Type | Phyical/Magic
 ------- |"Shadow"      | Darkness    | Magical  
 ------- |'Unholy Poke" | Mystical    | Physical  
 ------- |"Dire Ruin"   | Ethereal    | Magical  
-------- |**Cute**                                
+**Cute**|   |   |
 ------- |"Sing Song"   | Cute        | Physical  
 ------- |"Adorbes"     | Cute        | Magical  
 ------- |"Bubbles"     | Water       | Physical  
