@@ -1815,6 +1815,6 @@ while(1):
         myGuy.levelUpCheck()
         myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1
         if len(myGuy.inventory) < myGuy.maxHelditems:
-            randoNum = random.randint(1,1)
+            randoNum = random.randint(1,2)
             if randoNum == 1:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
