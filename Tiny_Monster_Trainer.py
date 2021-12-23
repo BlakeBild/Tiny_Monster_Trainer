@@ -1791,7 +1791,7 @@ while(1):
             if len(myGuy.inventory) > 0:
                 for things in range(0, len(myGuy.inventory)):
                     if myGuy.inventory[things-1].name == "Crystals":
-                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + myGuy.playerBlock['trainerLevel']) > 0: 
+                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + myGuy.playerBlock['trainerLevel']) > 15: 
                             gc.collect()
                             tameMon(myGuy, npcMon)
                             myGuy.friends[-1].statBlock['currentHealth'] = myGuy.friends[-1].statBlock['Health']
