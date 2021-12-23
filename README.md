@@ -12,7 +12,7 @@ To start you can only have up to two Monsters with you.
 If you get an additional Monster, you will be asked you to select one & let it go.  
 Every 10 Trainer Levels you can have an additional Monster with you, up to a maximum of 5.  
 Your Trainer Level also influences how well your Active Monster can fight.  
-The higher your Trainer Level, you'll seek out stronger the Roaming Monsters to fight.  
+The higher your Trainer Level, you'll seek out stronger Roaming Monsters to fight.  
 
 **Monster Stats**  
 **Health**: Amount of Health the Monster can have.  
