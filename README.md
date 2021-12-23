@@ -158,3 +158,17 @@ Monster Type | Attack Name | Element Type | Phyical/Magic
 ------- |"Superlunary"   | Ethereal   | Magical   
 ------- |"Obscurity"     | Darkness   | Magical  
 ------- |"Rue"           | Mind       | Magical  
+
+
+Future things I'd like to do/add:  
+(Probably will need to wait until i get a physical thumby to see what I can do for these things)  
+A way to store additional monsters that aren't with you. (I want to add a campfire you can visit & swap out monsters at)  
+Add a way to change the world seed (Thinking about adding an item you might be able to find after a specific trainer level, that when used will change the player's world seed)   
+Change Info, in battle, so that you can only see the other monsters info after a specific trainer level.  
+Multiplayer (for trading and battling)    
+Redo some combat maths.  
+Rewrite a few fuctions to be smaller.    
+Balance some stuff.    
+Clean up Player Creation.  
+More terrain images (based on room element type)   
+More animations (I would like to add 2 more training animations, one for HP/Agi & one for Myst/Tin) (I would like to have an animation for mutating) (attack animations, based on type or if they're physical or magic)  
