@@ -5,7 +5,7 @@ A game for the Thumby
 Move around, fight monsters, collect monsters, train monsters.  
 
 
-############**Game Info**##############
+############ **Game Info** ##############
 
 **Player Info**  
 To start you can only have up to two Monsters with you.  
@@ -34,7 +34,7 @@ If a fight is won, you will gain Experience towards your Trainer Level & you mig
 If a fight is lost one of your Monsters will have its HP & Stamina restored, but it will be disheartened and lose a Training Point.  
 
 
-############**Training**#############  
+############ **Training** #############  
 
 Train is used to increase a stat by 1 point, up to a maximum amount.  
 Learning a new attack cost 3 Training Points, a Monster can know up to 6 attacks.  
@@ -50,7 +50,7 @@ Learn Attack: 3 TP
 Mutate:       5 TP  
 
 
-#############**Items**##############  
+############# **Items** ##############  
 Items are not usable during combat.  
 
 #######  
@@ -63,7 +63,7 @@ Ribbons  - Raises max trainable HP by 2 and heals for 2
 Crystals - Will restore all stamina for all moves that the active Monster knows.
          - Crystals are also needed for Taming Monsters. They are consumed by the opposing monster while attempting to Tame
 
-#############**Types: Strengths and Weakness**##############  
+############# **Types: Strengths and Weakness** ##############  
 
 Bonus damage/defense is based on the Attack's Element Type vs Defending Monster Type  
 
