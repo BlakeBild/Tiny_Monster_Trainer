@@ -182,7 +182,7 @@ class AttackMove():
             attack3 = AttackMove("Boulder Toss", 10, 2, 0, "Earth")
             attack4 = AttackMove("Love Tap", 10, 2, 0, "Cute")
         elif elmType == "Mystical":
-            attack1 = AttackMove("Magic Missle", 15, 5, 0, "Mystical")
+            attack1 = AttackMove("Magic Missile", 15, 5, 0, "Mystical")
             attack2 = AttackMove("Ritual", 15, 5, 1, "Mystical")
             attack3 = AttackMove("Rune Toss", 10, 2, 0, "Wind")
             attack4 = AttackMove("Immolate", 10, 2, 1, "Fire")
