@@ -377,8 +377,8 @@ class Monster:
                         'Tinfoil' : 1,
                         'maxTinfoil' : 1}
                         
-        self.keyList = ['Health',       # 0
-                        'Type1',        # 1
+        self.keyList = ['Health',       # 0  
+                        'Type1',        # 1     Move types to end of keyList so that showMonInfo can be more intuitive
                         'Type2',        # 2
                         'Type3',        # 3
                         'Agility',      # 4
@@ -751,6 +751,7 @@ class RoamingMonster:
             else:
                 self.drawMonster()
  
+
 def worldRangeCheck(test):
     if test >= 19:
         test = test - 25
@@ -826,7 +827,7 @@ def buttonInput(selectPos):
     if(thumby.buttonD.pressed() == True):
         while(thumby.buttonD.pressed() == True): 
             pass
-        if (selectionBoxPos <= 11):
+        if (selectionBoxPos <= 26):
             selectionBoxPos = selectionBoxPos + 1
             return selectionBoxPos
         else:
@@ -834,22 +835,22 @@ def buttonInput(selectPos):
     if(thumby.buttonL.pressed() == True):
         while(thumby.buttonL.pressed() == True): 
             pass
-        selectionBoxPos = 13
+        selectionBoxPos = 29
         return selectionBoxPos
     if(thumby.buttonR.pressed() == True):
         while(thumby.buttonR.pressed() == True): 
             pass
-        selectionBoxPos = 12
+        selectionBoxPos = 28
         return selectionBoxPos
     if(thumby.buttonA.pressed() == True):
         while(thumby.buttonA.pressed() == True):
             pass
-        selectionBoxPos = 15
+        selectionBoxPos = 31
         return selectionBoxPos
     if(thumby.buttonB.pressed() == True):
         while(thumby.buttonB.pressed() == True):
             pass
-        selectionBoxPos = 14
+        selectionBoxPos = 30
         return selectionBoxPos
     return selectionBoxPos    
 
@@ -977,7 +978,7 @@ def attackOptionMenu(monInfo):
     for attacksKnown in range(0, len(monInfo)):
         playerOptionList.append(monInfo[attacksKnown].name)
         
-    while(currentSelect < 13):
+    while(currentSelect < 29):
         thumby.display.fill(0)
         tempSelect = currentSelect
         if currentSelect == len(monInfo):
@@ -986,17 +987,16 @@ def attackOptionMenu(monInfo):
             currentSelect = currentSelect + 1
         currentSelect = showOptions(playerOptionList, currentSelect, "Stamina: " + str(monInfo[currentSelect].currentUses))
         thumby.display.update()
-        if currentSelect == 15:
+        if currentSelect == 31:
             return tempSelect 
-        elif currentSelect == 14:
-            return 14 
-        elif currentSelect == 12 or currentSelect == 13:
+        elif currentSelect == 30:
+            return 30 
+        elif currentSelect == 28 or currentSelect == 29:
             currentSelect = tempSelect
     
     
-def battleScreen(playerMon, monTemplate, playerTrainLevel, npcTrainLevel):
+def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
     print("Hi, you are in a fight!")
-    nmeMon = makeRandomStats(monTemplate, playerTrainLevel)
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with a roaming " + nmeMon.statBlock['name'] + "!")
     currentSelect = 1
     tempSelect = currentSelect
@@ -1007,11 +1007,11 @@ def battleScreen(playerMon, monTemplate, playerTrainLevel, npcTrainLevel):
         currentSelect = showOptions(options, currentSelect, "", 47)
         thumby.display.drawFilledRectangle(0, 30, 72, 10, 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
-        if currentSelect == 15: 
+        if currentSelect == 31: 
             currentSelect = tempSelect
             if options[currentSelect] == "Atk": 
                 selectCheck = attackOptionMenu(playerMon.attackList)
-                if selectCheck < 14:
+                if selectCheck < 30:
                     if playerMon.attackList[selectCheck].currentUses <= 0:
                         playerMon.statBlock['currentHealth'] = math.floor(playerMon.statBlock['currentHealth'] * 0.7)
                         thingAquired(curMon.statBlock['given_name'], "is out of", "stamina", "HP lost", 2)
@@ -1053,7 +1053,7 @@ def battleScreen(playerMon, monTemplate, playerTrainLevel, npcTrainLevel):
                 return 4 
             else: 
                 pass
-        if currentSelect == 14 or currentSelect == 12 or currentSelect == 13 :
+        if currentSelect == 30 or currentSelect == 28 or currentSelect == 29 :
             currentSelect = tempSelect    
         printMon(playerMon.bodyBlock, 0, 0, 0)
         printMon(nmeMon.bodyBlock, 25, 0, 1)
@@ -1126,14 +1126,14 @@ def showOptions(options, currentSelect, bottomText, x=0):
         if optionAmount > 2:
             thumby.display.drawText(options[currentSelect+1], 1+x, 19, 1) #prints bottom opt
     thumby.display.drawText(options[currentSelect], 1+x, 10, 0) # prints center opt
+    thumby.display.drawLine(0, 28, 72, 28, 1)
     if bottomText != "":
-        thumby.display.drawLine(0+x, 28, 72, 28, 1)
         thumby.display.drawText(bottomText, 1, 30, 1) # prints other info on bottom of screen
     currentSelect = buttonInput(currentSelect)
     if optionAmount <= 1:
-        if currentSelect == 15:
+        if currentSelect == 31:
             return currentSelect
-        elif currentSelect == 14:
+        elif currentSelect == 30:
             return currentSelect
         elif currentSelect > 0 or currentSelect < 0:
             return 0
@@ -1165,10 +1165,10 @@ def displayItems(playerInfo):
             bottomScreenText = ("CurHP:" + str(playerInfo.friends[0].statBlock['currentHealth']))
             tempSelect = curSelect
             curSelect = showOptions(optionList, curSelect, bottomScreenText)
-            if curSelect ==  15:
+            if curSelect ==  31:
                 playerInfo.inventory[tempSelect].doAction(playerInfo.friends[0]) 
                 playerInfo.inventory.pop(tempSelect)
-            elif curSelect == 14:
+            elif curSelect == 30:
                 pass
             elif curSelect > 11:
                 curSelect = tempSelect
@@ -1177,7 +1177,19 @@ def displayItems(playerInfo):
         pass
 
 
+def drawArrows(l, r, d, u=1): # x, y):
+    arrowLR = [4,4,4,31,14,4] # 6 x 5
+    arrowUD = [8,24,63,24,8] # 5 x 6    # last three are: key, mirrorX, mirrorY
+    thumby.display.blit(bytearray(arrowLR), 1, 17, 6, 5, l, abs(l), 0)
+    thumby.display.blit(bytearray(arrowLR), 65, 17, 6, 5, r, 0, 0)
+    thumby.display.blit(bytearray(arrowUD), 66, 30, 5, 6, d, 0, 0)
+    thumby.display.blit(bytearray(arrowUD), 66, 4, 5, 6, u, 0, abs(u))
+
+
 def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
+    left = 1
+    right = -1
+    down = -1
     x = 0
     xMonRange = len(playerInfo.friends)
     currentSelect = -2
@@ -1194,39 +1206,59 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
         thumby.display.fill(0)
         if currentSelect == -2: 
             printMon(monsterListInfo[x].bodyBlock, 25 ,0, 0)
+            drawArrows(left, right, down)
             thumby.display.drawText(monsterListInfo[x].statBlock['given_name'], math.floor(((72-(len(monsterListInfo[x].statBlock['given_name']))*6))/2), 28, 1)
         elif currentSelect == -1:
             thingAquired(monsterListInfo[x].statBlock['given_name'], "is a", monsterListInfo[x].statBlock['name'], "", 0, 1)
+            drawArrows(left, right, down, -1)
         elif currentSelect <= 8:
             while(monsterListInfo[x].statBlock[monsterListInfo[x].keyList[currentSelect]] == ""):
                 currentSelect = currentSelect + 1
-            thumby.display.drawText(monsterListInfo[x].keyList[currentSelect], 0, 1, 1)
-            thumby.display.drawText(str(monsterListInfo[x].statBlock[monsterListInfo[x].keyList[currentSelect]]), 0, 9, 1)
+            thingAquired(monsterListInfo[x].statBlock['given_name'] + "'s",
+                        monsterListInfo[x].keyList[currentSelect], 
+                        "is",str(monsterListInfo[x].statBlock[monsterListInfo[x].keyList[currentSelect]]), 0, 1)
+            drawArrows(left, right, down)
         thumby.display.update()
         currentSelect = buttonInput(currentSelect)
-        if currentSelect == 15 and combatCheck == 0:
+        if currentSelect == 31 and combatCheck == 0:
             if playerInfo.friends[0] != playerInfo.friends[x] or startOfgameCheck == 1:
                 switchActiveMon(playerInfo, monsterListInfo[0], monsterListInfo[x], x)
+                thingAquired(monsterListInfo[0].statBlock['given_name'], "is now", "your active", "monster!", 2)
                 x = 0
                 currentSelect = -2
                 if startOfgameCheck == 1:
                     goBack = 1
             else:
-                pass
-        elif currentSelect == 14 and startOfgameCheck == 0:
+                currentSelect = tempSelect
+        elif currentSelect == 30 and startOfgameCheck == 0:
             goBack = 1
-        elif currentSelect == 12:
+        elif currentSelect == 28:
             x = x + 1
-            currentSelect = -2
+            currentSelect = tempSelect
             if x >= xMonRange:
                 x = x - 1
-        elif currentSelect == 13:
+        elif currentSelect == 29:
             x = x - 1
-            currentSelect = -2
+            currentSelect = tempSelect
             if x < 0:
                 x = x + 1
+        elif currentSelect >= 30:
+            currentSelect = -2
         else:
             pass
+        if x > 0 and x < (xMonRange-1):
+            left = -1
+            right = -1
+        elif xMonRange == 1:
+            left = 1
+            right = 1
+        elif x == (xMonRange - 1):
+            left = -1
+            right = 1
+        elif x == 0:
+            left = 1
+            right = -1
+
 
 
 def trainActiveMon(myMonStats, monsterBody):
@@ -1251,14 +1283,15 @@ def trainActiveMon(myMonStats, monsterBody):
         if currentSelect < -6 + 2:
             currentSelect = currentSelect + 6
         thumby.display.fill(0)
-        thingAquired(statNameList[currentSelect], statNumsList[currentSelect], trainingPointsTxt, myMonStats['given_name'], 0)
+        thingAquired(statNameList[currentSelect], statNumsList[currentSelect], trainingPointsTxt, myMonStats['given_name'], 0, 1)
+        drawArrows(1, 1, -1, -1)
         tempSelect = currentSelect
         currentSelect = buttonInput(currentSelect)
-        if currentSelect == 12 or currentSelect == 13:
+        if currentSelect == 28 or currentSelect == 29:
             currentSelect = tempSelect
-        elif currentSelect == 14: 
+        elif currentSelect == 30: 
             goBack = 1
-        elif currentSelect == 15:
+        elif currentSelect == 31:
             currentSelect = tempSelect
             if myMonStats['trainingPoints'] > 0:
                 if currentSelect == 0 and myMonStats['Health'] < myMonStats['maxHealth']: 
@@ -1297,61 +1330,38 @@ def trainActiveMon(myMonStats, monsterBody):
         thumby.display.update()
 
 
-def giveName(beingNamed): #add game start check
+def giveName(beingNamed):
     capAlphabet = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
                     'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z']
     character_list = [' ','a','b','c','d','e','f','g', 'h', 'i', 'j','k','l',
                         'm','n', 'o', 'p','q','r','s','t','u','v','w','x','y','z'] 
     selected_chars = beingNamed
     c = 1
+    tempC = c
     goBack = 0
-    addDelLtr_sprite = [8,28,42,8,8,8,0,20,20,20,20,0,62,34,34,28,0,62,42,42,0,62,32,32,0,62,42,42,0,2,62,2,0,62,42,42,0,0,0,0,
-           4,4,4,21,14,4,0,10,10,10,10,0,31,5,5,31,0,31,17,17,14,0,31,17,17,14,0,0,0,31,16,16,1,31,1,0,31,9,9,22]
+    addDelLtr2 = [0,124,18,18,124,0,0,40,40,40,40,0,124,84,84,0,120,16,8,120,0,124,68,68,56,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+           8,28,42,8,8,8,0,20,20,20,20,0,62,34,34,28,0,62,42,42,0,62,32,32,0,62,42,42,0,2,62,2,0,62,42,42,0,0,0,0,
+           4,4,4,21,14,4,0,10,10,10,10,0,31,5,5,31,0,31,17,17,14,0,31,17,17,14,0,0,31,16,16,1,31,1,0,31,9,9,22,0]
     while(goBack != 1):
-        thumby.display.fill(0)
-        thumby.display.drawFilledRectangle(0, 9, 10, 10, 1)
-        thumby.display.drawText(character_list[c - 1], 1, 0, 1)
-        thumby.display.drawText(character_list[c], 1, 10, 0)
-        thumby.display.drawText(character_list[c + 1], 1, 19, 1)
-        thumby.display.drawText(selected_chars, 1, 27, 1)
-        thumby.display.blit(bytearray(addDelLtr_sprite), 25, 10, 40, 16, 0, 0, 0)
+        tempC = c
+        c = showOptions(character_list, c, selected_chars, 0)
+        thumby.display.drawFilledRectangle(8, 9, 72, 9, 0)
+        thumby.display.blit(bytearray(addDelLtr2), 25, 3, 40, 21, -1, 0, 0)
         thumby.display.update()
-        while(thumby.dpadJustPressed() == False and thumby.actionPressed == False):
-            pass
-        if(thumby.buttonU.pressed() == True):
-            while(thumby.buttonU.pressed() == True):  
-                pass
-            if c == -24:
-                c = 3
-            c = c - 1
-        if(thumby.buttonD.pressed() == True):
-            while(thumby.buttonD.pressed() == True):  
-                pass
-            if c == 24:
-                c = -3
-            c = c + 1
-        if(thumby.buttonR.pressed() == True):
-            while(thumby.buttonR.pressed() == True):  
-                pass
-            if len(selected_chars) == 0:
-                selected_chars = selected_chars + capAlphabet[c]
+        if c == 28:
+            if len(selected_chars) == 0 or selected_chars[-1] == ' ':
+                selected_chars = selected_chars + capAlphabet[tempC]
             else:
-                selected_chars = selected_chars + character_list[c]
-        if(thumby.buttonL.pressed() == True):
-            while(thumby.buttonL.pressed() == True):  
-                pass
+                selected_chars = selected_chars + character_list[tempC]
+        elif c == 29:
             if len(selected_chars) > 0:
                 selected_chars = selected_chars.rstrip(selected_chars[-1])
-        if(thumby.buttonA.pressed() == True ):
-            while(thumby.buttonA.pressed() == True):
-                pass
+        elif c == 31:
             if len(selected_chars) > 0 :
                 beingNamed = selected_chars
-            goBack = 1
-        if(thumby.buttonB.pressed() == True ):
-            while(thumby.buttonB.pressed() == True):
-                pass
-            goBack = 1
+                goBack = 1
+        if c >= 28:
+            c = tempC
     return beingNamed
 
 
@@ -1368,11 +1378,11 @@ def optionScreen(playerInfo):
         subOptionsFriends = ["Swap Active", "Train", "Learn Attack", "Give Name", "Mutate", "Back"]
         while cancelCheck != 1:
             bottomScreenText = ("CurHP:" + str(playerInfo.friends[0].statBlock['currentHealth']))
-            if curSelect == 12 or curSelect == 13:
+            if curSelect == 28 or curSelect == 29:
                 curSelect = tempSelect
             tempSelect = curSelect
             curSelect = showOptions(optionList, curSelect, bottomScreenText)
-            if curSelect == 15:
+            if curSelect == 31:
                 curSelect = tempSelect
                 if optionList[curSelect] == "My Info":
                     playerInformation(playerInfo)
@@ -1381,11 +1391,11 @@ def optionScreen(playerInfo):
                     curSelect = 1
                     while(goBack != 1):
                         thumby.display.fill(0)
-                        if curSelect == 12 or curSelect == 13:
+                        if curSelect == 28 or curSelect == 29:
                             curSelect = tempSelect
                         tempSelect = curSelect
                         curSelect = showOptions(subOptionsFriends, curSelect, "My Friends")
-                        if curSelect == 15:
+                        if curSelect == 31:
                             curSelect = tempSelect
                             if subOptionsFriends[curSelect] == "Swap Active":
                                 showMonInfo(playerInfo)
@@ -1402,7 +1412,7 @@ def optionScreen(playerInfo):
                             if subOptionsFriends[curSelect] == "Back":
                                 curSelect = 1
                                 goBack = 1
-                        if curSelect == 14:
+                        if curSelect == 30:
                             curSelect = 1
                             goBack = 1
                         thumby.display.update()
@@ -1413,7 +1423,7 @@ def optionScreen(playerInfo):
                     thingAquired("","Game","Saved","", 1, 0)
                 if optionList[curSelect] == "Back": 
                     cancelCheck = 1
-            if curSelect == 14:
+            if curSelect == 30:
                 cancelCheck = 1
                 thumby.display.fill(0)
             thumby.display.update()
@@ -1459,7 +1469,7 @@ def tameMon(playerInfo, npcMon):
     newMon.bodyBlock = npcMon.bodyBlock.copy()
     newMon.attackList = npcMon.attackList.copy()
     newMon.mutateSeed = npcMon.mutateSeed.copy()
-    if len(playerInfo.friends) > playerInfo.playerBlock['friendMax']:
+    if len(playerInfo.friends) >= playerInfo.playerBlock['friendMax']:
             popItOff(playerInfo.friends, "monsters, please let one go!")
     else: 
         playerInfo.friends.append(newMon)
@@ -1507,13 +1517,13 @@ def makePlayer(monster1, monster2, monster3, seed):
     newPlayer = Player()
     thumby.display.fill(0)
     thingAquired("Press A", "to give", "your", "name!", 0)
-    while(currentSelect != 15):
+    while(currentSelect != 31):
         currentSelect = buttonInput(currentSelect)
     currentSelect = 0
     newPlayer.playerBlock['name'] = giveName(newPlayer.playerBlock['name'])
     thumby.display.fill(0)
     thingAquired("Press A", "to pick", "your", "Monster!", 0)
-    while(currentSelect != 15):
+    while(currentSelect != 31):
         currentSelect = buttonInput(currentSelect)
     currentSelect = 0
     newPlayer.friends.append(monster1)
@@ -1578,7 +1588,7 @@ def popItOff(theListofObjs, word):
         tempSelect = currentSelect
         currentSelect = showOptions(listOfNames, currentSelect, "", 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
-        if currentSelect == 15:
+        if currentSelect == 31:
             theListofObjs.pop(tempSelect)
         if currentSelect > 10:
             currentSelect = tempSelect
@@ -1615,10 +1625,10 @@ def openScreen():
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
         thumby.display.update()
         whatDo = buttonInput(whatDo)
-        if whatDo == 15:
+        if whatDo == 31:
             battleStartAnimation(0)
             return 0
-        elif whatDo == 14:
+        elif whatDo == 30:
             try:
                 f = open("tmt.json", "r")
                 f.close()
@@ -1776,17 +1786,17 @@ while(1):
             battle = 1
             battleStartAnimation(1)
     npcMon = makeRandomMon(monsterList, world[room].elementType)
+    battleMon = makeRandomStats(npcMon, myGuy.playerBlock['trainerLevel'])
     while(battle == 1):
         victory = 0
         thumby.display.fill(0)
-        victory = battleScreen(myGuy.friends[activeMon], npcMon, myGuy.playerBlock['trainerLevel'], (myGuy.playerBlock['trainerLevel'] + random.randrange(-2,2)))
+        victory = battleScreen(myGuy.friends[activeMon], battleMon, myGuy.playerBlock['trainerLevel'], (myGuy.playerBlock['trainerLevel'] + random.randrange(-2,2)))
         autoSwitchMon(myGuy)
         if myGuy.friends[activeMon].statBlock['currentHealth'] == 0:
             battle = 0
             loss(myGuy.friends[random.randint(0, len(myGuy.friends) - 1)])
         if npcMon.statBlock['currentHealth'] == 0:
             battle = 0
-            npcMon.statBlock['currentHealth'] = npcMon.statBlock['Health']
         if victory == 2:
             if len(myGuy.inventory) > 0:
                 for things in range(0, len(myGuy.inventory)):
@@ -1798,6 +1808,7 @@ while(1):
                             thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "<3", 3)
                             myGuy.inventory.pop(things-1)
                             battle = 0
+                            break
                         else:
                             thingAquired("Crystal", "Used,", "Not", "Tamed", 2)
                             myGuy.inventory.pop(things-1)
@@ -1815,6 +1826,6 @@ while(1):
         myGuy.levelUpCheck()
         myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1
         if len(myGuy.inventory) < myGuy.maxHelditems:
-            randoNum = random.randint(1,2)
-            if randoNum == 1:
+            randoNum = random.randint(1,10)
+            if randoNum > 3:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
