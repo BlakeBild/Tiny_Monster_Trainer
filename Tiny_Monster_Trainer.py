@@ -506,6 +506,8 @@ class Monster:
             0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0]
         body12_sprite =  [0,28,62,127,248,240,224,71,76,254,232,254,76,71,224,240,248,127,62,28,
             0,0,0,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,0,0]
+        body13_sprite = [0,0,124,198,131,49,69,65,41,3,28,16,32,38,41,41,29,129,194,60,
+           0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
         legs1_sprite =  [0,0,0,24,30,7,1,159,255,227,1,227,255,159,0,0,0,0,0,0,
             0,0,0,0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,0,0]
         legs2_sprite =  [0,0,0,48,124,30,7,243,125,7,241,3,31,121,3,199,126,60,0,0,
@@ -528,6 +530,8 @@ class Monster:
             0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
         legs10_sprite =  [124,194,128,56,76,224,193,131,14,172,248,94,6,131,193,228,184,0,198,124,
             0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
+        legs11_sprite = [24,48,224,240,184,128,129,207,253,219,237,59,13,7,1,0,0,0,0,0,
+           0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
         birbHead_sprite = [0,0,0,0,192,192,240,240,248,248,255,190,60,60,240,240,224,192,0,0,
             0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
         birbBody_sprite = [0,0,0,255,255,255,255,253,120,24,253,255,255,31,255,255,249,243,0,0,
@@ -552,7 +556,7 @@ class Monster:
             11: body12_sprite,
             12: head11_sprite}
             self.bodyBlock['head'] = heads[randoNum]
-            randoNum = random.randint(1,12)
+            randoNum = random.randint(1,13)
             bodyyodyody = {
             1: body1_sprite,
             2: body2_sprite,
@@ -565,9 +569,10 @@ class Monster:
             9: body9_sprite,
             10: body10_sprite,
             11: body11_sprite,
-            12: body12_sprite}
+            12: body12_sprite,
+            13: body13_sprite}
             self.bodyBlock['body'] = bodyyodyody[randoNum]
-            randoNum = random.randint(1,10)
+            randoNum = random.randint(1,11)
             legDay = {
             1: legs1_sprite,
             2: legs2_sprite,
@@ -578,7 +583,8 @@ class Monster:
             7: legs7_sprite,
             8: legs8_sprite,
             9: legs9_sprite,
-            10: legs10_sprite}
+            10: legs10_sprite,
+            11: legs11_sprite}
             self.bodyBlock['legs'] = legDay[randoNum]
         else:
             randoNum = random.randint(1,1)
