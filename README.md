@@ -160,13 +160,13 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
 Updates as of 1/3/22:
-Changed combat math so that the potential for high agility monsters avoiding all damage, all the time, was hopfully removed. 
-Added a couple of monster parts.
-Added some visuals to help with navigating the game.
-Rewrote some functions to be the same, they just take up less lines.
-Removed some errors that caused the game to break.
-Fixed some things that weren't working as intended.
-(more specific information can be found in the update history up to this point)
+Changed combat math so that the potential for high agility monsters avoiding all damage, all the time, was hopefully removed.   
+Added a couple of monster parts.  
+Added some visuals to help with navigating the game.  
+Rewrote some functions to be the same, they just take up less lines.  
+Removed some errors that caused the game to break.  
+Fixed some things that weren't working as intended.  
+(more specific information can be found in the update history up to this point)  
 
 Random thoughts as of 12/24/21:
 Future things I'd like to do/add:  
