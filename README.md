@@ -97,69 +97,78 @@ If the monster doesn't have the stamina for an attack: They will lose a % of the
 (Basic isn't a Monster Type, Basic attacks can't be learned, They are just default starting moves that a Monster can have)  
 
 
-Monster Type | Attack Name | Element Type | Phyical/Magic
+Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 :------- | :-------: | :-------: | :-------:
 **Basic** | | | 
-------- |"Poke"       |No Element Type      | Physical  
-------- |"Hit"        |No Element Type      | Physical  
-------- |MagicHit"    |No Element Type      | Magical  
+------- |"Poke"       |No Element Type      | Strength  
+------- |"Hit"        |No Element Type      | Strength  
+------- |MagicHit"    |No Element Type      | Mysticism   
 **Earth** |   |   |  
-------- |"RockToss"        |Earth       |Physical  
-------- |"Quake"           |Earth       | Magical  
-------- |"Pressure"        |Water       |Magical     
-------- |"Entomb"          |Darkness    |Physical    
+------- |"RockToss"        |Earth       | Strength  
+------- |"Quake"           |Earth       | Mysticism  
+------- |"Pressure"        |Water       | Mysticism     
+------- |"Entomb"          |Darkness    | Strength    
 **Wind**| |   |   |  
-------- |"Gust"        | Wind        | Physical  
-------- |"Cyclone"     | Wind        | Magical  
-------- |"Lightning"   | Light       | Physical  
-------- |"Divine Wind" | Ethereal    | Magical  
+------- |"Gust"        | Wind        | Strength  
+------- |"Cyclone"     | Wind        | Mysticism  
+------- |"Lightning"   | Light       | Strength  
+------- |"Divine Wind" | Ethereal    | Mysticism  
 **Water**|   |   |  
 ------- |"Geyser"      | Water       | Physical  
-------- |"Ice Shards"  | Water       | Magical  
-------- |"Freeze"      | Mind        | Magical  
-------- |"Wave"        | Physical    | Physical  
+------- |"Ice Shards"  | Water       | Mysticism  
+------- |"Freeze"      | Mind        | Mysticism  
+------- |"Wave"        | Physical    | Strength  
 **Fire**|   |   |                                  
-------- |"Torch"       | Fire        | Physical  
-------- |"Blaze"       | Fire        | Magical  
-------- |"Flare"       | Light       | Magical  
-------- |"Inferno"     | Wind        | Physical  
+------- |"Torch"       | Fire        | Strength  
+------- |"Blaze"       | Fire        | Mysticism  
+------- |"Flare"       | Light       | Mysticism  
+------- |"Inferno"     | Wind        | Strength  
 **Light**|   |   |                                
-------- |"Dazzle"      | Light       | Physical  
-------- |"Razzle"      | Light       | Magical  
-------- |"Radiance"    | Fire        | Physical  
-------- |"Gleam"       | Mystical    | Magical  
+------- |"Dazzle"      | Light       | Strength  
+------- |"Razzle"      | Light       | Mysticism  
+------- |"Radiance"    | Fire        | Strength  
+------- |"Gleam"       | Mystical    | Mysticism  
 **Darkness**|   |   |
-------- |"Murk"        | Darkness    | Physical  
-------- |"Shadow"      | Darkness    | Magical  
-------- |'Unholy Poke" | Mystical    | Physical  
-------- |"Dire Ruin"   | Ethereal    | Magical  
+------- |"Murk"        | Darkness    | Strength  
+------- |"Shadow"      | Darkness    | Mysticism  
+------- |'Unholy Poke" | Mystical    | Strength  
+------- |"Dire Ruin"   | Ethereal    | Mysticism  
 **Cute**|   |   |
-------- |"Sing Song"   | Cute        | Physical  
-------- |"Adorbes"     | Cute        | Magical  
-------- |"Bubbles"     | Water       | Physical  
-------- |"Fluff Ball"  | Physical    | Magical  
+------- |"Sing Song"   | Cute        | Strength  
+------- |"Adorbes"     | Cute        | Mysticism  
+------- |"Bubbles"     | Water       | Strength  
+------- |"Fluff Ball"  | Physical    | Mysticism  
 **Mind**|   |   |
-------- |"Headbutt"     | Mind       | Physical  
-------- |"Psychic"      | Mind       | Magical  
-------- |"Project Rock" | Earth      | Physical  
-------- |"Good Vibes"   | Cute       | Magical  
+------- |"Headbutt"     | Mind       | Strength  
+------- |"Psychic"      | Mind       | Mysticism  
+------- |"Project Rock" | Earth      | Strength  
+------- |"Good Vibes"   | Cute       | Mysticism  
 **Physical**|   |   |
-------- |"Body Slam"    | Physical   | Physical  
-------- |"Super Hit"    | Physical   | Magical  
-------- |"Boulder Toss" | Earth      | Physical  
-------- |"Love Tap"     | Cute       | Physical  
+------- |"Body Slam"    | Physical   | Strength  
+------- |"Super Hit"    | Physical   | Mysticism  
+------- |"Boulder Toss" | Earth      | Strength  
+------- |"Love Tap"     | Cute       | Strength  
 **Mystical**|   |   |
-------- |"Magic Missile" | Mystical   | Physical  
-------- |"Ritual"       | Mystical   | Magical  
-------- |"Rune Toss"    | Wind       | Physical  
-------- |"Immolate"     | Fire       | Magical  
+------- |"Magic Missile" | Mystical   | Strength  
+------- |"Ritual"       | Mystical   | Mysticism  
+------- |"Rune Toss"    | Wind       | Strength  
+------- |"Immolate"     | Fire       | Mysticism  
 **Ethereal**|   |   |
-------- |"Spooky Hit"    | Ethereal   | Physical   
-------- |"Superlunary"   | Ethereal   | Magical   
-------- |"Obscurity"     | Darkness   | Magical  
-------- |"Rue"           | Mind       | Magical  
+------- |"Spooky Hit"    | Ethereal   | Strength   
+------- |"Superlunary"   | Ethereal   | Mysticism   
+------- |"Obscurity"     | Darkness   | Mysticism  
+------- |"Rue"           | Mind       | Mysticism  
 
+Updates as of 1/3/22:
+Changed combat math so that the potential for high agility monsters avoiding all damage, all the time, was hopfully removed. 
+Added a couple of monster parts.
+Added some visuals to help with navigating the game.
+Rewrote some functions to be the same, they just take up less lines.
+Removed some errors that caused the game to break.
+Fixed some things that weren't working as intended.
+(more specific information can be found in the update history up to this point)
 
+Random thoughts as of 12/24/21:
 Future things I'd like to do/add:  
 (Probably will need to wait until i get a physical thumby to see what I can do for these things)  
 A way to store additional monsters that aren't with you. (I want to add a campfire you can visit & swap out monsters at)  
