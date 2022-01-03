@@ -829,39 +829,31 @@ def buttonInput(selectPos):
         while(thumby.buttonU.pressed() == True): 
             pass
         selectionBoxPos = selectionBoxPos - 1
-        return selectionBoxPos
-    if(thumby.buttonD.pressed() == True):
+    elif(thumby.buttonD.pressed() == True):
         while(thumby.buttonD.pressed() == True): 
             pass
         if (selectionBoxPos <= 26):
             selectionBoxPos = selectionBoxPos + 1
-            return selectionBoxPos
-        else:
-            return selectionBoxPos
-    if(thumby.buttonL.pressed() == True):
+    elif(thumby.buttonL.pressed() == True):
         while(thumby.buttonL.pressed() == True): 
             pass
         selectionBoxPos = 29
-        return selectionBoxPos
-    if(thumby.buttonR.pressed() == True):
+    elif(thumby.buttonR.pressed() == True):
         while(thumby.buttonR.pressed() == True): 
             pass
         selectionBoxPos = 28
-        return selectionBoxPos
-    if(thumby.buttonA.pressed() == True):
+    elif(thumby.buttonA.pressed() == True):
         while(thumby.buttonA.pressed() == True):
             pass
         selectionBoxPos = 31
-        return selectionBoxPos
-    if(thumby.buttonB.pressed() == True):
+    elif(thumby.buttonB.pressed() == True):
         while(thumby.buttonB.pressed() == True):
             pass
         selectionBoxPos = 30
-        return selectionBoxPos
     return selectionBoxPos    
 
 
-def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP):
+def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt):
     for x in range(0, 4):
         playerX = 8
         nmeX = 42
@@ -879,17 +871,17 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
         thumby.display.update()
         if missFlag == 1 and x > 1 and attackIsPlayer == 1: # player misses
-            thumby.display.drawText("Miss", 25, 30, 0)
+            thumby.display.drawText(atkTxt, 25, 30, 0)
         if missFlag == 0 and x > 1 and attackIsPlayer == 1: # player hits
             thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText("Hit!", 25, 30, 0)
+            thumby.display.drawText(atkTxt, 25, 30, 0)
             thumby.display.drawText(str(playerHP), 2, 30, 0)
             thumby.display.drawText(str(nmeHP - amountOfDmg), 72 - len(str(nmeHP - amountOfDmg) * 7), 30, 0)
         if missFlag == 1 and x > 1 and attackIsPlayer == 0: # nme misses
             thumby.display.drawText("Miss", 25, 30, 0)
         if missFlag == 0 and x > 1 and attackIsPlayer == 0: # nme hits
             thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText("Hit!", 25, 30, 0)
+            thumby.display.drawText(atkTxt, 25, 30, 0)
             thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
             thumby.display.drawText(str(playerHP - amountOfDmg), 2, 30, 0)
         thumby.display.update()
@@ -929,7 +921,6 @@ def isTypeStrong(mon1Type, mon2Type):
 
 
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
-    dodge = defenceMon.statBlock['Agility'] + defTrainLevel
     if activeAttack.magic == 1:
         attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel
         defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel
@@ -937,42 +928,58 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
         attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel
         defence = defenceMon.statBlock['Endurance'] + defTrainLevel
     hp2 = defenceMon.statBlock['currentHealth']
+    dodge = defenceMon.statBlock['Agility'] + defence
     damage = 0
+    hit = 1
     atkTypeBonus = 1
     defTypeBonus = 1
-    for x in range(1,3):
-        atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
-    attackMod = activeAttack.baseDamage + random.randint(0,5)
-    for x in range(1,3):
-        defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-    defenceMod = random.randint(0,7)
-    if attackAmnt + attackMod > dodge + defenceMod:
+    if (dodge + random.randint(0,50)) > 90: # check for dodge
+        if (attack + attackMon.statBlock['Agility'] + random.randint(0,10)) >= dodge: # check for glance
+            hit = 2
+        else:
+            hit = 0
+    if hit > 0:
+        for x in range(1,3):
+            atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
+        attackMod = activeAttack.baseDamage + random.randint(0,attackTrainLevel)
+        for x in range(1,3):
+            defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
+        defenceMod = random.randint(0,defTrainLevel)
         damage = (attackAmnt * atkTypeBonus) - (defence * defTypeBonus)
         if damage <= 0:
             damage = 1
+        else:
+            damage = math.ceil(damage/hit)
     hp2 = hp2 - damage
     if hp2 < 0:
         hp2 = 0
     defenceMon.statBlock['currentHealth'] = hp2
+    if hit == 1:
+        return "Hit!"
+    elif hit == 2:
+        return "Glance!"
+    elif hit == 0:
+        return "Miss"
+    
 
 
 def afterAttackSelect(attackingMon, atkChoice, defMon, playerTrainLevel, attackIsPlayer):
     scrollText = ""
     hpBeforeDmg = defMon.statBlock['currentHealth']
-    attack(attackingMon, defMon, attackingMon.attackList[atkChoice], playerTrainLevel, (playerTrainLevel + random.randint(-2, 2)))
+    attackText = attack(attackingMon, defMon, attackingMon.attackList[atkChoice], playerTrainLevel, (playerTrainLevel + random.randint(-2, 2)))
     amntOfDmg = hpBeforeDmg - defMon.statBlock['currentHealth'] 
     if amntOfDmg >= 1:
         if attackIsPlayer == 1:
-            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg)
+            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg, attackText)
             scrollText = (attackingMon.statBlock['given_name'] + " did " + str(amntOfDmg) + " points of damage!")
         else:
-            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'])
+            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'], attackText)
     else:
         if attackIsPlayer == 1:
-            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 1, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg)
+            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 1, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg, attackText)
             scrollText = (attackingMon.statBlock['given_name'] + "'s " + attackingMon.attackList[atkChoice].name + " attack missed!" )
         else: 
-            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 1, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'])
+            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 1, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'], attackText)
     return scrollText
 
 
