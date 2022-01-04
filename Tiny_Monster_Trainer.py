@@ -42,7 +42,6 @@ class Map:
     def __init__(self):
         self.elementType = 0
         self.floor = []
-        #self.roomNumber = 0  maybe put back in to add dif to nme mon based on room number
         for i in range(9 * 5):
             floorTile = Tile()
             self.floor.append(floorTile)
@@ -73,7 +72,6 @@ class Map:
 
  
     def procGenMap(self):
-        #terrainChance = 20 # removed and just put 20 where it was being used
         self.elementType = random.randint(0,10)
         for x in range (0,9):
             for y in range(0,5):
@@ -81,31 +79,35 @@ class Map:
                 if floor.tileType == 1:
                     pass
                 if floor.tileType == 2:
-                    somethingHere = random.randint(0,20)
+                    somethingHere = random.randint(0,20) # chance for random thing on map
                     if somethingHere == 1:
                         terrainTile = random.randrange(7,9)
                         self.floor[y*9+x].generateTile(terrainTile)
 
  
     def displayMap(self):
-        
         wall_sprite = [24,126,255,102,102,255,126,24]
         floor_sprite = [0,0,0,0,0,0,0,0]
         floor_crack = [0,0,0,0,40,20,0,0]
         door_sprite = [255,255,3,1,17,19,255,255]
         tree2_sprite = [0,14,95,119,127,91,14,0]
-        tree3_sprite = [255,157,14,8,2,14,159,247]
         mountain1_sprite = [192,120,12,30,63,14,60,224]
-        
+        dropplet_sprite = [56,108,198,178,170,206,122,0]
+        tablet_sprite = [128,248,132,146,146,132,248,128]
+        fireOrGrass_sprite = [152,112,230,60,240,30,251,128]
         for x in range(0, 9):
             for y in range(0, 5):
                 floor = self.floor[y*9+x]
-                if(floor.tileType == 1 and self.elementType < 3):
-                    thumby.display.blit(bytearray(tree2_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
-                elif(floor.tileType == 1 and self.elementType < 9):
+                if(floor.tileType == 1 and self.elementType < 2):
                     thumby.display.blit(bytearray(mountain1_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
-                elif(floor.tileType == 1):
+                elif(floor.tileType == 1 and self.elementType < 4):
+                    thumby.display.blit(bytearray(fireOrGrass_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
+                elif(floor.tileType == 1 and self.elementType < 6):
                     thumby.display.blit(bytearray(wall_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
+                elif(floor.tileType == 1 and self.elementType < 9):
+                    thumby.display.blit(bytearray(tree2_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
+                elif(floor.tileType == 1):
+                    thumby.display.blit(bytearray(tablet_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)   
                 elif(floor.tileType == 2):
                     thumby.display.blit(bytearray(floor_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
                 elif(floor.tileType == 3):
@@ -292,57 +294,47 @@ class Player:
  
  
     def movePlayer(self, currentRoom, monster, monsterMovement):
+        moved = 0
         while(thumby.dpadJustPressed() == False and thumby.actionPressed == False):
             pass
         if(thumby.buttonU.pressed() == True):
             while(thumby.buttonU.pressed() == True): 
                 pass
+            moved = 1
             if currentRoom.floor[self.currentPos-9].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos - 9
                 self.position[self.currentPos] = 1
-                monster.moveMonster(self, world[room], monsterMovement)
-            else:
-                self.drawPlayer()
-                monster.moveMonster(self, world[room])
-        if(thumby.buttonD.pressed() == True):
+        elif(thumby.buttonD.pressed() == True):
             while(thumby.buttonD.pressed() == True): 
                 pass
+            moved = 1
             if currentRoom.floor[self.currentPos+9].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos + 9
                 self.position[self.currentPos] = 1
-                self.drawPlayer()
-                monster.moveMonster(self, world[room], monsterMovement)
-            else:
-                self.drawPlayer()
-                monster.moveMonster(self, world[room], 0)
-        if(thumby.buttonL.pressed() == True):
+        elif(thumby.buttonL.pressed() == True):
             while(thumby.buttonL.pressed() == True): 
                 pass
+            moved = 1
             if currentRoom.floor[self.currentPos-1].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos - 1
                 self.position[self.currentPos] = 1
                 self.lOrR = 0
-                self.drawPlayer()
-                monster.moveMonster(self, world[room], monsterMovement)
-            else:
-                self.drawPlayer()
-                monster.moveMonster(self, world[room])
-        if(thumby.buttonR.pressed() == True):
+        elif(thumby.buttonR.pressed() == True):
             while(thumby.buttonR.pressed() == True): 
                 pass
+            moved = 1
             if currentRoom.floor[self.currentPos+1].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos + 1
                 self.position[self.currentPos] = 1
                 self.lOrR = 1
-                self.drawPlayer()
-                monster.moveMonster(self, world[room], monsterMovement)
-            else:
-                self.drawPlayer()
-                monster.moveMonster(self, world[room], monsterMovement)
+        if moved == 1:
+            monster.moveMonster(self.currentPos, world[room], monsterMovement)
+        monster.drawMonster()
+        self.drawPlayer()
 
 
     def levelUpCheck(self):
@@ -350,9 +342,9 @@ class Player:
         if self.playerBlock['experience'] ==  math.floor(self.playerBlock['trainerLevel'] * 1.5):
             self.playerBlock['trainerLevel'] = self.playerBlock['trainerLevel'] + 1
             thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
-            if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4: #I haven't tested this yet. Hope it works :P
+            if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4: # I haven't tested this yet. Hope it works :P
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
-                #print("friendMax = ", str(self.playerBlock['friendMax'])) 
+                print("friendMax = ", str(self.playerBlock['friendMax'])) 
 
         
 class Monster:
@@ -689,7 +681,7 @@ class RoamingMonster:
         for x in range(0, 9):
             for y in range(0, 5):
                 if self.position[y*9+x] == 1 :
-                    thumby.display.blit(bytearray(blob_sprite), x*8 ,y*8 , 8, 8, 0, 0, 0)
+                    thumby.display.blit(bytearray(blob_sprite), x*8 ,y*8 , 8, 8, -1, 0, 0)
     
     
     def placeMonster(self, map):
@@ -708,44 +700,30 @@ class RoamingMonster:
         self.currentPos = 0
     
     
-    def moveMonster(self, player, currentRoom, monsterMovement=0):
+    def moveMonster(self, playerPos, currentRoom, monsterMovement=0):
         if monsterMovement == 0:
-            if math.ceil(self.currentPos/9) > math.ceil(player.currentPos/9): 
+            if math.ceil(self.currentPos/9) > math.ceil(playerPos/9): 
                 if currentRoom.floor[self.currentPos-9].isObjectHere >= 1:  # check for blocked
                     self.position[self.currentPos] = 0
                     self.currentPos = self.currentPos - 9
                     self.position[self.currentPos] = 1
-                    self.drawMonster()
-                else:
-                    self.drawMonster()
-            elif math.ceil(self.currentPos/9) < math.ceil(player.currentPos/9): # move monster down
+            elif math.ceil(self.currentPos/9) < math.ceil(playerPos/9): # move monster down
                 if currentRoom.floor[self.currentPos+9].isObjectHere >= 1: # check for blocked
                     self.position[self.currentPos] = 0
                     self.currentPos = self.currentPos + 9
                     self.position[self.currentPos] = 1
-                    self.drawMonster()
-                else:
-                    self.drawMonster() 
-            elif self.currentPos == player.currentPos: # if monster is on same tile as player, don't move
-                self.drawMonster()
-            elif self.currentPos >= player.currentPos: # move monster left
+            elif self.currentPos == playerPos: # if monster is on same tile as player, don't move
+                pass
+            elif self.currentPos >= playerPos: # move monster left
                 if currentRoom.floor[self.currentPos-1].isObjectHere >= 1: # check for blocked 
                     self.position[self.currentPos] = 0
                     self.currentPos = self.currentPos - 1
                     self.position[self.currentPos] = 1
-                    self.drawMonster()
-                else:
-                    self.drawMonster()
-            elif self.currentPos <= player.currentPos: # move monster right
+            elif self.currentPos <= playerPos: # move monster right
                 if currentRoom.floor[self.currentPos+1].isObjectHere >= 1: # check for blocked
                     self.position[self.currentPos] = 0
                     self.currentPos = self.currentPos + 1
                     self.position[self.currentPos] = 1
-                    self.drawMonster()
-                else:
-                    self.drawMonster()
-            else:
-                self.drawMonster()
         else:
             randomDirList = [-9, -1, 1, 9]
             x = random.randint(0,3)
@@ -753,9 +731,7 @@ class RoamingMonster:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos + randomDirList[x]
                 self.position[self.currentPos] = 1
-                self.drawMonster()
-            else:
-                self.drawMonster()
+
  
 
 def worldRangeCheck(test):
@@ -773,38 +749,26 @@ def mapChangeCheck(player, worldMap, worldRoom):
             player.position[player.currentPos] = 0
             player.currentPos = 31
             player.position[player.currentPos] = 1
-            player.drawPlayer()
             worldRoom = worldRoom - 5
-            worldMap.displayMap()
             worldRoom = worldRangeCheck(worldRoom)
-            return worldRoom
         elif player.currentPos == 40:
             player.position[player.currentPos] = 0
             player.currentPos = 13
             player.position[player.currentPos] = 1
-            player.drawPlayer()
             worldRoom = worldRoom + 5
             worldRoom = worldRangeCheck(worldRoom)
-            worldMap.displayMap()
-            return worldRoom
         elif player.currentPos == 26:
             player.position[player.currentPos] = 0
             player.currentPos = 19
             player.position[player.currentPos] = 1
-            player.drawPlayer()
             worldRoom = worldRoom + 1
             worldRoom = worldRangeCheck(worldRoom)
-            worldMap.displayMap()
-            return worldRoom
         elif player.currentPos == 18:
             player.position[player.currentPos] = 0
             player.currentPos = 25
             player.position[player.currentPos] = 1
-            player.drawPlayer()
             worldRoom = worldRangeCheck(worldRoom)
             worldRoom = worldRoom - 1
-            worldMap.displayMap()
-            return worldRoom
     worldMap.displayMap()
     return worldRoom
 
@@ -941,10 +905,8 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
     if hit > 0:
         for x in range(1,3):
             atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
-        #attackMod = activeAttack.baseDamage + random.randint(0,attackTrainLevel)
         for x in range(1,3):
             defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-        #defenceMod = random.randint(0, defTrainLevel)
         damage = (attackAmnt * atkTypeBonus) - (defence * defTypeBonus)
         if damage <= 0:
             damage = 1
@@ -1009,7 +971,7 @@ def attackOptionMenu(monInfo):
     
     
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
-    #print("Hi, you are in a fight!")
+    print("Hi, you are in a fight!")
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with a roaming " + nmeMon.statBlock['name'] + "!")
     currentSelect = 1
     tempSelect = currentSelect
@@ -1761,10 +1723,10 @@ if load == 1:
 else:
     theWorldSeed = time.ticks_us()
     random.seed(theWorldSeed)
-    #print("World Seed = ", theWorldSeed)
+    print("World Seed = ", theWorldSeed)
     world = makeWorld(theWorldSeed)
     monsterList = makeMonsterList(theWorldSeed) 
-    myGuy = makePlayer(monsterList[0],monsterList[1], monsterList[2], theWorldSeed)
+    myGuy = makePlayer(monsterList[0], monsterList[1], monsterList[2], theWorldSeed)
 
 npcMon = Monster()
 activeMon = 0
@@ -1779,20 +1741,17 @@ victory = 0
 
 while(1):
     gc.collect() 
-    #print(gc.mem_free())
     micropython.mem_info()
     micropython.qstr_info()
     while(battle != 1):
         thumby.display.fill(0)
-        room = mapChangeCheck(myGuy, world[room], room)
+        room = mapChangeCheck(myGuy, world[room], room) # draw world map
         if tempRoom != room:
             npcMonRoaming.removeMonster()
             npcMonRoaming.placeMonster(world[room])
             tempRoom = room
             monsterMovement = random.randint(0,2)
-        myGuy.movePlayer(world[room], npcMonRoaming, monsterMovement)
-        npcMonRoaming.drawMonster()
-        myGuy.drawPlayer()
+        myGuy.movePlayer(world[room], npcMonRoaming, monsterMovement) # draws roaming monster & player
         optionScreen(myGuy)
         thumby.display.update()
         if myGuy.currentPos == npcMonRoaming.currentPos:
