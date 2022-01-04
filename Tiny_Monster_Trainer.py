@@ -42,7 +42,7 @@ class Map:
     def __init__(self):
         self.elementType = 0
         self.floor = []
-        self.roomNumber = 0 
+        #self.roomNumber = 0  maybe put back in to add dif to nme mon based on room number
         for i in range(9 * 5):
             floorTile = Tile()
             self.floor.append(floorTile)
@@ -73,7 +73,7 @@ class Map:
 
  
     def procGenMap(self):
-        terrainChance = 20
+        #terrainChance = 20 # removed and just put 20 where it was being used
         self.elementType = random.randint(0,10)
         for x in range (0,9):
             for y in range(0,5):
@@ -81,7 +81,7 @@ class Map:
                 if floor.tileType == 1:
                     pass
                 if floor.tileType == 2:
-                    somethingHere = random.randint(0,terrainChance)
+                    somethingHere = random.randint(0,20)
                     if somethingHere == 1:
                         terrainTile = random.randrange(7,9)
                         self.floor[y*9+x].generateTile(terrainTile)
@@ -206,7 +206,7 @@ class AttackMove():
 class TextForScroller():
     def __init__(self, scrollingText):
         self.scrollingText = scrollingText
-        self.scrollerLength = len(self.scrollingText) * 6 +82
+        self.scrollerLength = len(self.scrollingText) * 6 + 82
         self.scroller = 0
     
     def moveScroll(self):
@@ -1278,7 +1278,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
 
 def trainActiveMon(myMonStats, monsterBody):
     gc.collect()
-    micropython.mem_info()
+    #micropython.mem_info()
     thumby.display.fill(0)
     healthAmtTxt = (str(myMonStats['Health']) + '/' + str(myMonStats['maxHealth']))
     agileAmtTxt = (str(myMonStats['Agility']) + '/' + str(myMonStats['maxAgility']))
@@ -1483,10 +1483,10 @@ def tameMon(playerInfo, npcMon):
     newMon.bodyBlock = npcMon.bodyBlock.copy()
     newMon.attackList = npcMon.attackList.copy()
     newMon.mutateSeed = npcMon.mutateSeed.copy()
-    if len(playerInfo.friends) >= playerInfo.playerBlock['friendMax']:
+    playerInfo.friends.append(newMon)
+    if len(playerInfo.friends) > playerInfo.playerBlock['friendMax']:
             popItOff(playerInfo.friends, "monsters, please let one go!")
-    else: 
-        playerInfo.friends.append(newMon)
+
 
  
 def makeWorld(wSeed):
@@ -1497,7 +1497,7 @@ def makeWorld(wSeed):
     for i in range(0 , 25):
         newMap = Map()
         newMap.procGenMap()
-        newMap.roomNumber = i + 1
+        #newMap.roomNumber = i + 1
         worldList.append(newMap)
     return worldList
     
@@ -1815,11 +1815,11 @@ while(1):
             if len(myGuy.inventory) > 0:
                 for things in range(0, len(myGuy.inventory)):
                     if myGuy.inventory[things-1].name == "Crystals":
-                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + myGuy.playerBlock['trainerLevel']) > 15: 
+                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + random.randint(1, myGuy.playerBlock['trainerLevel'])) > 15: 
                             gc.collect()
+                            thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "<3", 3)
                             tameMon(myGuy, npcMon)
                             myGuy.friends[-1].statBlock['currentHealth'] = myGuy.friends[-1].statBlock['Health']
-                            thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "<3", 3)
                             myGuy.inventory.pop(things-1)
                             battle = 0
                             break
