@@ -352,7 +352,7 @@ class Player:
             thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
             if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4: #I haven't tested this yet. Hope it works :P
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
-                print("friendMax = ", str(self.playerBlock['friendMax'])) 
+                #print("friendMax = ", str(self.playerBlock['friendMax'])) 
 
         
 class Monster:
@@ -600,20 +600,20 @@ class Monster:
     
     
     def makeType(self):
-        monsterTypes = ['', "Wind", "Earth", "Water", "Fire", "Mind", "Darkness", 
+        monsterTypes = ["Wind", "Earth", "Water", "Fire", "Mind", "Darkness", 
                         "Cute", "Light", "Physical", "Mystical", "Ethereal"]
         if self.statBlock['Type1'] == "":
-            monType = monsterTypes[random.randint(1, len(monsterTypes)-1)]
+            monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
             return monType
         elif self.statBlock['Type2'] == "":
-            monType = monsterTypes[random.randint(1, len(monsterTypes)-1)]
+            monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
             while monType == self.statBlock['Type1']:
                 monType = monsterTypes[random.randint(1, len(monsterTypes)-1)]
             return monType
         elif self.statBlock['Type3'] == "":
-            monType = monsterTypes[random.randint(1, len(monsterTypes)-1)]
+            monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
             while monType == self.statBlock['Type1'] or monType == self.statBlock['Type2']:
-                monType = monsterTypes[random.randint(1, len(monsterTypes)-1)]
+                monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
             return monType
         return monType
 
@@ -871,17 +871,17 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
         thumby.display.update()
         if missFlag == 1 and x > 1 and attackIsPlayer == 1: # player misses
-            thumby.display.drawText(atkTxt, 25, 30, 0)
+            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2), 30, 0)
         if missFlag == 0 and x > 1 and attackIsPlayer == 1: # player hits
             thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText(atkTxt, 25, 30, 0)
+            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2), 30, 0)
             thumby.display.drawText(str(playerHP), 2, 30, 0)
             thumby.display.drawText(str(nmeHP - amountOfDmg), 72 - len(str(nmeHP - amountOfDmg) * 7), 30, 0)
         if missFlag == 1 and x > 1 and attackIsPlayer == 0: # nme misses
-            thumby.display.drawText("Miss", 25, 30, 0)
+            thumby.display.drawText("Miss", 24, 30, 0)
         if missFlag == 0 and x > 1 and attackIsPlayer == 0: # nme hits
             thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText(atkTxt, 25, 30, 0)
+            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2), 30, 0)
             thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
             thumby.display.drawText(str(playerHP - amountOfDmg), 2, 30, 0)
         thumby.display.update()
@@ -922,29 +922,29 @@ def isTypeStrong(mon1Type, mon2Type):
 
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
     if activeAttack.magic == 1:
-        attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel
-        defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel
+        attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + activeAttack.baseDamage
+        defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel + random.randint(0, 12)
     else:
-        attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel
-        defence = defenceMon.statBlock['Endurance'] + defTrainLevel
+        attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + activeAttack.baseDamage
+        defence = defenceMon.statBlock['Endurance'] + defTrainLevel + random.randint(0, 12)
     hp2 = defenceMon.statBlock['currentHealth']
     dodge = defenceMon.statBlock['Agility'] + defence
     damage = 0
     hit = 1
     atkTypeBonus = 1
     defTypeBonus = 1
-    if (dodge + random.randint(0,50)) > 90: # check for dodge
-        if (attack + attackMon.statBlock['Agility'] + random.randint(0,10)) >= dodge: # check for glance
+    if (dodge + random.randint(-abs(attackTrainLevel),100)) > (90 - defTrainLevel): # check for dodge
+        if ((attackAmnt + attackMon.statBlock['Agility']) + random.randint(-10,10)) >= dodge: # check for glance
             hit = 2
         else:
             hit = 0
     if hit > 0:
         for x in range(1,3):
             atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
-        attackMod = activeAttack.baseDamage + random.randint(0,attackTrainLevel)
+        #attackMod = activeAttack.baseDamage + random.randint(0,attackTrainLevel)
         for x in range(1,3):
             defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-        defenceMod = random.randint(0,defTrainLevel)
+        #defenceMod = random.randint(0, defTrainLevel)
         damage = (attackAmnt * atkTypeBonus) - (defence * defTypeBonus)
         if damage <= 0:
             damage = 1
@@ -957,7 +957,7 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
     if hit == 1:
         return "Hit!"
     elif hit == 2:
-        return "Glance!"
+        return "Glance"
     elif hit == 0:
         return "Miss"
     
@@ -1009,7 +1009,7 @@ def attackOptionMenu(monInfo):
     
     
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
-    print("Hi, you are in a fight!")
+    #print("Hi, you are in a fight!")
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with a roaming " + nmeMon.statBlock['name'] + "!")
     currentSelect = 1
     tempSelect = currentSelect
@@ -1028,6 +1028,8 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
                     if playerMon.attackList[selectCheck].currentUses <= 0:
                         playerMon.statBlock['currentHealth'] = math.floor(playerMon.statBlock['currentHealth'] * 0.7)
                         thingAquired(playerMon.statBlock['given_name'], "is out of", "stamina", "HP lost", 2)
+                        if playerMon.statBlock['currentHealth'] <= 0:
+                            return 
                     agileTie = 0
                     if (playerMon.statBlock['Agility'] + playerTrainLevel) == (nmeMon.statBlock['Agility'] + npcTrainLevel):
                         agileTie = random.randint(-2,1)
@@ -1726,7 +1728,7 @@ def makeRandomMon(monsterList, roomElm):
     random.seed(time.ticks_ms())
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
-    for x in range(0,6):
+    for x in range(0,10):
         thisGuyRightHere = monsterList[random.randint(0,24)]
         if (thisGuyRightHere.statBlock['Type1'] == spawnType[roomElm]
                 or thisGuyRightHere.statBlock['Type2'] == spawnType[roomElm] 
@@ -1759,7 +1761,7 @@ if load == 1:
 else:
     theWorldSeed = time.ticks_us()
     random.seed(theWorldSeed)
-    print("World Seed = ", theWorldSeed)
+    #print("World Seed = ", theWorldSeed)
     world = makeWorld(theWorldSeed)
     monsterList = makeMonsterList(theWorldSeed) 
     myGuy = makePlayer(monsterList[0],monsterList[1], monsterList[2], theWorldSeed)
@@ -1777,7 +1779,7 @@ victory = 0
 
 while(1):
     gc.collect() 
-    print(gc.mem_free())
+    #print(gc.mem_free())
     micropython.mem_info()
     micropython.qstr_info()
     while(battle != 1):
