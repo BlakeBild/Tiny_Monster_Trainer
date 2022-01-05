@@ -4,8 +4,8 @@ import time
 import thumby
 import math
 import random
-import micropython
 import ujson
+#import micropython
 
 
 player3_sprite = [0,46,251,127,123,255,46,0]
@@ -92,7 +92,7 @@ class Map:
         door_sprite = [255,255,3,1,17,19,255,255]
         tree2_sprite = [0,14,95,119,127,91,14,0]
         mountain1_sprite = [192,120,12,30,63,14,60,224]
-        dropplet_sprite = [56,108,198,178,170,206,122,0]
+        #dropplet_sprite = [56,108,198,178,170,206,122,0]
         tablet_sprite = [128,248,132,146,146,132,248,128]
         fireOrGrass_sprite = [152,112,230,60,240,30,251,128]
         for x in range(0, 9):
@@ -344,7 +344,7 @@ class Player:
             thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
             if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4: # I haven't tested this yet. Hope it works :P
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
-                print("friendMax = ", str(self.playerBlock['friendMax'])) 
+                #print("friendMax = ", str(self.playerBlock['friendMax'])) 
 
         
 class Monster:
@@ -474,6 +474,8 @@ class Monster:
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
         head11_sprite =  [124,198,131,1,5,5,9,131,198,124,124,198,131,1,5,5,9,131,198,124,
            0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0]
+        head12_sprite = [0,0,126,255,177,117,243,254,207,167,182,150,134,134,134,199,157,199,29,7,
+            0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
         body1_sprite =  [0,62,255,219,118,60,31,255,255,193,193,207,135,183,255,252,0,0,0,0,
            0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0]
         body2_sprite =  [0,56,252,204,30,62,115,231,253,248,16,248,253,231,115,62,30,204,252,56,
@@ -524,6 +526,8 @@ class Monster:
             0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
         legs11_sprite = [24,48,224,240,184,128,129,207,253,219,237,59,13,7,1,0,0,0,0,0,
            0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
+        legs12_sprite = [120,252,198,226,120,60,31,217,240,240,176,25,63,127,231,192,128,0,0,0,
+            0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,1,1,0,0]
         birbHead_sprite = [0,0,0,0,192,192,240,240,248,248,255,190,60,60,240,240,224,192,0,0,
             0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
         birbBody_sprite = [0,0,0,255,255,255,255,253,120,24,253,255,255,31,255,255,249,243,0,0,
@@ -532,7 +536,7 @@ class Monster:
             0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0]
         
         if random.randint(0,50) != 1:
-            randoNum = random.randint(0,12)
+            randoNum = random.randint(0,13)
             heads = {
             0: head0_sprite,
             1: head1_sprite,
@@ -546,7 +550,8 @@ class Monster:
             9: head9_sprite,
             10: head10_sprite,
             11: body12_sprite,
-            12: head11_sprite}
+            12: head11_sprite,
+            13: head12_sprite}
             self.bodyBlock['head'] = heads[randoNum]
             randoNum = random.randint(1,13)
             bodyyodyody = {
@@ -564,7 +569,7 @@ class Monster:
             12: body12_sprite,
             13: body13_sprite}
             self.bodyBlock['body'] = bodyyodyody[randoNum]
-            randoNum = random.randint(1,11)
+            randoNum = random.randint(1,12)
             legDay = {
             1: legs1_sprite,
             2: legs2_sprite,
@@ -576,7 +581,8 @@ class Monster:
             8: legs8_sprite,
             9: legs9_sprite,
             10: legs10_sprite,
-            11: legs11_sprite}
+            11: legs11_sprite,
+            12: legs12_sprite}
             self.bodyBlock['legs'] = legDay[randoNum]
         else:
             randoNum = random.randint(1,1)
@@ -743,7 +749,6 @@ def worldRangeCheck(test):
 
 
 def mapChangeCheck(player, worldMap, worldRoom):
-    gc.collect()
     if worldMap.floor[player.currentPos].isObjectHere == 2:
         if player.currentPos == 4:
             player.position[player.currentPos] = 0
@@ -971,7 +976,7 @@ def attackOptionMenu(monInfo):
     
     
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
-    print("Hi, you are in a fight!")
+    #print("Hi, you are in a fight!")
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with a roaming " + nmeMon.statBlock['name'] + "!")
     currentSelect = 1
     tempSelect = currentSelect
@@ -1129,7 +1134,6 @@ def playerInformation(playerInfo):
 
 def displayItems(playerInfo):
     thumby.display.fill(0)
-    gc.collect()
     curSelect = 0
     tempSelect = curSelect
     cancelCheck = 0
@@ -1237,10 +1241,8 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
             right = -1
 
 
-
 def trainActiveMon(myMonStats, monsterBody):
     gc.collect()
-    #micropython.mem_info()
     thumby.display.fill(0)
     healthAmtTxt = (str(myMonStats['Health']) + '/' + str(myMonStats['maxHealth']))
     agileAmtTxt = (str(myMonStats['Agility']) + '/' + str(myMonStats['maxAgility']))
@@ -1519,8 +1521,9 @@ def makePlayer(monster1, monster2, monster3, seed):
     return newPlayer 
     
 
-def thingAquired(word1, word2, itemName, word4 ="", setSleep=1, skipUpdate=0):
-    thumby.display.fill(0)
+def thingAquired(word1, word2, itemName, word4 ="", setSleep=1, skipUpdate=0, skipFill=0):
+    if skipFill == 0:
+        thumby.display.fill(0)
     thumby.display.drawText(word1, math.floor(((72-(len(word1))*6))/2), 1, 1)
     thumby.display.drawText(word2, math.floor(((72-(len(word2))*6))/2), 10, 1)
     thumby.display.drawText(itemName, math.floor(((72-(len(itemName))*6))/2), 19, 1)
@@ -1594,10 +1597,22 @@ def trainAnimation(monsterBody):
 
 
 def openScreen():
+    monsterTail = [0,0,0,128,192,224,224,176,120,216,188,236,220,244,126,126,54,60,44,60,120,224,0,0,0,
+           248,254,159,179,247,252,61,31,7,3,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
+           255,140,157,191,255,192,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+           3,15,31,17,19,23,31,30,28,24,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    monsterMouth = [60,254,227,195,215,239,254,121,126,60,60,60,60,124,254,190,242,118,124,118,242,254,28,0,0,
+            252,255,255,15,3,49,206,3,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,
+            255,207,95,254,240,204,158,27,173,205,15,134,192,0,0,0,0,0,0,0,0,0,0,0,0,
+            1,15,30,18,23,31,31,31,31,31,27,13,7,0,0,0,0,0,0,0,0,0,0,0,0]
     myScroller = TextForScroller("Press A to Start or B to Load!")
     while(1):
         whatDo = 0
-        thingAquired("Tiny", "Monster", "Trainer!", "", 0, 1)
+        thumby.display.fill(0)
+        thumby.display.blit(bytearray(monsterTail), 0, 0, 25, 30, 0, 0, 0)
+        thumby.display.blit(bytearray(monsterMouth), 47, 0, 25, 30, 0, 1, 0)
+        thingAquired("Tiny", "Monster", "Trainer!", "", 0, 1, 1)
+        thumby.display.drawLine(0, 28, 72, 28, 1)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
         thumby.display.update()
         whatDo = buttonInput(whatDo)
@@ -1712,6 +1727,7 @@ def loss(curMon):
     
 ## Setting up the game ##
 
+
 world=[]
 monsterList=[]
 myGuy = Player()
@@ -1723,7 +1739,7 @@ if load == 1:
 else:
     theWorldSeed = time.ticks_us()
     random.seed(theWorldSeed)
-    print("World Seed = ", theWorldSeed)
+    #print("World Seed = ", theWorldSeed)
     world = makeWorld(theWorldSeed)
     monsterList = makeMonsterList(theWorldSeed) 
     myGuy = makePlayer(monsterList[0], monsterList[1], monsterList[2], theWorldSeed)
@@ -1741,8 +1757,8 @@ victory = 0
 
 while(1):
     gc.collect() 
-    micropython.mem_info()
-    micropython.qstr_info()
+    #micropython.mem_info()
+    #micropython.qstr_info()
     while(battle != 1):
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room) # draw world map
@@ -1786,7 +1802,7 @@ while(1):
                             thingAquired("Crystal", "Used,", "Not", "Tamed", 2)
                             myGuy.inventory.pop(things-1)
                             break
-                    else:
+                    elif things == len(myGuy.inventory):
                         thingAquired("You don't", "have any", "Taming", "Crystals", 2) 
             else:
                 thingAquired("You don't", "have any", "Taming", "Crystals", 2)
