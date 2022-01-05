@@ -24,7 +24,7 @@ The higher your Trainer Level, you'll seek out stronger Roaming Monsters to figh
 **Types**: The Type that the Monster is and what pool of moves it can learn from.  
 
 **Battles**  
-**Swap**: shows you your Active Monster and you can select another one of your Monster's to be the Active one.  
+**Swap**: shows you your Active Monster and you can select another one of your Monsters to be the Active one.  
 **Info**: Shows the opposing Monster's Stats/Types & the Active Monster's Stats/Types.  
 **Attack**: Lets you pick a move to use against the opposing Monster.  
 **Run**: Lets you escape the battle.  
@@ -56,6 +56,7 @@ Items are not usable during combat.
 #######  
 **Item List**  
 #######  
+  
 Bandaids - Heals 8 HP  
 PushPops - Heals 20 HP  
 Stickers - Raises max trainable HP by 1 and heals for 1  
@@ -94,6 +95,7 @@ If the monster doesn't have the stamina for an attack: They will lose a % of the
 ########  
 **Attack List**  
 ########  
+  
 (Basic isn't a Monster Type, Basic attacks can't be learned, They are just default starting moves that a Monster can have)  
 
 
@@ -159,19 +161,20 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
+Updates as of 1/5/22:  
+Changed some combat math s'more. I like it better now, but I still haven't been able to play it long enough to see what it might be like at higher trainer levels. I also added some visuals and more monster parts. I fixed some more things that I found that weren’t working as intended. 
+
 Updates as of 1/3/22:  
 Changed combat math so that the potential for high agility monsters avoiding all damage, all the time, was hopefully removed. Added a couple of monster parts. Added some visuals to help with navigating the game. Rewrote some functions to be the same, they just take up less lines. Removed some errors that caused the game to break. Fixed some things that weren't working as intended.  
 
 Random thoughts as of 12/24/21:
 Future things I'd like to do/add:  
-(Probably will need to wait until i get a physical thumby to see what I can do for these things)  
+(Probably will need to wait until i get a physical Thumby to see what I can do for these things)  
 A way to store additional monsters that aren't with you. (I want to add a campfire you can visit & swap out monsters at)  
 Add a way to change the world seed (Thinking about adding an item you might be able to find after a specific trainer level, that when used will change the player's world seed)   
-Change Info, in battle, so that you can only see the other monsters info after a specific trainer level.  
+Change Info, in battle, so that you can only see the other monster’s info after a specific trainer level.  
 Multiplayer (for trading and battling)    
 Redo some combat maths.  
-Rewrite a few fuctions to be smaller.    
+Rewrite a few functions to be smaller.    
 Balance some stuff.    
 Clean up Player Creation.  
-More terrain images (based on room element type)   
-More animations (I would like to add 2 more training animations, one for HP/Agi & one for Myst/Tin) (I would like to have an animation for mutating) (attack animations, based on type or if they're physical or magic)  
