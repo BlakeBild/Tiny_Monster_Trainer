@@ -1124,10 +1124,10 @@ def showOptions(options, currentSelect, bottomText, x=0):
 
 def playerInformation(playerInfo):
     thumby.display.fill(0)
-    thumby.display.drawText(playerInfo.playerBlock['name'], 0, 0 ,1)
-    thumby.display.blit(bytearray(player3_sprite),0 ,9 ,8 ,8 ,0 ,0 ,0)
-    thumby.display.drawText("Lvl: " + str(playerInfo.playerBlock['trainerLevel']), 0, 19, 1)
-    thumby.display.drawText("Exp: " + str(playerInfo.playerBlock['experience']), 0, 28, 1)
+    thumby.display.drawText(playerInfo.playerBlock['name'], 1, 1 ,1)
+    thumby.display.blit(bytearray(player3_sprite),1 ,10 ,8 ,8 ,0 ,0 ,0)
+    thumby.display.drawText("Lvl: " + str(playerInfo.playerBlock['trainerLevel']), 1, 20, 1)
+    thumby.display.drawText("Exp: " + str(playerInfo.playerBlock['experience']), 1, 29, 1)
     thumby.display.update()
     time.sleep(2)
 
@@ -1311,7 +1311,7 @@ def trainActiveMon(myMonStats, monsterBody):
 
 def giveName(beingNamed):
     capAlphabet = [' ', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-                    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Z']
+                    'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     character_list = [' ','a','b','c','d','e','f','g', 'h', 'i', 'j','k','l',
                         'm','n', 'o', 'p','q','r','s','t','u','v','w','x','y','z'] 
     selected_chars = beingNamed
