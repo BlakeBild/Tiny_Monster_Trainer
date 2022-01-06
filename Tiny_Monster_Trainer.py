@@ -496,8 +496,8 @@ class Monster:
             0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
         body10_sprite =  [0,0,32,124,126,38,14,27,183,227,9,227,183,27,14,38,126,124,32,0,
             0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
-        body11_sprite =  [0,16,127,48,32,32,230,226,255,127,0,0,255,226,206,128,192,112,0,0,
-            0,0,0,0,0,1,1,1,0,0,0,0,1,1,1,0,0,0,0,0]
+        body11_sprite = [0,16,127,48,32,32,230,226,255,127,34,68,255,226,238,32,48,28,0,0,
+           0,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0]
         body12_sprite =  [0,28,62,127,248,240,224,71,76,254,232,254,76,71,224,240,248,127,62,28,
             0,0,0,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,0,0]
         body13_sprite = [0,0,124,198,131,49,69,65,41,3,28,16,32,38,41,41,29,129,194,60,
@@ -833,8 +833,8 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         elif x == 2 and attackIsPlayer == 0:
             nmeY = 10
         thumby.display.fill(0)
-        printMon(playerBod, playerX + y, 0, 0)
-        printMon(nmeBod, nmeX - nmeY, 0, 1)
+        printMon(playerBod, playerX + y, 1, 0)
+        printMon(nmeBod, nmeX - nmeY, 1, 1)
         thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
         thumby.display.drawText(str(playerHP), 2, 30, 0)
         thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
@@ -985,8 +985,8 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
         thumby.display.fill(0)
         tempSelect = currentSelect
         currentSelect = showOptions(options, currentSelect, "", 47)
-        thumby.display.drawFilledRectangle(0, 30, 72, 10, 0)
-        thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
+        thumby.display.drawFilledRectangle(0, 31, 72, 10, 0)
+        thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
         if currentSelect == 31: 
             currentSelect = tempSelect
             if options[currentSelect] == "Atk": 
@@ -1102,15 +1102,15 @@ def showOptions(options, currentSelect, bottomText, x=0):
     optionAmount = len(options)
     currentSelect = currentSelectCheckRange(optionAmount, currentSelect)
     thumby.display.fill(0)
-    thumby.display.drawFilledRectangle(0+x, 9, 72, 9, 1)
+    thumby.display.drawFilledRectangle(0+x, 9+1, 72, 9, 1)
     if optionAmount > 1: 
-        thumby.display.drawText(options[currentSelect - 1], 1+x, 1, 1) # prints top opt
+        thumby.display.drawText(options[currentSelect - 1], 1+x, 1+1, 1) # prints top opt
         if optionAmount > 2:
-            thumby.display.drawText(options[currentSelect+1], 1+x, 19, 1) #prints bottom opt
-    thumby.display.drawText(options[currentSelect], 1+x, 10, 0) # prints center opt
-    thumby.display.drawLine(0, 28, 72, 28, 1)
+            thumby.display.drawText(options[currentSelect+1], 1+x, 19+1, 1) #prints bottom opt
+    thumby.display.drawText(options[currentSelect], 1+x, 10+1, 0) # prints center opt
+    thumby.display.drawLine(0, 29, 72, 29, 1)
     if bottomText != "":
-        thumby.display.drawText(bottomText, 1, 30, 1) # prints other info on bottom of screen
+        thumby.display.drawText(bottomText, 1, 31, 1) # prints other info on bottom of screen
     currentSelect = buttonInput(currentSelect)
     if optionAmount <= 1:
         if currentSelect == 31:
@@ -1324,7 +1324,7 @@ def giveName(beingNamed):
     while(goBack != 1):
         tempC = c
         c = showOptions(character_list, c, selected_chars, 0)
-        thumby.display.drawFilledRectangle(8, 9, 72, 9, 0)
+        thumby.display.drawFilledRectangle(8, 10, 72, 9, 0)
         thumby.display.blit(bytearray(addDelLtr2), 25, 3, 40, 21, -1, 0, 0)
         thumby.display.update()
         if c == 28:
