@@ -1037,8 +1037,8 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
                 pass
         if currentSelect == 30 or currentSelect == 28 or currentSelect == 29 :
             currentSelect = tempSelect    
-        printMon(playerMon.bodyBlock, 0, 0, 0)
-        printMon(nmeMon.bodyBlock, 25, 0, 1)
+        printMon(playerMon.bodyBlock, 0, 1, 0)
+        printMon(nmeMon.bodyBlock, 25, 1, 1)
         thumby.display.update()
     return 0  
 
@@ -1721,9 +1721,11 @@ def loss(curMon):
     curMon.statBlock['currentHealth'] = curMon.statBlock['Health']
     for attacks in range(0, len(curMon.attackList)):
         curMon.attackList[attacks-1].currentUses = curMon.attackList[attacks-1].numUses
-    curMon.statBlock['trainingPoints'] = curMon.statBlock['trainingPoints'] - 1
+    if curMon.statBlock['trainingPoints'] > 0:
+        curMon.statBlock['trainingPoints'] = curMon.statBlock['trainingPoints'] - 1
     thingAquired(curMon.statBlock['given_name'], "is", "Disheartened", "TP lost", 2)
-
+    #else:
+        #thingAquired(curMon.statBlock['given_name'], "is", "Disheartened", "No TP Left.", 2)
     
 ## Setting up the game ##
 
@@ -1775,7 +1777,7 @@ while(1):
             battle = 1
             battleStartAnimation(1)
     npcMon = makeRandomMon(monsterList, world[room].elementType)
-    battleMon = makeRandomStats(npcMon, myGuy.playerBlock['trainerLevel'])
+    battleMon = makeRandomStats(npcMon, random.randint(0, myGuy.playerBlock['trainerLevel']))
     while(battle == 1):
         victory = 0
         thumby.display.fill(0)
@@ -1791,7 +1793,7 @@ while(1):
                 for things in range(0, len(myGuy.inventory)):
                     if myGuy.inventory[things-1].name == "Crystals":
                         if (random.randint(0,20) + myGuy.inventory[things-1].bonus + random.randint(1, myGuy.playerBlock['trainerLevel'])) > 15: 
-                            gc.collect()
+                            #gc.collect()
                             thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "<3", 3)
                             tameMon(myGuy, npcMon)
                             myGuy.friends[-1].statBlock['currentHealth'] = myGuy.friends[-1].statBlock['Health']
@@ -1816,5 +1818,5 @@ while(1):
         myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1
         if len(myGuy.inventory) < myGuy.maxHelditems:
             randoNum = random.randint(1,10)
-            if randoNum > 3:
+            if randoNum > 2:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
