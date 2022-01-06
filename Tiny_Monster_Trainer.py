@@ -92,7 +92,6 @@ class Map:
         door_sprite = [255,255,3,1,17,19,255,255]
         tree2_sprite = [0,14,95,119,127,91,14,0]
         mountain1_sprite = [192,120,12,30,63,14,60,224]
-        #dropplet_sprite = [56,108,198,178,170,206,122,0]
         tablet_sprite = [128,248,132,146,146,132,248,128]
         fireOrGrass_sprite = [152,112,230,60,240,30,251,128]
         for x in range(0, 9):
@@ -139,58 +138,58 @@ class AttackMove():
             attack2 = AttackMove("Hit", 10, 1)
             attack3 = AttackMove("MagicHit", 10, 1, 1)
         elif elmType == "Earth":
-            attack1 = AttackMove("RockToss", 15, 5, 0, "Earth")
-            attack2 = AttackMove("Quake", 15, 5, 1, "Earth")
+            attack1 = AttackMove("RockToss", 15, 3, 0, "Earth")
+            attack2 = AttackMove("Quake", 15, 3, 1, "Earth")
             attack3 = AttackMove("Pressure", 10, 2, 1, "Water")
             attack4 = AttackMove("Entomb", 10, 2, 0, "Darkness")
         elif elmType == "Wind":
-            attack1 = AttackMove("Gust", 15, 5, 0, "Wind")
-            attack2 = AttackMove("Cyclone", 15, 5, 1, "Wind")
+            attack1 = AttackMove("Gust", 15, 3, 0, "Wind")
+            attack2 = AttackMove("Cyclone", 15, 3, 1, "Wind")
             attack3 = AttackMove("Lightning", 10, 2, 0, "Light")
             attack4 = AttackMove("Divine Wind", 10, 2, 1, "Ethereal")
         elif elmType == "Water":
-            attack1 = AttackMove("Geyser", 15, 5, 0, "Water")
-            attack2 = AttackMove("Ice Shards", 15, 5, 1, "Water")
+            attack1 = AttackMove("Geyser", 15, 3, 0, "Water")
+            attack2 = AttackMove("Ice Shards", 15, 3, 1, "Water")
             attack3 = AttackMove("Freeze", 10, 2, 1, "Mind")
             attack4 = AttackMove("Wave", 10, 2, 0, "Physical")
         elif elmType == "Fire":
-            attack1 = AttackMove("Torch", 15, 5, 0, "Fire")
-            attack2 = AttackMove("Blaze", 15, 5, 1, "Fire") 
+            attack1 = AttackMove("Torch", 15, 3, 0, "Fire")
+            attack2 = AttackMove("Blaze", 15, 3, 1, "Fire") 
             attack3 = AttackMove("Flare", 10, 2, 1, "Light")
             attack4 = AttackMove("Inferno", 10, 2, 0, "Wind")
         elif elmType == "Light":
-            attack1 = AttackMove("Dazzle", 15, 5, 0, "Light")
-            attack2 = AttackMove("Razzle", 15, 5, 1, "Light")
+            attack1 = AttackMove("Dazzle", 15, 3, 0, "Light")
+            attack2 = AttackMove("Razzle", 15, 3, 1, "Light")
             attack3 = AttackMove("Radiance", 10, 2, 0, "Fire")
             attack4 = AttackMove("Gleam", 10, 2, 1, "Mystical")
         elif elmType == "Darkness":
-            attack1 = AttackMove("Murk", 15, 5, 0, "Darkness")
-            attack2 = AttackMove("Shadow", 15, 5, 1, "Darkness")
+            attack1 = AttackMove("Murk", 15, 3, 0, "Darkness")
+            attack2 = AttackMove("Shadow", 15, 3, 1, "Darkness")
             attack3 = AttackMove("Unholy Poke", 10, 2, 0, "Mystical")
             attack4 = AttackMove("Dire Ruin", 10, 2, 1, "Ethereal")
         elif elmType == "Cute":
-            attack1 = AttackMove("Sing Song", 15, 5, 0, "Cute")
-            attack2 = AttackMove("Adorbes", 15, 5, 1, "Cute")
+            attack1 = AttackMove("Sing Song", 15, 3, 0, "Cute")
+            attack2 = AttackMove("Adorbes", 15, 3, 1, "Cute")
             attack3 = AttackMove("Bubbles", 10, 2, 0, "Water")
             attack4 = AttackMove("Fluff Ball", 10, 2, 1, "Physical")
         elif elmType == "Mind":
-            attack1 = AttackMove("Headbutt", 15, 5, 0, "Mind")
-            attack2 = AttackMove("Psychic", 15, 5, 1, "Mind")
+            attack1 = AttackMove("Headbutt", 15, 3, 0, "Mind")
+            attack2 = AttackMove("Psychic", 15, 3, 1, "Mind")
             attack3 = AttackMove("Project Rock", 10, 2, 0, "Earth")
             attack4 = AttackMove("Good Vibes", 10, 2, 1, "Cute")
         elif elmType == "Physical":
-            attack1 = AttackMove("Body Slam", 15, 5, 0, "Physical")
-            attack2 = AttackMove("Super Hit", 10, 10, 1, "Physical")
+            attack1 = AttackMove("Body Slam", 15, 3, 0, "Physical")
+            attack2 = AttackMove("Super Hit", 10, 3, 1, "Physical")
             attack3 = AttackMove("Boulder Toss", 10, 2, 0, "Earth")
             attack4 = AttackMove("Love Tap", 10, 2, 0, "Cute")
         elif elmType == "Mystical":
-            attack1 = AttackMove("Magic Missile", 15, 5, 0, "Mystical")
-            attack2 = AttackMove("Ritual", 15, 5, 1, "Mystical")
+            attack1 = AttackMove("Magic Missile", 15, 3, 0, "Mystical")
+            attack2 = AttackMove("Ritual", 15, 3, 1, "Mystical")
             attack3 = AttackMove("Rune Toss", 10, 2, 0, "Wind")
             attack4 = AttackMove("Immolate", 10, 2, 1, "Fire")
         elif elmType == "Ethereal":
-            attack1 = AttackMove("Spooky Hit", 15, 5, 0, "Ethereal")
-            attack2 = AttackMove("Superlunary", 15, 5, 1, "Ethereal")
+            attack1 = AttackMove("Spooky Hit", 15, 3, 0, "Ethereal")
+            attack2 = AttackMove("Superlunary", 15, 3, 1, "Ethereal")
             attack3 = AttackMove("Obscurity", 10, 2, 1, "Darkness")
             attack4 = AttackMove("Rue", 10, 2, 1, "Mind")
         basicList.append(attack1)
@@ -263,8 +262,6 @@ class Item():
             self.name = "Crystals"
             self.key = 3
             self.bonus = random.randint(0,7)
-        else:
-            pass
 
 
 class Player:
@@ -339,12 +336,11 @@ class Player:
 
     def levelUpCheck(self):
         self.playerBlock['experience'] = self.playerBlock['experience'] + 1
-        if self.playerBlock['experience'] ==  math.floor(self.playerBlock['trainerLevel'] * 1.5):
+        if self.playerBlock['experience'] == self.playerBlock['trainerLevel'] * 2:
             self.playerBlock['trainerLevel'] = self.playerBlock['trainerLevel'] + 1
             thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
-            if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4: # I haven't tested this yet. Hope it works :P
+            if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4:
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
-                #print("friendMax = ", str(self.playerBlock['friendMax'])) 
 
         
 class Monster:
@@ -739,7 +735,6 @@ class RoamingMonster:
                 self.position[self.currentPos] = 1
 
  
-
 def worldRangeCheck(test):
     if test >= 19:
         test = test - 25
@@ -892,12 +887,12 @@ def isTypeStrong(mon1Type, mon2Type):
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
     if activeAttack.magic == 1:
         attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + activeAttack.baseDamage
-        defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel + random.randint(0, 12)
+        defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel + random.randint(0, 5)
     else:
         attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + activeAttack.baseDamage
-        defence = defenceMon.statBlock['Endurance'] + defTrainLevel + random.randint(0, 12)
+        defence = defenceMon.statBlock['Endurance'] + defTrainLevel + random.randint(0, 5)
     hp2 = defenceMon.statBlock['currentHealth']
-    dodge = defenceMon.statBlock['Agility'] + defence
+    dodge = defenceMon.statBlock['Agility'] + math.ceil(defence/2) 
     damage = 0
     hit = 1
     atkTypeBonus = 1
@@ -927,13 +922,12 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
         return "Glance"
     elif hit == 0:
         return "Miss"
-    
-
+        
 
 def afterAttackSelect(attackingMon, atkChoice, defMon, playerTrainLevel, attackIsPlayer):
     scrollText = ""
     hpBeforeDmg = defMon.statBlock['currentHealth']
-    attackText = attack(attackingMon, defMon, attackingMon.attackList[atkChoice], playerTrainLevel, (playerTrainLevel + random.randint(-2, 2)))
+    attackText = attack(attackingMon, defMon, attackingMon.attackList[atkChoice], playerTrainLevel, (random.randint(playerTrainLevel - 5, playerTrainLevel + 2) + random.randint(-2, 2)))
     amntOfDmg = hpBeforeDmg - defMon.statBlock['currentHealth'] 
     if amntOfDmg >= 1:
         if attackIsPlayer == 1:
@@ -1022,7 +1016,7 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
                         return 1 
             elif options[currentSelect] == "Run": 
                 nmeMon.statBlock['currentHealth'] = 0
-                return 0
+                #return 0
             elif options[currentSelect] == "Tame": 
                 return 2 
             elif options[currentSelect] == "Info": 
@@ -1102,12 +1096,12 @@ def showOptions(options, currentSelect, bottomText, x=0):
     optionAmount = len(options)
     currentSelect = currentSelectCheckRange(optionAmount, currentSelect)
     thumby.display.fill(0)
-    thumby.display.drawFilledRectangle(0+x, 9+1, 72, 9, 1)
+    thumby.display.drawFilledRectangle(0+x, 10, 72, 9, 1)
     if optionAmount > 1: 
-        thumby.display.drawText(options[currentSelect - 1], 1+x, 1+1, 1) # prints top opt
+        thumby.display.drawText(options[currentSelect - 1], 1+x, 2, 1) # prints top opt
         if optionAmount > 2:
-            thumby.display.drawText(options[currentSelect+1], 1+x, 19+1, 1) #prints bottom opt
-    thumby.display.drawText(options[currentSelect], 1+x, 10+1, 0) # prints center opt
+            thumby.display.drawText(options[currentSelect+1], 1+x, 20, 1) #prints bottom opt
+    thumby.display.drawText(options[currentSelect], 1+x, 11, 0) # prints center opt
     thumby.display.drawLine(0, 29, 72, 29, 1)
     if bottomText != "":
         thumby.display.drawText(bottomText, 1, 31, 1) # prints other info on bottom of screen
@@ -1721,7 +1715,7 @@ def loss(curMon):
     curMon.statBlock['currentHealth'] = curMon.statBlock['Health']
     for attacks in range(0, len(curMon.attackList)):
         curMon.attackList[attacks-1].currentUses = curMon.attackList[attacks-1].numUses
-    if curMon.statBlock['trainingPoints'] > 0:
+    if curMon.statBlock['trainingPoints'] >= 0:
         curMon.statBlock['trainingPoints'] = curMon.statBlock['trainingPoints'] - 1
     thingAquired(curMon.statBlock['given_name'], "is", "Disheartened", "TP lost", 2)
     #else:
