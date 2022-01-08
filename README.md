@@ -30,8 +30,8 @@ The higher your Trainer Level, you'll seek out stronger Roaming Monsters to figh
 **Run**: Lets you escape the battle.  
 **Tame**: Lets you try to tame the opposing Monster, at the cost of one Crystal.   
 
-If a fight is won, you will gain Experience towards your Trainer Level & you might get an Item.  
-If a fight is lost one of your Monsters will have its HP & Stamina restored, but it will be disheartened and lose a Training Point.  
+**If a fight is won**, Your active monster will gain 1 Training Point, you will gain an Experience Point towards your Trainer Level, & you might get an Item.  
+**If a fight is lost**, one of your Monsters will have its HP & Stamina restored, but it will also be disheartened and lose a Training Point.  
 
 
 ############ **Training** #############  
