@@ -431,7 +431,7 @@ class Monster:
                     if mutation == 0 or mutation > 3 :
                         self.statBlock['max' + self.keyList[mutation]] = self.statBlock['max' + self.keyList[mutation]] + 10
                 else:
-                    if self.bodyBlock['head'] != birbHead_sprite:
+                    if (random.randint(1,3)) != 1:
                         self.makeMonBody()
                     if self.statBlock['Type2'] == "":
                         self.statBlock['Type2'] = self.makeType()
@@ -1223,7 +1223,7 @@ def trainAnAttackMove(attackList, statBlock, keyList):
                     howManyTypes = howManyTypes + 1
             while(attackLearned != 1):
                 learnFromType = random.randint(1,howManyTypes)
-                selectionNumber = random.randint(0, 3)
+                selectionNumber = random.randint(1, 4)
                 newAttack.getAnAttackMove(selectionNumber, statBlock[keyList[learnFromType]])
                 attackList.append(newAttack)
                 noDupAtk(attackList)
@@ -1256,6 +1256,7 @@ def tameMon(playerInfo, npcMon):
  
 def makeWorld(wSeed):
     gc.collect()
+    thingAquired("", "Generating", "World","", 0)
     random.seed(wSeed) 
     worldList = []
     for i in range(0 , 25): # world size
@@ -1270,6 +1271,7 @@ def makeMonsterList(mSeed):
     random.seed(mSeed) 
     monsterList = []
     for i in range (0 , 25): # numberOfMons = 25
+        thingAquired("", "Generating", "Monsters",str(i+1), 0)
         newMon = Monster()
         newMon.makeMonster()
         monsterList.append(newMon)
@@ -1393,6 +1395,7 @@ def trainAnimation(monsterBody):
         thumby.display.blit(bytearray(images["barbell"]), 21, math.floor(5+bobOffset), 30, 9, 0, 0, 0)
         thumby.display.update()
     f.close()
+    del images
 
 
 def openScreen():
@@ -1412,6 +1415,7 @@ def openScreen():
         whatDo = buttonInput(whatDo)
         if whatDo == 31:
             battleStartAnimation(0)
+            f.close()
             return 0
         elif whatDo == 30:
             try:
