@@ -143,7 +143,7 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 **Mind**|   |   |
 ------- |"Headbutt"     | Mind       | Strength  
 ------- |"Psychic"      | Mind       | Mysticism  
-------- |"Project Rock" | Earth      | Strength  
+------- |"Telekinesis" | Earth      | Strength  
 ------- |"Good Vibes"   | Cute       | Mysticism  
 **Physical**|   |   |
 ------- |"Body Slam"    | Physical   | Strength  
@@ -160,6 +160,10 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Superlunary"   | Ethereal   | Mysticism   
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
+
+Updates as of 1/14/22:  
+Issue where there was not enough memory to load TMT from the thumby launcher on physical thumby. Moved images and attacks to their own ujson files in an attempt to fix this.  
+Fixed issue where there where two images named legs7. Changed name of Mind move to telekinesis from project rock. Added tmt.ujson save for ease of testing.
 
 Updates as of 1/5/22:  
 Changed some combat math s'more. I like it better now, but I still haven't been able to play it long enough to see what it might be like at higher trainer levels. I also added some visuals and more monster parts. I fixed some more things that I found that weren’t working as intended. 
