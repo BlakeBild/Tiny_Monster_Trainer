@@ -5,6 +5,7 @@ import thumby
 import math
 import random
 import ujson
+import micropython
 
 
 player3_sprite = [0,46,251,127,123,255,46,0]
@@ -126,80 +127,16 @@ class AttackMove():
 
 
     def getAnAttackMove(self, selectionNum, elmType=""):
-        basicList = []
-        attack1 = AttackMove("ElsePoke1", 15, 0)
-        attack2 = attack1
-        attack3 = attack1
-        attack4 = attack1
-        if elmType == "Default":
-            attack1 = AttackMove("Poke", 20, 0)
-            attack2 = AttackMove("Hit", 10, 2)
-            attack3 = AttackMove("MagicHit", 10, 2, 1)
-        elif elmType == "Earth":
-            attack1 = AttackMove("RockToss", 15, 10, 0, "Earth")
-            attack2 = AttackMove("Quake", 15, 10, 1, "Earth")
-            attack3 = AttackMove("Pressure", 10, 5, 1, "Water")
-            attack4 = AttackMove("Entomb", 10, 5, 0, "Darkness")
-        elif elmType == "Wind":
-            attack1 = AttackMove("Gust", 15, 10, 0, "Wind")
-            attack2 = AttackMove("Cyclone", 15, 10, 1, "Wind")
-            attack3 = AttackMove("Lightning", 10, 5, 0, "Light")
-            attack4 = AttackMove("Divine Wind", 10, 5, 1, "Ethereal")
-        elif elmType == "Water":
-            attack1 = AttackMove("Geyser", 15, 10, 0, "Water")
-            attack2 = AttackMove("Ice Shards", 15, 10, 1, "Water")
-            attack3 = AttackMove("Freeze", 10, 5, 1, "Mind")
-            attack4 = AttackMove("Wave", 10, 5, 0, "Physical")
-        elif elmType == "Fire":
-            attack1 = AttackMove("Torch", 15, 10, 0, "Fire")
-            attack2 = AttackMove("Blaze", 15, 10, 1, "Fire") 
-            attack3 = AttackMove("Flare", 10, 5, 1, "Light")
-            attack4 = AttackMove("Inferno", 10, 5, 0, "Wind")
-        elif elmType == "Light":
-            attack1 = AttackMove("Dazzle", 15, 10, 0, "Light")
-            attack2 = AttackMove("Razzle", 15, 10, 1, "Light")
-            attack3 = AttackMove("Radiance", 10, 5, 0, "Fire")
-            attack4 = AttackMove("Gleam", 10, 5, 1, "Mystical")
-        elif elmType == "Darkness":
-            attack1 = AttackMove("Murk", 15, 10, 0, "Darkness")
-            attack2 = AttackMove("Shadow", 15, 10, 1, "Darkness")
-            attack3 = AttackMove("Unholy Poke", 10, 5, 0, "Mystical")
-            attack4 = AttackMove("Dire Ruin", 10, 5, 1, "Ethereal")
-        elif elmType == "Cute":
-            attack1 = AttackMove("Sing Song", 15, 10, 0, "Cute")
-            attack2 = AttackMove("Adorbes", 15, 10, 1, "Cute")
-            attack3 = AttackMove("Bubbles", 10, 5, 0, "Water")
-            attack4 = AttackMove("Fluff Ball", 10, 5, 1, "Physical")
-        elif elmType == "Mind":
-            attack1 = AttackMove("Headbutt", 15, 10, 0, "Mind")
-            attack2 = AttackMove("Psychic", 15, 10, 1, "Mind")
-            attack3 = AttackMove("Project Rock", 10, 5, 0, "Earth")
-            attack4 = AttackMove("Good Vibes", 10, 5, 1, "Cute")
-        elif elmType == "Physical":
-            attack1 = AttackMove("Body Slam", 15, 10, 0, "Physical")
-            attack2 = AttackMove("Super Hit", 10, 10, 1, "Physical")
-            attack3 = AttackMove("Boulder Toss", 10, 5, 0, "Earth")
-            attack4 = AttackMove("Love Tap", 10, 5, 0, "Cute")
-        elif elmType == "Mystical":
-            attack1 = AttackMove("Magic Missile", 15, 10, 0, "Mystical")
-            attack2 = AttackMove("Ritual", 15, 10, 1, "Mystical")
-            attack3 = AttackMove("Rune Toss", 10, 5, 0, "Wind")
-            attack4 = AttackMove("Immolate", 10, 5, 1, "Fire")
-        elif elmType == "Ethereal":
-            attack1 = AttackMove("Spooky Hit", 15, 10, 0, "Ethereal")
-            attack2 = AttackMove("Superlunary", 15, 10, 1, "Ethereal")
-            attack3 = AttackMove("Obscurity", 10, 5, 1, "Darkness")
-            attack4 = AttackMove("Rue", 10, 5, 1, "Mind")
-        basicList.append(attack1)
-        basicList.append(attack2)
-        basicList.append(attack3)
-        basicList.append(attack4)
-        self.name = basicList[selectionNum].name
-        self.numUses = basicList[selectionNum].numUses
-        self.currentUses = basicList[selectionNum].currentUses
-        self.baseDamage = basicList[selectionNum].baseDamage
-        self.magic = basicList[selectionNum].magic
-        self.moveElementType = basicList[selectionNum].moveElementType
+        f = open('Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
+        attackJson = ujson.load(f)
+
+        self.name = attackJson[elmType][str(selectionNum)]["name"]
+        self.numUses = attackJson[elmType][str(selectionNum)]["Sta"]
+        self.currentUses = attackJson[elmType][str(selectionNum)]["Sta"]
+        self.baseDamage = attackJson[elmType][str(selectionNum)]["bnsDmg"]
+        self.magic = attackJson[elmType][str(selectionNum)]["pOrM"]
+        self.moveElementType = attackJson[elmType][str(selectionNum)]["Type"]
+        f.close()
 
 
 class TextForScroller():
@@ -241,6 +178,7 @@ class Item():
         else:
             pass
 
+
     def getItem(self):
         randoNum = random.randint(1,5)
         if randoNum == 1:
@@ -271,11 +209,10 @@ class Player:
                             'experience' : 0,
                             'friendMax' : 2,
                             'worldSeed' : 0}
-            
+        self.lOrR = 0    
         self.friends = []
         self.inventory = []
         self.maxHelditems = 10
-        self.lOrR = 0
         self.currentPos = math.ceil((9 * 5) / 2)
         self.position = []
         for i in range(9 * 5):
@@ -446,149 +383,23 @@ class Monster:
     
     def makeMonBody(self):
         gc.collect()
-        head1_sprite =  [0,0,0,0,48,48,200,236,76,112,112,76,236,200,48,48,0,0,0,0,
-           0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-        head2_sprite =  [16,124,68,76,84,124,48,22,190,224,224,190,22,48,124,68,76,84,124,16,
-            0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0]
-        head3_sprite =  [0,0,0,0,62,66,129,1,193,33,65,33,197,5,137,66,62,0,0,0,
-            0,0,0,0,0,0,1,1,0,1,0,1,0,1,1,0,0,0,0,0]
-        head4_sprite =  [16,56,68,206,84,56,124,134,35,3,11,51,134,124,56,68,206,84,56,16,
-            0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0]
-        head5_sprite =  [0,7,30,62,62,124,254,131,17,69,69,17,131,254,124,62,62,30,7,0,
-            0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0]         
-        head6_sprite =  [0,0,0,0,0,248,12,6,35,3,131,7,47,30,252,120,0,0,0,0,
-            0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0]          
-        head7_sprite =  [0,0,0,120,224,124,196,28,120,32,170,32,120,28,196,124,224,120,0,0,
-            0,0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,0,0,0,0]          
-        head8_sprite =  [0,0,0,0,0,0,206,159,57,153,63,147,51,159,206,0,0,0,0,0,
-            0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
-        head9_sprite =  [0,0,0,2,196,200,192,36,232,32,252,32,232,36,192,200,196,2,0,0,
-            0,0,0,0,0,0,0,0,1,0,1,0,1,0,0,0,0,0,0,0]
-        head10_sprite =  [0,0,0,0,32,112,32,4,98,68,64,68,98,4,32,112,32,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        head11_sprite =  [124,198,131,1,5,5,9,131,198,124,124,198,131,1,5,5,9,131,198,124,
-           0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0]
-        head12_sprite = [0,0,126,255,177,117,243,254,207,167,182,150,134,134,134,199,157,199,29,7,
-            0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
-        body1_sprite = [0,62,251,219,102,60,30,255,227,193,205,207,135,183,183,254,0,0,0,0,
-           0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0]
-        body2_sprite =  [0,56,252,204,30,62,115,231,253,248,16,248,253,231,115,62,30,204,252,56,
-           0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-        body3_sprite =  [0,56,16,60,100,198,19,17,74,130,130,74,9,19,198,100,60,16,56,0,
-            0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0]
-        body4_sprite =  [6,4,28,52,38,80,254,131,41,125,117,41,131,254,80,32,32,248,136,80,
-            0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0]
-        body5_sprite =  [0,2,8,4,16,0,57,65,1,170,170,170,1,65,57,0,16,4,8,2,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        body6_sprite =  [146,124,16,56,124,198,1,56,68,17,17,68,56,1,198,124,56,16,124,146,
-            0,0,0,0,0,0,1,0,0,1,1,0,0,1,0,0,0,0,0,0]
-        body7_sprite =  [0,192,192,224,32,46,167,131,249,172,238,172,249,131,167,46,32,60,12,12,
-            0,0,0,0,0,0,1,0,0,1,1,1,0,0,1,0,0,0,0,0]
-        body8_sprite =  [0,31,19,19,24,28,24,16,145,255,255,255,145,16,24,28,24,19,19,31,
-            0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-        body9_sprite =  [0,254,96,56,126,211,215,133,17,147,198,147,17,133,215,211,126,56,12,254,
-            0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-        body10_sprite =  [0,0,32,124,126,38,14,27,183,227,9,227,183,27,14,38,126,124,32,0,
-            0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0]
-        body11_sprite = [0,16,127,48,32,32,230,226,255,127,34,68,255,226,238,32,48,28,0,0,
-           0,0,0,0,0,1,1,1,0,0,0,0,1,1,0,0,0,0,0,0]
-        body12_sprite =  [0,28,62,127,248,240,224,71,76,254,232,254,76,71,224,240,248,127,62,28,
-            0,0,0,0,0,1,0,0,1,1,1,1,1,0,0,1,0,0,0,0]
-        body13_sprite = [0,0,124,198,131,49,69,65,41,3,28,16,32,38,41,41,29,129,194,60,
-           0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0]
-        legs1_sprite =  [0,0,0,24,30,7,1,159,255,227,1,227,255,159,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,1,1,1,0,1,1,1,0,0,0,0,0,0]
-        legs2_sprite =  [0,0,0,48,124,30,7,243,125,7,241,3,31,121,3,199,126,60,0,0,
-           0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        legs3_sprite =  [0,0,112,24,60,78,247,123,137,14,14,14,137,123,231,78,60,16,112,0,
-            0,0,0,0,1,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0]
-        legs4_sprite =  [0,8,24,56,40,44,39,161,225,172,36,38,163,225,179,30,12,0,0,0,
-            0,0,0,0,0,0,0,1,0,1,0,0,1,0,1,0,0,0,0,0]
-        legs5_sprite =  [14,31,31,191,231,49,249,154,15,15,15,15,154,249,49,231,191,31,31,14,
-            0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0]
-        legs6_sprite =  [0,0,0,0,0,0,1,2,5,7,7,7,5,2,1,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]        
-        legs7_sprite =  [0,0,68,156,176,184,159,207,255,115,1,3,231,255,158,52,180,146,72,0,
-            0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0]
-        legs7_sprite =  [0,0,0,0,16,86,148,165,169,171,255,171,169,165,148,86,16,0,0,0,
-            0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0]
-        legs8_sprite = [240,156,198,96,120,140,6,1,121,205,5,205,121,1,6,140,120,96,192,0,
-           0,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0]
-        legs9_sprite =  [0,0,0,0,120,140,6,1,57,125,125,125,57,1,6,140,120,0,0,0,
-            0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0]
-        legs10_sprite =  [124,194,128,56,76,224,193,131,14,172,248,94,6,131,193,228,184,0,198,124,
-            0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
-        legs11_sprite = [24,48,224,240,184,128,129,207,253,219,237,59,13,7,1,0,0,0,0,0,
-           0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0]
-        legs12_sprite = [120,252,198,226,120,60,31,223,252,248,184,16,56,127,230,192,128,0,0,0,
-           0,0,0,0,0,0,1,1,0,1,0,1,0,0,1,0,1,1,0,0]
-        birbHead_sprite = [0,0,0,0,192,192,240,240,248,248,255,190,60,60,240,240,224,192,0,0,
-            0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0]
-        birbBody_sprite = [0,0,0,255,255,255,255,253,120,24,253,255,255,31,255,255,249,243,0,0,
-            0,0,0,1,1,1,1,0,0,1,1,1,0,0,1,1,1,1,0,0]
-        birbLegs_sprite = [0,24,62,55,51,49,180,246,179,59,185,252,190,63,31,15,7,1,0,0,
-            0,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,0,0,0,0]
-        
-        if random.randint(0,50) != 1:
+        f = open('Games/Tiny_Monster_Trainer/Curtian/MonsterParts.ujson')
+        monsterParts = ujson.load(f)
+
+        if random.randint(0,60) != 1:
             randoNum = random.randint(0,13)
-            heads = {
-            0: head0_sprite,
-            1: head1_sprite,
-            2: head2_sprite,
-            3: head3_sprite,
-            4: head4_sprite,
-            5: head5_sprite,
-            6: head6_sprite,
-            7: head7_sprite,
-            8: head8_sprite,
-            9: head9_sprite,
-            10: head10_sprite,
-            11: body12_sprite,
-            12: head11_sprite,
-            13: head12_sprite}
-            self.bodyBlock['head'] = heads[randoNum]
+            self.bodyBlock['head'] = monsterParts["heads"][str(randoNum)]
             randoNum = random.randint(1,13)
-            bodyyodyody = {
-            1: body1_sprite,
-            2: body2_sprite,
-            3: body3_sprite,
-            4: body4_sprite,
-            5: body5_sprite,
-            6: body6_sprite,
-            7: body7_sprite,
-            8: body8_sprite,
-            9: body9_sprite,
-            10: body10_sprite,
-            11: body11_sprite,
-            12: body12_sprite,
-            13: body13_sprite}
-            self.bodyBlock['body'] = bodyyodyody[randoNum]
-            randoNum = random.randint(1,12)
-            legDay = {
-            1: legs1_sprite,
-            2: legs2_sprite,
-            3: legs3_sprite,
-            4: legs4_sprite,
-            5: legs5_sprite,
-            6: legs6_sprite,
-            7: legs7_sprite,
-            8: legs8_sprite,
-            9: legs9_sprite,
-            10: legs10_sprite,
-            11: legs11_sprite,
-            12: legs12_sprite}
-            self.bodyBlock['legs'] = legDay[randoNum]
+            self.bodyBlock['body'] = monsterParts["bodies"][str(randoNum)]
+            randoNum = random.randint(1,13)
+            self.bodyBlock['legs'] = monsterParts["legs"][str(randoNum)]
         else:
-            randoNum = random.randint(1,1)
-            specialHeads = {
-                1: birbHead_sprite}
-            specialBodies = {
-                1: birbBody_sprite}
-            specialLegs = {
-                1: birbLegs_sprite}
-            self.bodyBlock['head'] = specialHeads[randoNum]
-            self.bodyBlock['body'] = specialBodies[randoNum]
-            self.bodyBlock['legs'] = specialLegs[randoNum]
+            self.bodyBlock['head'] = monsterParts["special"]["birbHead"]
+            self.bodyBlock['body'] = monsterParts["special"]["birbBody"]
+            self.bodyBlock['legs'] = monsterParts["special"]["birbLegs"]
+        f.close()
+        del monsterParts
+
     
     
     def makeType(self):
@@ -1463,13 +1274,13 @@ def makeMonsterList(mSeed):
         newMon.makeMonster()
         monsterList.append(newMon)
         newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(0,2), "Default")
+        newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
         monsterList[i].attackList.append(newMonAtk)
         newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(0,2), "Default")
+        newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
         monsterList[i].attackList.append(newMonAtk)
         newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(0,3), monsterList[i].statBlock['Type1'])
+        newMonAtk.getAnAttackMove(random.randint(1,4), monsterList[i].statBlock['Type1'])
         monsterList[i].attackList.append(newMonAtk)
         noDupAtk(newMon.attackList)
         monsterList[i].makeMonBody()
@@ -1568,8 +1379,8 @@ def printMon(monsterBody, x, y, playerOrNPC):
 
     
 def trainAnimation(monsterBody):
-    barbell2 = [124,254,255,255,253,253,251,230,124,24,56,48,56,24,56,56,48,56,24,56,48,124,254,255,255,253,253,251,230,124,
-           0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0]
+    f = open('Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    images = ujson.load(f)
     t0 = 0
     ct0 = time.ticks_ms()
     while(t0 - ct0 < 3000):
@@ -1579,25 +1390,21 @@ def trainAnimation(monsterBody):
         bobOffset = math.sin(t0 / bobRate) * bobRange
         thumby.display.fill(0)
         printMon(monsterBody, 26, 12, 0)
-        thumby.display.blit(bytearray(barbell2), 21, math.floor(5+bobOffset), 30, 9, 0, 0, 0)
+        thumby.display.blit(bytearray(images["barbell"]), 21, math.floor(5+bobOffset), 30, 9, 0, 0, 0)
         thumby.display.update()
+    f.close()
 
 
 def openScreen():
-    monsterTail = [0,0,0,128,192,224,224,176,120,216,188,236,220,244,126,126,54,60,44,60,120,224,0,0,0,
-           248,254,159,179,247,252,61,31,7,3,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,
-           255,140,157,191,255,192,128,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-           3,15,31,17,19,23,31,30,28,24,16,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    monsterMouth = [60,254,227,195,215,239,254,121,126,60,60,60,60,124,254,190,242,118,124,118,242,254,28,0,0,
-            252,255,255,15,3,49,206,3,0,0,0,0,0,0,1,1,0,0,0,0,0,1,0,0,0,
-            255,207,95,254,240,204,158,27,173,205,15,134,192,0,0,0,0,0,0,0,0,0,0,0,0,
-            1,15,30,18,23,31,31,31,31,31,27,13,7,0,0,0,0,0,0,0,0,0,0,0,0]
+    gc.collect()
+    f = open('Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    images = ujson.load(f)
     myScroller = TextForScroller("Press A to Start or B to Load!")
     while(1):
         whatDo = 0
         thumby.display.fill(0)
-        thumby.display.blit(bytearray(monsterTail), 0, 0, 25, 30, 0, 0, 0)
-        thumby.display.blit(bytearray(monsterMouth), 47, 0, 25, 30, 0, 1, 0)
+        thumby.display.blit(bytearray(images["introTail"]), 0, 0, 25, 30, 0, 0, 0)
+        thumby.display.blit(bytearray(images["introHead"]), 47, 0, 25, 30, 0, 1, 0)
         thingAquired("Tiny", "Monster", "Trainer!", "", 0, 1, 1)
         thumby.display.drawLine(0, 28, 72, 28, 1)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 30, 1)
@@ -1608,13 +1415,16 @@ def openScreen():
             return 0
         elif whatDo == 30:
             try:
-                f = open("tmt.json", "r")
-                f.close()
+                p = open("Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
+                p.close()
             except OSError:
                 battleStartAnimation(0)
+                f.close()
                 return 0
             battleStartAnimation(0)
+            f.close()
             return 1
+    
 
    
 def obj_to_dict(obj):
@@ -1630,22 +1440,23 @@ def save(playerInfo):
     for x in range(0, len(playerInfo.friends)):
         tempAttackDict = {}
         for y in range (0, len(playerInfo.friends[x].attackList)):
-            tempAttackDict['attack' + str(y)] = obj_to_dict(playerInfo.friends[x].attackList[y])
-            attackDict['mon' + str(x) + 'atk'] = tempAttackDict
-        statDict['mon' + str(x) + 'stat'] = playerInfo.friends[x].statBlock
-        bodyDict['mon' + str(x) + 'body'] = playerInfo.friends[x].bodyBlock
-        mutateDict['mon' + str(x) + 'mutate'] = playerInfo.friends[x].mutateSeed
+            tempAttackDict["attack" + str(y)] = obj_to_dict(playerInfo.friends[x].attackList[y])
+            attackDict["mon" + str(x) + "atk"] = tempAttackDict
+        statDict["mon" + str(x) + "stat"] = playerInfo.friends[x].statBlock
+        bodyDict["mon" + str(x) + "body"] = playerInfo.friends[x].bodyBlock
+        mutateDict["mon" + str(x) + "mutate"] = playerInfo.friends[x].mutateSeed
     for x in range(0, len(playerInfo.inventory)):
-        itemDict['item' + str(x)] = obj_to_dict(playerInfo.inventory[x])
-    bigDict = [{'player' : playerInfo.playerBlock, 'items' : [itemDict], 'monsterInfo': [statDict, bodyDict, attackDict, mutateDict]}]
-    with open('tmt.ujson', 'w') as f:
+        itemDict["item" + str(x)] = obj_to_dict(playerInfo.inventory[x])
+    bigDict = [{"player" : playerInfo.playerBlock, "items" : [itemDict], "monsterInfo": [statDict, bodyDict, attackDict, mutateDict]}]
+    print(bigDict)
+    with open('Games/Tiny_Monster_Trainer/Curtian/tmt.ujson', 'w') as f:
         ujson.dump(bigDict, f)
         f.close()
 
 def loadGame():
     gc.collect()
     tempPlayer = Player()
-    f = open('tmt.ujson')
+    f = open('Games/Tiny_Monster_Trainer/Curtian/tmt.ujson')
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
     if bigJson[0]['items'] != [{}]:
@@ -1732,7 +1543,7 @@ else:
 
 npcMon = Monster()
 activeMon = 0
-room = 13 # I guess i could just change this to 13
+room = 13 
 tempRoom = room
 npcMonRoaming = RoamingMonster()
 monsterMovement = 0
@@ -1743,6 +1554,7 @@ victory = 0
 
 while(1):
     gc.collect() 
+    micropython.mem_info()
     while(battle != 1):
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room) # draw world map
