@@ -5,7 +5,7 @@ import thumby
 import math
 import random
 import ujson
-import micropython
+#import micropython
 
 
 player3_sprite = [0,46,251,127,123,255,46,0]
@@ -127,7 +127,7 @@ class AttackMove():
 
 
     def getAnAttackMove(self, selectionNum, elmType=""):
-        f = open('Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
+        f = open('/Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
         attackJson = ujson.load(f)
 
         self.name = attackJson[elmType][str(selectionNum)]["name"]
@@ -383,7 +383,7 @@ class Monster:
     
     def makeMonBody(self):
         gc.collect()
-        f = open('Games/Tiny_Monster_Trainer/Curtian/MonsterParts.ujson')
+        f = open('/Games/Tiny_Monster_Trainer/Curtian/MonsterParts.ujson')
         monsterParts = ujson.load(f)
 
         if random.randint(0,60) != 1:
@@ -1075,28 +1075,29 @@ def trainActiveMon(myMonStats, monsterBody):
         elif currentSelect == 31:
             currentSelect = tempSelect
             if myMonStats['trainingPoints'] > 0:
-                if currentSelect == 0 and myMonStats['Health'] < myMonStats['maxHealth']: 
+                print(currentSelect, " = currentSelect")
+                if statNameList[currentSelect] == "Health" and myMonStats['Health'] < myMonStats['maxHealth']: 
                     myMonStats['Health'] = myMonStats['Health'] + 1
                     myMonStats['currentHealth'] = myMonStats['Health']
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "health!", 2) 
-                elif currentSelect == 1 and myMonStats['Agility'] < myMonStats['maxAgility']: 
+                elif statNameList[currentSelect] == "Agility" and myMonStats['Agility'] < myMonStats['maxAgility']: 
                     myMonStats['Agility'] = myMonStats['Agility'] + 1
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "agility!", 2)
-                elif currentSelect == 2 or currentSelect == -4 and myMonStats['Strength'] < myMonStats['maxStrength']: 
+                elif statNameList[currentSelect] == "Strength" and myMonStats['Strength'] < myMonStats['maxStrength']: 
                     myMonStats['Strength'] = myMonStats['Strength'] + 1
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "strength!", 2)
-                elif currentSelect == 3 or currentSelect == -3  and myMonStats['Endurance'] < myMonStats['maxEndurance']: 
+                elif statNameList[currentSelect] == "Endurance"  and myMonStats['Endurance'] < myMonStats['maxEndurance']: 
                     myMonStats['Endurance'] = myMonStats['Endurance'] + 1
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "endurance", 2)
-                elif currentSelect == 4 or currentSelect == -2  and myMonStats['Mysticism'] < myMonStats['maxMysticism']: 
+                elif statNameList[currentSelect] == "Mysticism" and myMonStats['Mysticism'] < myMonStats['maxMysticism']: 
                     myMonStats['Mysticism'] = myMonStats['Mysticism'] + 1
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "practiced", "their", "mysticism", 2)
-                elif currentSelect == -1 and myMonStats['Tinfoil'] < myMonStats['maxTinfoil']: 
+                elif statNameList[currentSelect] == "Tinfoil" and myMonStats['Tinfoil'] < myMonStats['maxTinfoil']: 
                     myMonStats['Tinfoil'] = myMonStats['Tinfoil'] + 1
                     trainAnimation(monsterBody)
                     thingAquired(myMonStats['given_name'], "polished", "their", "tinfoil", 2)
@@ -1381,7 +1382,7 @@ def printMon(monsterBody, x, y, playerOrNPC):
 
     
 def trainAnimation(monsterBody):
-    f = open('Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
     images = ujson.load(f)
     t0 = 0
     ct0 = time.ticks_ms()
@@ -1400,7 +1401,7 @@ def trainAnimation(monsterBody):
 
 def openScreen():
     gc.collect()
-    f = open('Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
     images = ujson.load(f)
     myScroller = TextForScroller("Press A to Start or B to Load!")
     while(1):
@@ -1419,7 +1420,7 @@ def openScreen():
             return 0
         elif whatDo == 30:
             try:
-                p = open("Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
+                p = open("/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
                 p.close()
             except OSError:
                 battleStartAnimation(0)
@@ -1452,15 +1453,15 @@ def save(playerInfo):
     for x in range(0, len(playerInfo.inventory)):
         itemDict["item" + str(x)] = obj_to_dict(playerInfo.inventory[x])
     bigDict = [{"player" : playerInfo.playerBlock, "items" : [itemDict], "monsterInfo": [statDict, bodyDict, attackDict, mutateDict]}]
-    print(bigDict)
-    with open('Games/Tiny_Monster_Trainer/Curtian/tmt.ujson', 'w') as f:
+    #print(bigDict)
+    with open('/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson', 'w') as f:
         ujson.dump(bigDict, f)
         f.close()
 
 def loadGame():
     gc.collect()
     tempPlayer = Player()
-    f = open('Games/Tiny_Monster_Trainer/Curtian/tmt.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson')
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
     if bigJson[0]['items'] != [{}]:
@@ -1558,7 +1559,7 @@ victory = 0
 
 while(1):
     gc.collect() 
-    micropython.mem_info()
+    #micropython.mem_info()
     while(battle != 1):
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room) # draw world map
@@ -1620,3 +1621,4 @@ while(1):
             randoNum = random.randint(1,10)
             if randoNum > 2:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
+
