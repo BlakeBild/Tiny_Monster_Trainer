@@ -161,7 +161,7 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
-updates as of 1/19/22:
+updates as of 1/19/22:  
 Fixed issue where you could go above the max amount for some skills
 
 Updates as of 1/14/22:  
