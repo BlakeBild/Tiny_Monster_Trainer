@@ -161,6 +161,11 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
+
+updates as of 3/26/22:  
+Fixed issue where the worldseed wasn't assigned to the player block and the game would always load the default 0 world  
+slowed down scrolling text on open screen
+
 updates as of 1/19/22:  
 Fixed issue where you could go above the max amount for some skills
 
