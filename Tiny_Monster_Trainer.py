@@ -1401,6 +1401,7 @@ def trainAnimation(monsterBody):
 
 def openScreen():
     gc.collect()
+    thumby.display.setFPS(40)
     f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
     images = ujson.load(f)
     myScroller = TextForScroller("Press A to Start or B to Load!")
@@ -1537,6 +1538,9 @@ myGuy = Player()
 load = openScreen()
 if load == 1: 
     myGuy = loadGame()
+    if myGuy.playerBlock["worldSeed"] == 0:
+        theWorldSeed = time.ticks_us()
+        myGuy.playerBlock["worldSeed"] = theWorldSeed
     world = makeWorld(myGuy.playerBlock['worldSeed'])
     monsterList = makeMonsterList(myGuy.playerBlock['worldSeed'])
 else:
@@ -1621,4 +1625,3 @@ while(1):
             randoNum = random.randint(1,10)
             if randoNum > 2:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
-
