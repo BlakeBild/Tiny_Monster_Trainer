@@ -1318,7 +1318,7 @@ def makePlayer(monster1, monster2, monster3, seed):
     newPlayer.inventory.append(newItem)
     newPlayer.inventory.append(newItem)
     thingAquired("", "Good", "Luck", "", 2)
-    newPlayer.worldSeed = seed 
+    newPlayer.playerBlock['worldSeed'] = seed 
     return newPlayer 
     
 
