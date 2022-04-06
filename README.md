@@ -161,6 +161,10 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
+updates as of 4/6/22:  
+Added the ability to cycle up through select first monster/monster info/swap active screen.   
+Changed the way the options menu checks for the correct selection.
+
 
 updates as of 3/26/22:  
 Fixed issue where the worldseed wasn't assigned to the player block and the game would always load the default 0 world  
