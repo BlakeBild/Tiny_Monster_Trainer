@@ -423,6 +423,7 @@ class Monster:
 
     def mutateMon(self):
         if self.statBlock['trainingPoints'] > 4:
+            tempBody = self.bodyBlock.copy()
             if self.mutateSeed[1] < 4:
                 random.seed(self.mutateSeed[0] + (self.mutateSeed[1] * 100))
                 mutation = random.randint(1, 5)
@@ -449,6 +450,7 @@ class Monster:
                     self.statBlock['maxHealth'] = self.statBlock['maxHealth'] + 20
                 self.mutateSeed[1] = self.mutateSeed[1] + 1
                 self.statBlock['trainingPoints'] = self.statBlock['trainingPoints'] - 5 
+                mutateAnimation(tempBody, self.bodyBlock)
                 thingAquired(self.statBlock['given_name'], "has", "mutated!", "", 2)
             else:
                 thingAquired(self.statBlock['given_name'], "is unable to", "mutate", "again", 2)
@@ -591,7 +593,7 @@ def battleStartAnimation(color):
         thumby.display.update()
     thumby.display.fill(0)
     thumby.display.update()
-    thumby.display.setFPS(30)
+    thumby.display.setFPS(40)
 
 
 def buttonInput(selectPos):                
@@ -884,6 +886,8 @@ def autoSwitchMon(playerInfo):
             if playerInfo.friends[x].statBlock['currentHealth'] > 0:
                 switchActiveMon(playerInfo, playerInfo.friends[0], playerInfo.friends[x], x)
             x = x + 1
+        if playerInfo.friends[0].statBlock['currentHealth'] > 0:
+            thingAquired(playerInfo.friends[0].statBlock['given_name'], "is now", "your active", "monster!", 2)
 
 
 def currentSelectCheckRange(optionAmount, currentSelect):
@@ -982,7 +986,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
     goBack = 0
     monsterListInfo = playerInfo.friends
     while(goBack != 1): 
-        print("currentSelect = ", currentSelect)
+        #print("currentSelect = ", currentSelect)
         if currentSelect == 9:
             currentSelect = -2
         if currentSelect == -3:
@@ -1012,10 +1016,14 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
             drawArrows(left, right, down, up)
         thumby.display.update()
         currentSelect = buttonInput(currentSelect)
-        if currentSelect == 31 and combatCheck == 0:
+        if currentSelect == 31 and combatCheck != 1:
             if playerInfo.friends[0] != playerInfo.friends[x] or startOfgameCheck == 1:
+                if playerInfo.friends[x].statBlock['currentHealth'] == 0:
+                    thingAquired(monsterListInfo[x].statBlock['given_name'], "does not", "have enough", "HP to fight!", 2)
                 switchActiveMon(playerInfo, monsterListInfo[0], monsterListInfo[x], x)
-                thingAquired(monsterListInfo[0].statBlock['given_name'], "is now", "your active", "monster!", 2)
+                goBack = 1
+                if combatCheck != 2: #need to while switching in battle if selected mon has HPs
+                    thingAquired(monsterListInfo[0].statBlock['given_name'], "is now", "your active", "monster!", 2)
                 x = 0
                 currentSelect = -2
                 if startOfgameCheck == 1:
@@ -1084,7 +1092,7 @@ def trainActiveMon(myMonStats, monsterBody):
         elif currentSelect == 31:
             currentSelect = tempSelect
             if myMonStats['trainingPoints'] > 0:
-                print(currentSelect, " = currentSelect")
+                #print(currentSelect, " = currentSelect")
                 if statNameList[currentSelect] == "Health" and myMonStats['Health'] < myMonStats['maxHealth']: 
                     myMonStats['Health'] = myMonStats['Health'] + 1
                     myMonStats['currentHealth'] = myMonStats['Health']
@@ -1389,7 +1397,50 @@ def printMon(monsterBody, x, y, playerOrNPC):
         thumby.display.blit(bytearray(monsterBody['body']), x, y+9, 20, 9, 0, playerOrNPC, 0)
         thumby.display.blit(bytearray(monsterBody['legs']), x, y+18, 20, 9, 0, playerOrNPC, 0)
 
+
+def mutateAnimation(tempBody, monsterBody):
+    random.seed(time.ticks_ms())
+    t0 = 0
+    ct0 = time.ticks_ms()
+    # BITMAP: width: 20, height: 30
+    poppy = bytearray([0,0,0,0,0,0,0,8,120,208,16,16,24,14,4,12,24,16,16,24,
+           0,0,0,6,14,10,154,243,1,1,0,0,0,0,0,0,0,0,0,0,
+           0,0,2,2,3,7,133,140,120,0,0,0,0,0,0,0,0,0,0,0,
+           0,0,0,1,19,39,37,60,0,0,0,0,0,0,0,0,0,0,0,0])
+
+    while(t0 - ct0 < 6000):
+        t0 = time.ticks_ms()
+        randoNum = random.randint(-1,1)
+        randoNum2 = random.randint(-1,1)
+        randoNum3 = random.randint(-1,1)
     
+        thumby.display.fill(0) # Fill canvas to black
+        thumby.display.drawLine(6+randoNum, 6+randoNum2, 18+randoNum3, 12, 1)
+        thumby.display.drawLine(6+randoNum, 6+randoNum2+1, 18+randoNum3, 12+1, 1)
+        thumby.display.drawLine(6+randoNum2, 18+randoNum, 18+randoNum3, 20, 1)
+        thumby.display.drawLine(6+randoNum2, 18+randoNum+1, 18+randoNum3, 20+1, 1)
+        thumby.display.drawLine(6+randoNum3, 30+randoNum2, 18+randoNum, 28, 1)
+        thumby.display.drawLine(6+randoNum3, 30+randoNum2+1, 18+randoNum, 28+1, 1)
+        thumby.display.drawLine(72-6-randoNum3, 6-randoNum2, 72-18-randoNum, 12, 1)
+        thumby.display.drawLine(72-6-randoNum3, 6-randoNum2+1, 72-18-randoNum, 12+1, 1)
+        thumby.display.drawLine(72-6-randoNum2, 18-randoNum, 72-18-randoNum3, 20, 1)
+        thumby.display.drawLine(72-6-randoNum2, 18-randoNum+1, 72-18-randoNum3, 20+1, 1)
+        thumby.display.drawLine(72-6-randoNum, 30-randoNum3, 72-18-randoNum2, 28, 1)
+        thumby.display.drawLine(72-6-randoNum, 30-randoNum3+1, 72-18-randoNum2, 28+1, 1)
+
+        if t0 - ct0 > 3000:
+            thumby.display.blit(poppy, 15+randoNum2, 1 + randoNum3, 20, 30, 0, 0, 0)
+            thumby.display.blit(poppy, 72-37+randoNum2, 1 + randoNum3, 20, 30, 0, 1, 0)
+        if t0 - ct0 < 3000:
+            if (t0 - ct0) % 3 == 0 and t0 - ct0 > 2300:
+                printMon(monsterBody, 25+randoNum2, 8, 0)
+            else:
+                printMon(tempBody, 25, 8, 0)
+        if t0 - ct0 > 3000:
+            printMon(monsterBody, 25+randoNum2, 8+randoNum, 0)
+        thumby.display.update()
+
+
 def trainAnimation(monsterBody):
     f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
     images = ujson.load(f)
@@ -1440,7 +1491,6 @@ def openScreen():
             f.close()
             return 1
     
-
 
 def obj_to_dict(obj):
     return obj.__dict__
@@ -1623,7 +1673,7 @@ while(1):
             else:
                 thingAquired("You don't", "have any", "Taming", "Crystals", 2)
         if victory == 4:
-            showMonInfo(myGuy)
+            showMonInfo(myGuy, 0, 2)
             victory = 0
         thumby.display.update()
     battleStartAnimation(0) 
