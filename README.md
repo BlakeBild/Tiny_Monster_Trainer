@@ -163,7 +163,9 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 
   
 Updates as of 4/10/22:  
-Rewrote the battle animation screen & added beginning of implementing attack bolts to indicate the element type of the attack.    
+Rewrote the battle animation screen    
+Fixed maxFriends, so that you can't go above the max amount anymore.    
+Attacks will pick a random bolt to shoot, will eventually not be random and based on attacks element type (i hope :D )   
   
 Updates as of 4/9/22:  
 Changed up the combat math, trying to make it less swingy.  
