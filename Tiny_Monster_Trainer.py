@@ -628,41 +628,73 @@ def buttonInput(selectPos):
     return selectionBoxPos    
 
 
-def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt):
-    for x in range(0, 4):
+def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt, attackType = ""):
+    # BITMAP: width: 8, height: 8
+    sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # dark/ethereal
+    # BITMAP: width: 8, height: 8
+    maybeFireball = bytearray([20,42,62,99,69,89,99,62]) # fire
+    # BITMAP: width: 8, height: 8
+    maybeWaterball = bytearray([16,68,16,40,68,76,56,0]) # water
+    # BITMAP: width: 8, height: 8
+    windBlow = bytearray([68,85,85,34,8,138,170,68]) # wind
+    # BITMAP: width: 8, height: 8
+    #rock = bytearray([20,65,28,42,66,86,36,56]) # earth
+    # BITMAP: width: 8, height: 8
+    #doubleCircle = bytearray([60,66,153,165,165,153,66,60]) # physical
+    # BITMAP: width: 8, height: 8
+    spiral = bytearray([124,130,57,69,149,153,66,60]) # mind/mystic
+    # BITMAP: width: 8, height: 8
+    fourFlowers = bytearray([32,82,37,2,64,164,74,4]) #cute/light
+    
+    playerHPTemp = playerHP
+    nmeHPTemp = nmeHP 
+    nmeAfterDmg = nmeHP - amountOfDmg
+    playerAfterDmg = playerHP - amountOfDmg
+    combatText = ""
+    t0 = 0
+    ct0 = time.ticks_ms()
+    bobRate = 250
+    bobRange = 5
+    animateX = 0
+    thumby.display.setFPS(30)
+    while(t0 - ct0 < 4000):
+        t0 = time.ticks_ms()
+        bobOffset = math.sin(t0 / bobRate) * bobRange
+        if(t0 - ct0 >= 4000):
+            combatText = ""
         playerX = 8
         nmeX = 42
         y = 0
         nmeY = 0
-        if x == 2 and attackIsPlayer == 1:
+        if (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and attackIsPlayer == 1:
             y = 10
-        elif x == 2 and attackIsPlayer == 0:
+        elif (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and attackIsPlayer == 0:
             nmeY = 10
-        thumby.display.fill(0)
+        thumby.display.fill(0) 
         printMon(playerBod, playerX + y, 1, 0)
         printMon(nmeBod, nmeX - nmeY, 1, 1)
         thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
         thumby.display.drawText(str(playerHP), 2, 30, 0)
         thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
-        thumby.display.update()
-        if missFlag == 1 and x > 1 and attackIsPlayer == 1: # player misses
-            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2)+1, 30, 0)
-        if missFlag == 0 and x > 1 and attackIsPlayer == 1: # player hits
-            thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2)+1, 30, 0)
-            thumby.display.drawText(str(playerHP), 2, 30, 0)
-            thumby.display.drawText(str(nmeHP - amountOfDmg), 72 - len(str(nmeHP - amountOfDmg) * 7), 30, 0)
-        if missFlag == 1 and x > 1 and attackIsPlayer == 0: # nme misses
+        thumby.display.drawText(combatText, math.ceil(((72-(len(combatText))*6))/2)+1, 30, 0)
+        if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 1: # player misses
+            combatText = atkTxt
+        if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 1: # player hits
+            thumby.display.blit(sidewaySkull, (10 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
+            nmeHP = nmeAfterDmg
+            combatText = atkTxt
+        if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 0: # nme misses
             thumby.display.drawText("Miss", 25, 30, 0)
-        if missFlag == 0 and x > 1 and attackIsPlayer == 0: # nme hits
-            thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
-            thumby.display.drawText(atkTxt, math.ceil(((72-(len(atkTxt))*6))/2)+1, 30, 0)
-            thumby.display.drawText(str(nmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
-            thumby.display.drawText(str(playerHP - amountOfDmg), 2, 30, 0)
+            combatText = "Miss"
+        if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 0: # nme hits
+            thumby.display.blit(maybeWaterball, (52 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
+            combatText = atkTxt
+            playerHP = playerAfterDmg
         thumby.display.update()
-        time.sleep(1)
         y = 0
         nmeY = 0
+        if (t0 - ct0) % 2 == 0:
+            animateX = animateX + 1
 
 
 def isTypeWeak(mon1Type, mon2Type): 
@@ -705,7 +737,7 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
         attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
         defence = defTrainLevel + dodgeBonus
     hp2 = defenceMon.statBlock['currentHealth']
-    dodge = defenceMon.statBlock['Agility'] + dodgeBonus #+ math.ceil(defence/2) 
+    dodge = defenceMon.statBlock['Agility'] + dodgeBonus 
     damage = 0
     hit = 1
     atkTypeBonus = 1
@@ -1691,4 +1723,3 @@ while(1):
             randoNum = random.randint(1,10)
             if randoNum > 2:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
-
