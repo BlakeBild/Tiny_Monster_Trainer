@@ -162,9 +162,11 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
   
-Updates as of 4/8/22:  
+Updates as of 4/10/22:  
+Rewrote the battle animation screen & added beginning of implementing attack bolts to indicate the element type of the attack.    
+  
+Updates as of 4/9/22:  
 Changed up the combat math, trying to make it less swingy.  
-
   
 Updates as of 4/8/22:  
 Fixed - now game will let you know that active monster doesn't have enough HP to fight, if in a fight it will tell you it switched to another monster that has HP  
@@ -176,7 +178,7 @@ Changed the way the options menu checks for the correct selection.
 
 Updates as of 3/26/22:  
 Fixed issue where the worldseed wasn't assigned to the player block and the game would always load the default 0 world  
-slowed down scrolling text on open screen
+Slowed down scrolling text on open screen
 
 Updates as of 1/19/22:  
 Fixed issue where you could go above the max amount for some skills
