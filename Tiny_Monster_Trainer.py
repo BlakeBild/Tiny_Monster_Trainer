@@ -697,19 +697,22 @@ def isTypeStrong(mon1Type, mon2Type):
 
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
     if activeAttack.magic == 1:
+        dodgeBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 6)
         attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2) 
-        defence = defenceMon.statBlock['Tinfoil'] + defTrainLevel + random.randint(-1, 5)
+        defence =  defTrainLevel + dodgeBonus
     else:
+        dodgeBonus = defenceMon.statBlock['Endurance'] + random.randint(-1, 6)
         attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
-        defence = defenceMon.statBlock['Endurance'] + defTrainLevel + random.randint(-1, 5)
+        defence = defTrainLevel + dodgeBonus
     hp2 = defenceMon.statBlock['currentHealth']
-    dodge = defenceMon.statBlock['Agility'] + math.ceil(defence/2) 
+    dodge = defenceMon.statBlock['Agility'] + dodgeBonus #+ math.ceil(defence/2) 
     damage = 0
     hit = 1
     atkTypeBonus = 1
     defTypeBonus = 1
-    if (dodge + random.randint(-abs(attackTrainLevel),100)) > (90 - defTrainLevel): # check for dodge
-        if ((attackAmnt + attackMon.statBlock['Agility']) + random.randint(-10, 10)) >= dodge: # check for glance
+    if (dodge + random.randint(-abs(attackTrainLevel),(100 - defTrainLevel)))+200 > (90 - defTrainLevel)+200: # check for dodge
+        glanceCheck = random.randint(-20, 20)
+        if ((math.ceil(attackAmnt/2) + attackMon.statBlock['Agility']) + glanceCheck) >= dodge+defTrainLevel: # check for glance
             hit = 2
         else:
             hit = 0
@@ -718,11 +721,15 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
             atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
         for x in range(1,3):
             defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-        damage = (attackAmnt * atkTypeBonus) - (defence * defTypeBonus)
+        damage = math.ceil((attackAmnt * atkTypeBonus)/3) - math.ceil((defence * defTypeBonus)/3)
         if damage <= 0:
             damage = 1
         else:
             damage = math.ceil(damage/hit)
+    if hit == 1:
+        piz = [0,0,0,0,1,1,1,2,3]
+        paz = random.randint(0,8)
+        damage = damage + piz[paz]
     hp2 = hp2 - damage
     if hp2 < 0:
         hp2 = 0
@@ -732,7 +739,7 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
     elif hit == 2:
         return "Glance"
     else: # hit == 0:
-        return "Miss"
+        return "Miss"  
         
 
 def afterAttackSelect(attackingMon, atkChoice, defMon, playerTrainLevel, npcTrainLevel, attackIsPlayer):
@@ -1684,3 +1691,4 @@ while(1):
             randoNum = random.randint(1,10)
             if randoNum > 2:
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
+
