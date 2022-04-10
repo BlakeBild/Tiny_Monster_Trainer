@@ -41,13 +41,18 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
             defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
         print("attackAmnt = ", attackAmnt)
         print("defence = ", defence)
-        print((math.ceil(attackAmnt * atkTypeBonus)/3), " - ", math.ceil((defence * defTypeBonus)/3))
+        print((math.ceil((attackAmnt * atkTypeBonus)/3)), " - ", math.ceil((defence * defTypeBonus)/3))
         damage = math.ceil((attackAmnt * atkTypeBonus)/3) - math.ceil((defence * defTypeBonus)/3)
         if damage <= 0:
             damage = 1
         else:
             damage = math.ceil(damage/hit)
     print("Hit for: ", damage)
+    if hit == 1: 
+        piz = [0,0,0,1,1,1,2,2,3]
+        paz = random.randint(0,8)
+        damage = damage + piz[paz]
+        print("damage = ", damage, ", Pizpaz = ", piz[paz])
     hp2 = hp2 - damage
     if hp2 < 0:
         hp2 = 0
@@ -58,3 +63,4 @@ def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLeve
         return "Glance"
     else: # hit == 0:
         return "Miss"
+        
