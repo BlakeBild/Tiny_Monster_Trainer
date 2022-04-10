@@ -163,18 +163,22 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 
   
 Updates as of 4/8/22:  
+Changed up the combat math, trying to make it less swingy.  
+
+  
+Updates as of 4/8/22:  
 Fixed - now game will let you know that active monster doesn't have enough HP to fight, if in a fight it will tell you it switched to another monster that has HP  
 Added mutate animation ( That takes up too many lines :D )  
 
-updates as of 4/6/22:  
+Updates as of 4/6/22:  
 Added the ability to cycle up through select first monster/monster info/swap active screen.   
 Changed the way the options menu checks for the correct selection.
 
-updates as of 3/26/22:  
+Updates as of 3/26/22:  
 Fixed issue where the worldseed wasn't assigned to the player block and the game would always load the default 0 world  
 slowed down scrolling text on open screen
 
-updates as of 1/19/22:  
+Updates as of 1/19/22:  
 Fixed issue where you could go above the max amount for some skills
 
 Updates as of 1/14/22:  
