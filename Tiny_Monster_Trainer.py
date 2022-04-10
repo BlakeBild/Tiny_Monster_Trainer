@@ -273,11 +273,13 @@ class Player:
 
     def levelUpCheck(self):
         self.playerBlock['experience'] = self.playerBlock['experience'] + 1
-        if self.playerBlock['experience'] == self.playerBlock['trainerLevel'] * 2:
+        if self.playerBlock['experience'] >= self.playerBlock['trainerLevel'] * 2:
             self.playerBlock['trainerLevel'] = self.playerBlock['trainerLevel'] + 1
             thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
-            if self.playerBlock['trainerLevel'] % 10 == 0 & self.playerBlock['friendMax'] < 4:
+            if self.playerBlock['trainerLevel'] % 10 == 0 and self.playerBlock['friendMax'] < 5:
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
+                thingAquired(self.playerBlock['name'], "can now", "have " + str(self.playerBlock['friendMax']), "monsters!", 2)
+                
 
         
 class Monster:
@@ -628,7 +630,7 @@ def buttonInput(selectPos):
     return selectionBoxPos    
 
 
-def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt, attackType = ""):
+def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt):
     # BITMAP: width: 8, height: 8
     sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # dark/ethereal
     # BITMAP: width: 8, height: 8
@@ -638,16 +640,17 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
     # BITMAP: width: 8, height: 8
     windBlow = bytearray([68,85,85,34,8,138,170,68]) # wind
     # BITMAP: width: 8, height: 8
-    #rock = bytearray([20,65,28,42,66,86,36,56]) # earth
+    rock = bytearray([20,65,28,42,66,86,36,56]) # earth
     # BITMAP: width: 8, height: 8
-    #doubleCircle = bytearray([60,66,153,165,165,153,66,60]) # physical
+    doubleCircle = bytearray([60,66,153,165,165,153,66,60]) # physical
     # BITMAP: width: 8, height: 8
     spiral = bytearray([124,130,57,69,149,153,66,60]) # mind/mystic
     # BITMAP: width: 8, height: 8
     fourFlowers = bytearray([32,82,37,2,64,164,74,4]) #cute/light
     
-    playerHPTemp = playerHP
-    nmeHPTemp = nmeHP 
+    randoBolt = random.randint(0,7)
+    BoltArray = [sidewaySkull, maybeFireball, maybeWaterball, windBlow, rock, doubleCircle, spiral, fourFlowers]
+    
     nmeAfterDmg = nmeHP - amountOfDmg
     playerAfterDmg = playerHP - amountOfDmg
     combatText = ""
@@ -680,14 +683,14 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 1: # player misses
             combatText = atkTxt
         if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 1: # player hits
-            thumby.display.blit(sidewaySkull, (10 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
+            thumby.display.blit(BoltArray[randoBolt], (10 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
             nmeHP = nmeAfterDmg
             combatText = atkTxt
         if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 0: # nme misses
             thumby.display.drawText("Miss", 25, 30, 0)
             combatText = "Miss"
         if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 0: # nme hits
-            thumby.display.blit(maybeWaterball, (52 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
+            thumby.display.blit(BoltArray[randoBolt], (52 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
             combatText = atkTxt
             playerHP = playerAfterDmg
         thumby.display.update()
@@ -729,11 +732,11 @@ def isTypeStrong(mon1Type, mon2Type):
 
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
     if activeAttack.magic == 1:
-        dodgeBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 6)
+        dodgeBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 5)
         attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2) 
         defence =  defTrainLevel + dodgeBonus
     else:
-        dodgeBonus = defenceMon.statBlock['Endurance'] + random.randint(-1, 6)
+        dodgeBonus = defenceMon.statBlock['Endurance'] + random.randint(-1, 5)
         attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
         defence = defTrainLevel + dodgeBonus
     hp2 = defenceMon.statBlock['currentHealth']
@@ -1328,6 +1331,7 @@ def makeMonsterList(mSeed):
     random.seed(mSeed) 
     monsterList = []
     for i in range (0 , 25): # numberOfMons = 25
+        gc.collect()
         thingAquired("", "Generating", "Monsters",str(i+1), 0)
         newMon = Monster()
         newMon.makeMonster()
@@ -1343,6 +1347,8 @@ def makeMonsterList(mSeed):
         monsterList[i].attackList.append(newMonAtk)
         noDupAtk(newMon.attackList)
         monsterList[i].makeMonBody()
+        #micropython.mem_info()
+        #print("Mon: ", i, ", name is ", newMon.statBlock['name'])
     return monsterList
     
 
@@ -1608,13 +1614,13 @@ def makeRandomMon(monsterList, roomElm):
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
     for x in range(0,10):
-        thisGuyRightHere = monsterList[random.randint(0,24)]
+        thisGuyRightHere = monsterList[random.randint(0,24)] 
         if (thisGuyRightHere.statBlock['Type1'] == spawnType[roomElm]
                 or thisGuyRightHere.statBlock['Type2'] == spawnType[roomElm] 
                 or thisGuyRightHere.statBlock['Type3'] == spawnType[roomElm]):
             thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
             return thisGuyRightHere
-    thisGuyRightHere = monsterList[random.randint(0,24)]
+    thisGuyRightHere = monsterList[random.randint(0,24)] 
     thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
     return thisGuyRightHere
 
@@ -1636,9 +1642,9 @@ myGuy = Player()
 load = openScreen()
 if load == 1: 
     myGuy = loadGame()
-    if myGuy.playerBlock["worldSeed"] == 0:
+    if myGuy.playerBlock['worldSeed'] == 0:
         theWorldSeed = time.ticks_us()
-        myGuy.playerBlock["worldSeed"] = theWorldSeed
+        myGuy.playerBlock['worldSeed'] = theWorldSeed
     world = makeWorld(myGuy.playerBlock['worldSeed'])
     monsterList = makeMonsterList(myGuy.playerBlock['worldSeed'])
 else:
@@ -1663,6 +1669,10 @@ while(1):
     gc.collect()
     #micropython.mem_info()
     while(battle != 1):
+        if myGuy.playerBlock['friendMax'] > 5:      # remove friendMax checks after around 6/1/22
+            myGuy.playerBlock['friendMax'] = 5
+        if len(myGuy.friends) > myGuy.playerBlock['friendMax']:
+            popItOff(myGuy.friends, "monsters, please let one go!")
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room) # draw world map
         if tempRoom != room:
