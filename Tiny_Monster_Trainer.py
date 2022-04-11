@@ -997,8 +997,10 @@ def displayItems(playerInfo):
     tempSelect = curSelect
     cancelCheck = 0
     optionList = []
+    i = 0
     for items in playerInfo.inventory:
-        optionList.append(items.name)
+        i = i+1
+        optionList.append(str(i) + ". " + items.name)
     x = len(optionList)
     if x > 0:
         while curSelect < 11:
@@ -1006,7 +1008,10 @@ def displayItems(playerInfo):
             tempSelect = curSelect
             curSelect = showOptions(optionList, curSelect, bottomScreenText)
             if curSelect ==  31:
-                playerInfo.inventory[tempSelect].doAction(playerInfo.friends[0]) 
+                playerInfo.inventory[tempSelect].doAction(playerInfo.friends[0])
+                thingAquired(playerInfo.playerBlock['name'],
+                "gave", playerInfo.friends[0].statBlock['given_name'],
+                playerInfo.inventory[tempSelect].name, 2)
                 playerInfo.inventory.pop(tempSelect)
             elif curSelect == 30:
                 pass
@@ -1579,8 +1584,10 @@ def loadGame():
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
     if bigJson[0]['items'] != [{}]:
-        for x in range(0, len(bigJson[0]['items'])):
-            tempPlayer.inventory.append(Item(bigJson[0]['items'][0]['item' + str(x)]['name'], bigJson[0]['items'][0]['item' + str(x)]['key'], bigJson[0]['items'][0]['item' + str(x)]['bonus'])) ############# key, bonus=0
+        for x in range(0, len(bigJson[0]['items'][0])):
+            tempPlayer.inventory.append(Item(bigJson[0]['items'][0]['item' + str(x)]['name'],
+                                            bigJson[0]['items'][0]['item' + str(x)]['key'],
+                                            bigJson[0]['items'][0]['item' + str(x)]['bonus'])) 
     for x in range(0, len(bigJson[0]['monsterInfo'][0])):
         tempMon = Monster()
         tempMon.statBlock = bigJson[0]['monsterInfo'][0]['mon' + str(x) + 'stat'].copy()
