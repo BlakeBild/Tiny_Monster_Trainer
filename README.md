@@ -162,6 +162,11 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
   
+Updates as of 4/11/22:   
+Fixed issue where items were not being loaded correctly, only loaded the first item that was saved.  
+Added numbers to item screen to help show how many items the player has.   
+Added text to tell the player they used an item.   
+   
 Updates as of 4/10/22:  
 Rewrote the battle animation screen.    
 Attacks will pick bolt that goes across the screen based on the element type for the attack that was selected.  
