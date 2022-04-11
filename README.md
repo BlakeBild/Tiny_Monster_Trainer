@@ -163,9 +163,10 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 
   
 Updates as of 4/10/22:  
-Rewrote the battle animation screen    
+Rewrote the battle animation screen.    
+Attacks will pick bolt that goes across the screen based on the element type for the attack that was selected.  
 Fixed maxFriends, so that you can't go above the max amount anymore.    
-Attacks will pick a random bolt to shoot, will eventually not be random and based on attacks element type (i hope :D )   
+Had to lower monster count to 22 due to memory issues that come up when loading a game with 5 monsters on your team, from the title screen.  
   
 Updates as of 4/9/22:  
 Changed up the combat math, trying to make it less swingy.  
