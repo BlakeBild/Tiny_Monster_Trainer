@@ -629,37 +629,47 @@ def buttonInput(selectPos):
         selectionBoxPos = 30
     return selectionBoxPos    
 
+def typeAsNum(moveType):
+    typeList = ["", "Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
+                "Mind", "Physical", "Mystical", "Ethereal"]
+    typeNumber = 0
+    for i in range(0,11):
+        if moveType == typeList[i]:
+            typeNumber = i
+            #print("typelist = ", typeNumber, ", i = ", i)
+    return typeNumber
+        
 
-def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt):
-    # BITMAP: width: 8, height: 8
-    sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # dark/ethereal
-    # BITMAP: width: 8, height: 8
-    maybeFireball = bytearray([20,42,62,99,69,89,99,62]) # fire
-    # BITMAP: width: 8, height: 8
-    maybeWaterball = bytearray([16,68,16,40,68,76,56,0]) # water
-    # BITMAP: width: 8, height: 8
-    windBlow = bytearray([68,85,85,34,8,138,170,68]) # wind
-    # BITMAP: width: 8, height: 8
-    rock = bytearray([20,65,28,42,66,86,36,56]) # earth
-    # BITMAP: width: 8, height: 8
-    doubleCircle = bytearray([60,66,153,165,165,153,66,60]) # physical
-    # BITMAP: width: 8, height: 8
-    spiral = bytearray([124,130,57,69,149,153,66,60]) # mind/mystic
-    # BITMAP: width: 8, height: 8
-    fourFlowers = bytearray([32,82,37,2,64,164,74,4]) #cute/light
+def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, playerHP, nmeHP, atkTxt, attackType = ""):
     
-    randoBolt = random.randint(0,7)
-    BoltArray = [sidewaySkull, maybeFireball, maybeWaterball, windBlow, rock, doubleCircle, spiral, fourFlowers]
+    # BITMAP: width: 8, height: 8
+    sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # ethereal
+    darkness = bytearray([0,36,66,8,16,66,36,0]) # darkness
+    maybeFireball = bytearray([20,42,62,99,69,89,99,62]) # fire
+    maybeWaterball = bytearray([16,68,16,40,68,76,56,0]) # water
+    windBlow = bytearray([68,85,85,34,8,138,170,68]) # wind
+    rock = bytearray([20,65,28,42,66,86,36,56]) # earth
+    punch =  bytearray([189,165,36,116,148,180,132,120])  # physical
+    spiral = bytearray([124,130,57,69,149,153,66,60]) # mind
+    fourFlowers = bytearray([32,82,37,2,64,164,74,4]) # light
+    heart = bytearray([28,62,126,252,252,126,62,28]) # cute
+    arrow = bytearray([4,60,39,114,90,78,120,0]) # mystic
+    basic = bytearray([56,108,130,162,138,154,130,124]) #basic
+    
+    BoltArray = [basic, rock, windBlow, maybeWaterball, maybeFireball, fourFlowers, darkness, heart, spiral, punch, arrow, sidewaySkull]
+    attackTypeNum = typeAsNum(attackType)
     
     nmeAfterDmg = nmeHP - amountOfDmg
     playerAfterDmg = playerHP - amountOfDmg
     combatText = ""
+    
     t0 = 0
     ct0 = time.ticks_ms()
     bobRate = 250
     bobRange = 5
     animateX = 0
-    thumby.display.setFPS(30)
+    
+    thumby.display.setFPS(40)
     while(t0 - ct0 < 4000):
         t0 = time.ticks_ms()
         bobOffset = math.sin(t0 / bobRate) * bobRange
@@ -670,9 +680,9 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         y = 0
         nmeY = 0
         if (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and attackIsPlayer == 1:
-            y = 10
+            y = 5
         elif (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and attackIsPlayer == 0:
-            nmeY = 10
+            nmeY = 5
         thumby.display.fill(0) 
         printMon(playerBod, playerX + y, 1, 0)
         printMon(nmeBod, nmeX - nmeY, 1, 1)
@@ -683,20 +693,20 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
         if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 1: # player misses
             combatText = atkTxt
         if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 1: # player hits
-            thumby.display.blit(BoltArray[randoBolt], (10 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
+            thumby.display.blit(BoltArray[attackTypeNum], (30 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
             nmeHP = nmeAfterDmg
             combatText = atkTxt
         if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 0: # nme misses
             thumby.display.drawText("Miss", 25, 30, 0)
             combatText = "Miss"
         if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 0: # nme hits
-            thumby.display.blit(BoltArray[randoBolt], (52 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
+            thumby.display.blit(BoltArray[attackTypeNum], (36 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
             combatText = atkTxt
             playerHP = playerAfterDmg
         thumby.display.update()
         y = 0
         nmeY = 0
-        if (t0 - ct0) % 2 == 0:
+        if (t0 - ct0) % 2 == 0 and (t0 - ct0) > 2000:
             animateX = animateX + 1
 
 
@@ -731,6 +741,7 @@ def isTypeStrong(mon1Type, mon2Type):
 
 
 def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
+    
     if activeAttack.magic == 1:
         dodgeBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 5)
         attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2) 
@@ -784,10 +795,10 @@ def afterAttackSelect(attackingMon, atkChoice, defMon, playerTrainLevel, npcTrai
     amntOfDmg = hpBeforeDmg - defMon.statBlock['currentHealth'] 
     if amntOfDmg >= 1:
         if attackIsPlayer == 1:
-            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg, attackText)
+            attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg, attackText, attackingMon.attackList[atkChoice].moveElementType)
             scrollText = (attackingMon.statBlock['given_name'] + " did " + str(amntOfDmg) + " points of damage!")
         else:
-            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'], attackText)
+            attackAnimation(defMon.bodyBlock, attackingMon.bodyBlock, attackIsPlayer, 0, amntOfDmg, hpBeforeDmg, attackingMon.statBlock['currentHealth'], attackText, attackingMon.attackList[atkChoice].moveElementType)
     else:
         if attackIsPlayer == 1:
             attackAnimation(attackingMon.bodyBlock, defMon.bodyBlock, attackIsPlayer, 1, amntOfDmg, attackingMon.statBlock['currentHealth'], hpBeforeDmg, attackText)
@@ -1028,7 +1039,6 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
     goBack = 0
     monsterListInfo = playerInfo.friends
     while(goBack != 1): 
-        #print("currentSelect = ", currentSelect)
         if currentSelect == 9:
             currentSelect = -2
         if currentSelect == -3:
@@ -1134,7 +1144,6 @@ def trainActiveMon(myMonStats, monsterBody):
         elif currentSelect == 31:
             currentSelect = tempSelect
             if myMonStats['trainingPoints'] > 0:
-                #print(currentSelect, " = currentSelect")
                 if statNameList[currentSelect] == "Health" and myMonStats['Health'] < myMonStats['maxHealth']: 
                     myMonStats['Health'] = myMonStats['Health'] + 1
                     myMonStats['currentHealth'] = myMonStats['Health']
@@ -1330,7 +1339,7 @@ def makeMonsterList(mSeed):
     gc.collect()
     random.seed(mSeed) 
     monsterList = []
-    for i in range (0 , 25): # numberOfMons = 25
+    for i in range (0 , 22): # numberOfMons = 22
         gc.collect()
         thingAquired("", "Generating", "Monsters",str(i+1), 0)
         newMon = Monster()
@@ -1614,13 +1623,13 @@ def makeRandomMon(monsterList, roomElm):
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
     for x in range(0,10):
-        thisGuyRightHere = monsterList[random.randint(0,24)] 
+        thisGuyRightHere = monsterList[random.randint(0,21)] 
         if (thisGuyRightHere.statBlock['Type1'] == spawnType[roomElm]
                 or thisGuyRightHere.statBlock['Type2'] == spawnType[roomElm] 
                 or thisGuyRightHere.statBlock['Type3'] == spawnType[roomElm]):
             thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
             return thisGuyRightHere
-    thisGuyRightHere = monsterList[random.randint(0,24)] 
+    thisGuyRightHere = monsterList[random.randint(0,21)] 
     thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
     return thisGuyRightHere
 
