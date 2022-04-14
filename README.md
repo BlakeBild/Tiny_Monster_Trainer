@@ -162,6 +162,9 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
   
+Updates as of 4/14/22:   
+Fixed issue with mutate animation wouldn't load if you had 5 monsters.  
+Added more body parts for monsters.  
   
 Updates as of 4/11/22:   
 Fixed issue where items were not being loaded correctly, it only loaded the first item that was saved.  
