@@ -275,7 +275,7 @@ class Player:
         self.playerBlock['experience'] = self.playerBlock['experience'] + 1
         if self.playerBlock['experience'] >= self.playerBlock['trainerLevel'] * 2:
             self.playerBlock['trainerLevel'] = self.playerBlock['trainerLevel'] + 1
-            thingAquired("Your", "Trainer", "Level is", "Now " + str(self.playerBlock['trainerLevel']), 2)
+            thingAquired(self.playerBlock['name'], "Your Trainer", "Level Is", "Now " + str(self.playerBlock['trainerLevel']), 2)
             if self.playerBlock['trainerLevel'] % 10 == 0 and self.playerBlock['friendMax'] < 5:
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
                 thingAquired(self.playerBlock['name'], "can now", "have " + str(self.playerBlock['friendMax']), "monsters!", 2)
@@ -424,6 +424,7 @@ class Monster:
 
 
     def mutateMon(self):
+        #micropython.mem_info()
         if self.statBlock['trainingPoints'] > 4:
             tempBody = self.bodyBlock.copy()
             if self.mutateSeed[1] < 4:
@@ -452,6 +453,8 @@ class Monster:
                     self.statBlock['maxHealth'] = self.statBlock['maxHealth'] + 20
                 self.mutateSeed[1] = self.mutateSeed[1] + 1
                 self.statBlock['trainingPoints'] = self.statBlock['trainingPoints'] - 5 
+                gc.collect()
+                #micropython.mem_info()
                 mutateAnimation(tempBody, self.bodyBlock)
                 thingAquired(self.statBlock['given_name'], "has", "mutated!", "", 2)
             else:
@@ -1343,7 +1346,7 @@ def makeMonsterList(mSeed):
     gc.collect()
     random.seed(mSeed) 
     monsterList = []
-    for i in range (0 , 22): # numberOfMons = 22
+    for i in range (0 , 20): # numberOfMons = 20
         gc.collect()
         thingAquired("", "Generating", "Monsters",str(i+1), 0)
         newMon = Monster()
@@ -1451,53 +1454,55 @@ def popItOff(theListofObjs, word):
 
 
 def printMon(monsterBody, x, y, playerOrNPC):
-        thumby.display.blit(bytearray(monsterBody['head']), x, y, 20, 9, 0, playerOrNPC, 0)
-        thumby.display.blit(bytearray(monsterBody['body']), x, y+9, 20, 9, 0, playerOrNPC, 0)
-        thumby.display.blit(bytearray(monsterBody['legs']), x, y+18, 20, 9, 0, playerOrNPC, 0)
+    thumby.display.blit(bytearray(monsterBody['head']), x, y, 20, 9, 0, playerOrNPC, 0)
+    thumby.display.blit(bytearray(monsterBody['body']), x, y+9, 20, 9, 0, playerOrNPC, 0)
+    thumby.display.blit(bytearray(monsterBody['legs']), x, y+18, 20, 9, 0, playerOrNPC, 0)
+
+def printExciteLines(randoNum, randoNum2, randoNum3):
+    thumby.display.drawLine(6+randoNum, 6+randoNum2, 18+randoNum3, 12, 1)
+    thumby.display.drawLine(6+randoNum, 6+randoNum2+1, 18+randoNum3, 12+1, 1)
+    thumby.display.drawLine(6+randoNum2, 18+randoNum, 18+randoNum3, 20, 1)
+    thumby.display.drawLine(6+randoNum2, 18+randoNum+1, 18+randoNum3, 20+1, 1)
+    thumby.display.drawLine(6+randoNum3, 30+randoNum2, 18+randoNum, 28, 1)
+    thumby.display.drawLine(6+randoNum3, 30+randoNum2+1, 18+randoNum, 28+1, 1)
+    thumby.display.drawLine(72-6-randoNum3, 6-randoNum2, 72-18-randoNum, 12, 1)
+    thumby.display.drawLine(72-6-randoNum3, 6-randoNum2+1, 72-18-randoNum, 12+1, 1)
+    thumby.display.drawLine(72-6-randoNum2, 18-randoNum, 72-18-randoNum3, 20, 1)
+    thumby.display.drawLine(72-6-randoNum2, 18-randoNum+1, 72-18-randoNum3, 20+1, 1)
+    thumby.display.drawLine(72-6-randoNum, 30-randoNum3, 72-18-randoNum2, 28, 1)
+    thumby.display.drawLine(72-6-randoNum, 30-randoNum3+1, 72-18-randoNum2, 28+1, 1)
 
 
 def mutateAnimation(tempBody, monsterBody):
+    gc.collect()
     random.seed(time.ticks_ms())
     t0 = 0
     ct0 = time.ticks_ms()
     # BITMAP: width: 20, height: 30
-    poppy = bytearray([0,0,0,0,0,0,0,8,120,208,16,16,24,14,4,12,24,16,16,24,
-           0,0,0,6,14,10,154,243,1,1,0,0,0,0,0,0,0,0,0,0,
-           0,0,2,2,3,7,133,140,120,0,0,0,0,0,0,0,0,0,0,0,
-           0,0,0,1,19,39,37,60,0,0,0,0,0,0,0,0,0,0,0,0])
-
+    f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    images = ujson.load(f)
+    
     while(t0 - ct0 < 6000):
         t0 = time.ticks_ms()
-        randoNum = random.randint(-1,1)
-        randoNum2 = random.randint(-1,1)
-        randoNum3 = random.randint(-1,1)
+        randoNumber = random.randint(-1,1)
+        randoNumber2 = random.randint(-1,1)
+        randoNumber3 = random.randint(-1,1)
     
         thumby.display.fill(0) # Fill canvas to black
-        thumby.display.drawLine(6+randoNum, 6+randoNum2, 18+randoNum3, 12, 1)
-        thumby.display.drawLine(6+randoNum, 6+randoNum2+1, 18+randoNum3, 12+1, 1)
-        thumby.display.drawLine(6+randoNum2, 18+randoNum, 18+randoNum3, 20, 1)
-        thumby.display.drawLine(6+randoNum2, 18+randoNum+1, 18+randoNum3, 20+1, 1)
-        thumby.display.drawLine(6+randoNum3, 30+randoNum2, 18+randoNum, 28, 1)
-        thumby.display.drawLine(6+randoNum3, 30+randoNum2+1, 18+randoNum, 28+1, 1)
-        thumby.display.drawLine(72-6-randoNum3, 6-randoNum2, 72-18-randoNum, 12, 1)
-        thumby.display.drawLine(72-6-randoNum3, 6-randoNum2+1, 72-18-randoNum, 12+1, 1)
-        thumby.display.drawLine(72-6-randoNum2, 18-randoNum, 72-18-randoNum3, 20, 1)
-        thumby.display.drawLine(72-6-randoNum2, 18-randoNum+1, 72-18-randoNum3, 20+1, 1)
-        thumby.display.drawLine(72-6-randoNum, 30-randoNum3, 72-18-randoNum2, 28, 1)
-        thumby.display.drawLine(72-6-randoNum, 30-randoNum3+1, 72-18-randoNum2, 28+1, 1)
-
+        printExciteLines(randoNumber, randoNumber2, randoNumber3)
+        
         if t0 - ct0 > 3000:
-            thumby.display.blit(poppy, 15+randoNum2, 1 + randoNum3, 20, 30, 0, 0, 0)
-            thumby.display.blit(poppy, 72-37+randoNum2, 1 + randoNum3, 20, 30, 0, 1, 0)
+            thumby.display.blit(bytearray(images["poppy"]), 15+randoNumber2, 1 + randoNumber3, 20, 30, 0, 0, 0)
+            thumby.display.blit(bytearray(images["poppy"]), 72-37+randoNumber2, 1 + randoNumber3, 20, 30, 0, 1, 0)
         if t0 - ct0 < 3000:
             if (t0 - ct0) % 3 == 0 and t0 - ct0 > 2300:
-                printMon(monsterBody, 25+randoNum2, 8, 0)
+                printMon(monsterBody, 25+randoNumber2, 8, 0)
             else:
                 printMon(tempBody, 25, 8, 0)
         if t0 - ct0 > 3000:
-            printMon(monsterBody, 25+randoNum2, 8+randoNum, 0)
+            printMon(monsterBody, 25+randoNumber2, 8+randoNumber, 0)
         thumby.display.update()
-
+        
 
 def trainAnimation(monsterBody):
     f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
@@ -1575,6 +1580,8 @@ def save(playerInfo):
     with open('/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson', 'w') as f:
         ujson.dump(bigDict, f)
         f.close()
+    del bigDict
+    gc.collect()
 
 def loadGame():
     gc.collect()
@@ -1629,13 +1636,13 @@ def makeRandomMon(monsterList, roomElm):
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
     for x in range(0,10):
-        thisGuyRightHere = monsterList[random.randint(0,21)] 
+        thisGuyRightHere = monsterList[random.randint(0,19)] 
         if (thisGuyRightHere.statBlock['Type1'] == spawnType[roomElm]
                 or thisGuyRightHere.statBlock['Type2'] == spawnType[roomElm] 
                 or thisGuyRightHere.statBlock['Type3'] == spawnType[roomElm]):
             thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
             return thisGuyRightHere
-    thisGuyRightHere = monsterList[random.randint(0,21)] 
+    thisGuyRightHere = monsterList[random.randint(0,19)] 
     thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
     return thisGuyRightHere
 
