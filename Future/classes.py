@@ -1,9 +1,10 @@
+import gc
 import time
 import thumby
 import math
 import random
-import gc
 import ujson
+
 
 class Player:
     def __init__(self):                                           
@@ -79,10 +80,9 @@ class Player:
         self.playerBlock['experience'] = self.playerBlock['experience'] + 1
         if self.playerBlock['experience'] >= self.playerBlock['trainerLevel'] * 2:
             self.playerBlock['trainerLevel'] = self.playerBlock['trainerLevel'] + 1
-            thingAquired(self.playerBlock['name'], "Your Trainer", "Level Is", "Now " + str(self.playerBlock['trainerLevel']), 2)
             if self.playerBlock['trainerLevel'] % 10 == 0 and self.playerBlock['friendMax'] < 5:
                 self.playerBlock['friendMax'] = self.playerBlock['friendMax'] + 1
-                thingAquired(self.playerBlock['name'], "can now", "have " + str(self.playerBlock['friendMax']), "monsters!", 2)
+
                 
 
 class RoamingMonster:
@@ -255,7 +255,7 @@ class Monster:
         f = open('/Games/Tiny_Monster_Trainer/Curtian/MonsterParts.ujson')
         monsterParts = ujson.load(f)
 
-        if random.randint(0,60) != 1:
+        if random.randint(0,120) != 1:
             randoNum = random.randint(0,15)
             self.bodyBlock['head'] = monsterParts["heads"][str(randoNum)]
             randoNum = random.randint(1,15)
@@ -271,11 +271,11 @@ class Monster:
 
     
     
-    def makeType(self):
+    def makeType(self, type1=0):
         monsterTypes = ["Wind", "Earth", "Water", "Fire", "Mind", "Darkness", 
                         "Cute", "Light", "Physical", "Mystical", "Ethereal"]
         if self.statBlock['Type1'] == "":
-            monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
+            monType = monsterTypes[type1]
             return monType
         elif self.statBlock['Type2'] == "":
             monType = monsterTypes[random.randint(0, len(monsterTypes)-1)]
@@ -290,13 +290,13 @@ class Monster:
         return monType
 
 
-    def makeMonster(self):
+    def makeMonster(self, type1=0):
         gc.collect()
         genStat = self.makeStat
         self.statBlock['name'] = self.makeName()
         self.statBlock['given_name'] = self.statBlock['name']
         self.statBlock['trainingPoints'] = 7
-        self.statBlock['Type1'] = self.makeType()
+        self.statBlock['Type1'] = self.makeType(type1)
         randoNum = random.randint(1,3)
         if randoNum == 1:
             self.statBlock['Type2'] = self.makeType()
@@ -309,9 +309,33 @@ class Monster:
         for x in range (4,9):
             self.statBlock[self.keyList[x]] = genStat(0)
             self.statBlock['max' + self.keyList[x]] = genStat(self.statBlock[self.keyList[x]], 1)
-        self.mutateSeed.append(random.randint(0,99))
+        self.mutateSeed.append(random.randint(0,255))
         self.mutateSeed.append(0)
-        
+ 
+
+class AttackMove():
+    def __init__(self, name="", numUses=0, baseDamage=0, magic=0, moveElementType=""):
+        self.name = name 
+        self.numUses = numUses 
+        self.currentUses = numUses 
+        self.baseDamage = baseDamage  
+        self.magic = magic 
+        self.moveElementType = moveElementType
+
+
+    def getAnAttackMove(self, selectionNum, elmType=""):
+        f = open('/Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
+        attackJson = ujson.load(f)
+
+        self.name = attackJson[elmType][str(selectionNum)]["name"]
+        self.numUses = attackJson[elmType][str(selectionNum)]["Sta"]
+        self.currentUses = attackJson[elmType][str(selectionNum)]["Sta"]
+        self.baseDamage = attackJson[elmType][str(selectionNum)]["bnsDmg"]
+        self.magic = attackJson[elmType][str(selectionNum)]["pOrM"]
+        self.moveElementType = attackJson[elmType][str(selectionNum)]["Type"]
+        f.close() 
+ 
+    
 class Item():
     def __init__(self, name, key, bonus=0):
         self.name = name
