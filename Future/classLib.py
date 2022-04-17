@@ -1,4 +1,5 @@
 import gc
+gc.enable()
 import time
 import thumby
 import math
@@ -172,7 +173,7 @@ class Monster:
                         'maxTinfoil' : 1}
 
         self.keyList = ['Health',       # 0  
-                        'Type1',        # 1     Move types to end of keyList so that showMonInfo can be more intuitive
+                        'Type1',        # 1 
                         'Type2',        # 2
                         'Type3',        # 3
                         'Agility',      # 4
