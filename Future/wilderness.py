@@ -7,7 +7,7 @@ import random
 import ujson
 import sys
 sys.path.append("/Games/Tiny_Monster_Trainer/")
-from classes import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item
+from classes import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
 import micropython
 
 
@@ -16,51 +16,6 @@ import micropython
 #head0_sprite = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 #           0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 #
-'''
-class Tile:
-    def __init__(self):
-        self.tileType = 0
-        self.isObjectHere = 0
-
-           
-    def generateTile(self, preTileType):
-        if preTileType == 1: # wall
-            self.isObjectHere = 0
-        elif preTileType == 2: # floor
-            self.tileType = 2 
-            self.isObjectHere = 1
-        elif preTileType == 3: # door
-            self.tileType = 3 
-            self.isObjectHere = 2
-        elif preTileType == 8: # crack
-            self.tileType = 8 
-            self.isObjectHere = 1
-        else:
-            self.tileType = 1 # wall
-            self.isObjectHere = 0
-'''
-
-class AttackMove():
-    def __init__(self, name="", numUses=0, baseDamage=0, magic=0, moveElementType=""):
-        self.name = name 
-        self.numUses = numUses 
-        self.currentUses = numUses 
-        self.baseDamage = baseDamage  
-        self.magic = magic 
-        self.moveElementType = moveElementType
-
-
-    def getAnAttackMove(self, selectionNum, elmType=""):
-        f = open('/Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
-        attackJson = ujson.load(f)
-
-        self.name = attackJson[elmType][str(selectionNum)]["name"]
-        self.numUses = attackJson[elmType][str(selectionNum)]["Sta"]
-        self.currentUses = attackJson[elmType][str(selectionNum)]["Sta"]
-        self.baseDamage = attackJson[elmType][str(selectionNum)]["bnsDmg"]
-        self.magic = attackJson[elmType][str(selectionNum)]["pOrM"]
-        self.moveElementType = attackJson[elmType][str(selectionNum)]["Type"]
-        f.close()
 
 
 def mutateMon(self):
@@ -893,31 +848,35 @@ def makeWorld(wSeed):
         newMap.procGenMap()
         worldList.append(newMap)
     return worldList
-    
+
+
 
 def makeMonsterList(mSeed):
     gc.collect()
     random.seed(mSeed) 
     monsterList = []
-    for i in range (0 , 20): # numberOfMons = 20
-        gc.collect()
-        thingAquired("", "Generating", "Monsters",str(i+1), 0)
-        newMon = Monster()
-        newMon.makeMonster()
-        monsterList.append(newMon)
-        newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
-        monsterList[i].attackList.append(newMonAtk)
-        newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
-        monsterList[i].attackList.append(newMonAtk)
-        newMonAtk = AttackMove()
-        newMonAtk.getAnAttackMove(random.randint(1,4), monsterList[i].statBlock['Type1'])
-        monsterList[i].attackList.append(newMonAtk)
-        noDupAtk(newMon.attackList)
-        monsterList[i].makeMonBody()
-        micropython.mem_info()
-        print("Mon: ", i, ", name is ", newMon.statBlock['name'])
+    monsterCount = 0
+    for i in range (0 , 11): # numberOfMons = 22
+        for n in range (0,2):
+            gc.collect()
+            thingAquired("", "Generating", "Monsters",str(i+1), 0)
+            newMon = Monster()
+            newMon.makeMonster(i)
+            monsterList.append(newMon)
+            newMonAtk = AttackMove()
+            newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
+            monsterList[monsterCount].attackList.append(newMonAtk)
+            newMonAtk = AttackMove()
+            newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
+            monsterList[monsterCount].attackList.append(newMonAtk)
+            newMonAtk = AttackMove()
+            newMonAtk.getAnAttackMove(random.randint(1,4), monsterList[i].statBlock['Type1'])
+            monsterList[monsterCount].attackList.append(newMonAtk)
+            noDupAtk(newMon.attackList)
+            monsterList[monsterCount].makeMonBody()
+            micropython.mem_info()
+            monsterCount = monsterCount + 1
+            print("Mon: ", monsterCount, ", name is ", newMon.statBlock['name'], ", type1 = ", newMon.statBlock['Type1'])
     return monsterList
     
 
@@ -1074,7 +1033,7 @@ def trainAnimation(monsterBody):
     f.close()
     del images
 
-
+''''
 def openScreen():
     gc.collect()
     thumby.display.setFPS(40)
@@ -1106,7 +1065,7 @@ def openScreen():
             battleStartAnimation(0)
             f.close()
             return 1
-    
+'''    
 
 def obj_to_dict(obj):
     return obj.__dict__
@@ -1135,6 +1094,7 @@ def save(playerInfo):
         f.close()
     del bigDict
     gc.collect()
+
 
 def loadGame():
     gc.collect()
@@ -1185,20 +1145,56 @@ def makeRandomStats(monToStat, trainerLevel):
 
     
 def makeRandomMon(monsterList, roomElm):
+    gc.collect()
     random.seed(time.ticks_ms())
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
+    f = open('/Games/Tiny_Monster_Trainer/here_be_monsters.ujson')
+    monsterJson = ujson.load(f)
+    tempMon = Monster()
+    numberOfMons = len(monsterJson[0]['monsterInfo'][0])
+    print("Length numberOfMons = ", numberOfMons)
     for x in range(0,10):
-        thisGuyRightHere = monsterList[random.randint(0,19)] 
-        if (thisGuyRightHere.statBlock['Type1'] == spawnType[roomElm]
-                or thisGuyRightHere.statBlock['Type2'] == spawnType[roomElm] 
-                or thisGuyRightHere.statBlock['Type3'] == spawnType[roomElm]):
-            thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
-            return thisGuyRightHere
-    thisGuyRightHere = monsterList[random.randint(0,19)] 
-    thisGuyRightHere = makeRandomStats(thisGuyRightHere, 0)
-    return thisGuyRightHere
-
+        randomNumber = random.randint(0,numberOfMons-1)
+        tempMon = Monster()
+        tempMon.statBlock = monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat'].copy()
+        tempMon.bodyBlock = monsterJson[0]['monsterInfo'][1]['mon' + str(randomNumber) + 'body'].copy()
+        tempMon.mutateSeed = monsterJson[0]['monsterInfo'][2]['mon' + str(randomNumber) + 'mutate'].copy()
+        if (tempMon.statBlock['Type1'] == spawnType[roomElm] or tempMon.statBlock['Type2'] == spawnType[roomElm] or tempMon.statBlock['Type3'] == spawnType[roomElm]):
+            tempMon = makeRandomStats(tempMon, 0)
+            tempMon = makeRandomStats(tempMon, 0)
+            newMonAtk = AttackMove()
+            newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
+            tempMon.attackList.append(newMonAtk)
+            newMonAtk = AttackMove()
+            newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type1'])
+            tempMon.attackList.append(newMonAtk)
+            newMonAtk = AttackMove()
+            if tempMon.statBlock['Type2'] != "":
+                newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type2'])
+            else:
+                newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type1'])
+            tempMon.attackList.append(newMonAtk)
+            noDupAtk(tempMon.attackList)
+            f.close()
+            del monsterJson
+            return tempMon
+    tempMon = makeRandomStats(tempMon, 0)
+    newMonAtk = AttackMove()
+    newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
+    tempMon.attackList.append(newMonAtk)
+    newMonAtk = AttackMove()
+    newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type1'])
+    tempMon.attackList.append(newMonAtk)
+    newMonAtk = AttackMove()
+    if tempMon.statBlock['Type2'] != "":
+        newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type2'])
+    else:
+        newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type1'])
+    tempMon.attackList.append(newMonAtk)
+    noDupAtk(tempMon.attackList)
+    return tempMon
+    
 
 def loss(curMon):
     curMon.statBlock['currentHealth'] = curMon.statBlock['Health']
@@ -1209,25 +1205,18 @@ def loss(curMon):
     thingAquired(curMon.statBlock['given_name'], "is", "Disheartened", "TP lost", 2)
     # else print that no TP left to lose
 
+
 ## Setting up the game ##
 
 world=[]
 monsterList=[]
 myGuy = Player()
-load = openScreen()
-if load == 1: 
-    myGuy = loadGame()
-    if myGuy.playerBlock['worldSeed'] == 0:
-        theWorldSeed = time.ticks_us()
-        myGuy.playerBlock['worldSeed'] = theWorldSeed
-    world = makeWorld(myGuy.playerBlock['worldSeed'])
-    monsterList = makeMonsterList(myGuy.playerBlock['worldSeed'])
-else:
+myGuy = loadGame()
+if myGuy.playerBlock['worldSeed'] == 0:
     theWorldSeed = time.ticks_us()
-    random.seed(theWorldSeed)
-    world = makeWorld(theWorldSeed)
-    monsterList = makeMonsterList(theWorldSeed) 
-    myGuy = makePlayer(monsterList[0], monsterList[1], monsterList[2], theWorldSeed)
+    myGuy.playerBlock['worldSeed'] = theWorldSeed
+world = makeWorld(myGuy.playerBlock['worldSeed'])
+
 
 npcMon = Monster()
 activeMon = 0
@@ -1306,8 +1295,14 @@ while(1):
         thumby.display.update()
     battleStartAnimation(0) 
     if victory == 1:
+        tempLvlCheck = myGuy.playerBlock['trainerLevel']
+        tempMaxFrenCheck = myGuy.playerBlock['friendMax']
         myGuy.levelUpCheck()
         myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1
+        if myGuy.playerBlock['trainerLevel'] != tempLvlCheck:
+            thingAquired(self.playerBlock['name'], "Your Trainer", "Level Is", "Now " + str(self.playerBlock['trainerLevel']), 2)
+        if myGuy.playerBlock['friendMax'] != tempMaxFrenCheck:
+            thingAquired(self.playerBlock['name'], "can now", "have " + str(self.playerBlock['friendMax']), "monsters!", 2)
         if len(myGuy.inventory) < myGuy.maxHelditems:
             randoNum = random.randint(1,10)
             if randoNum > 2:
