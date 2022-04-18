@@ -20,7 +20,7 @@ def makeMonsterList(mSeed):
     monsterList = []
     monsterCount = 0
     for i in range (0 , 11): # number of mons = i * n  (Leave this at 11, so it can cycle through each type)
-        for n in range (0,3): # numberOfMons = 33  (Change this number to change the total monster count)
+        for n in range (0,2): # numberOfMons = 22  (Change this number to change the total monster count) (game will not load right at 33 mons)
             gc.collect()
             thingAquired("", "Generating", "Monsters",str(monsterCount+1), 0)
             newMon = Monster()
@@ -95,6 +95,7 @@ def makePlayer(monster1, monster2, monster3, seed):
     newPlayer.playerBlock['worldSeed'] = seed 
     return newPlayer 
 
+
     
 try:
     p = open("/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
@@ -106,4 +107,5 @@ except OSError:
     random.seed(theWorldSeed)
     #print("world seed = ", theWorldSeed)
     monsterList = makeMonsterList(theWorldSeed) 
+
 
