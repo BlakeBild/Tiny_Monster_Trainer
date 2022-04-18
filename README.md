@@ -163,11 +163,14 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
+   
+Updates as of 04/18/22:  
+Restructured things, now using methods and stuff. The game will now make a list of monsters to load from for when you encounter a roaming monster. Player now roams the wilderness.   
+Things are setup so that new modes can be added, multiplayer is coming "soon(TM)" (Planning on adding live multiplayer via Link Cable & Ghost Multiplayer, to load someone else's trainer you have saved to fight them that way too), A storage mode to save monsters & be able to trade them via Link Cable. We'll see how far I can get with those things.  
   
 Updates as of 4/16/22:  
 Started restructuring things so that I can work on multiplayer.  Things that will be added are: generate a list of monsters then save that list to a .ujson, this will be the pool of monsters for the players world. The ability to save monsters in storage.  I will probably change the way that monsters are created so that I can have monsters the player encounters train themselves, learn new attacks, and mutate before a fight (I think this would help the monsters scale with players at higher trainer levels). I will add vs fights against other players. (i want to save player ghosts so you can battle against them when they aren't around, this will be added a lot later, if added at all). If you win a vs. fight against another player I'd like to add a random monster from their pool of monsters to yours. I want to add monster trading, but that will probably be later. I would like to add a way to temporarily change the player's world seed, and maybe visit the world seed of other players.
-  
-
+    
 Updates as of 4/14/22:   
 Fixed issue with mutate animation wouldn't load if you had 5 monsters.  
 Added more body parts for monsters.  
