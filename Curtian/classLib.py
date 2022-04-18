@@ -46,13 +46,13 @@ class Player:
 
 
     def movePlayer(self, currentRoom, monster, monsterMovement):
-        moved = 0
+        #moved = 0
         while(thumby.dpadJustPressed() == False and thumby.actionPressed == False):
             pass
         if(thumby.buttonU.pressed() == True):
             while(thumby.buttonU.pressed() == True): 
                 pass
-            moved = 1
+            #moved = 1
             if currentRoom.floor[self.currentPos-9].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos - 9
@@ -60,7 +60,7 @@ class Player:
         elif(thumby.buttonD.pressed() == True):
             while(thumby.buttonD.pressed() == True): 
                 pass
-            moved = 1
+            #moved = 1
             if currentRoom.floor[self.currentPos+9].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos + 9
@@ -68,7 +68,7 @@ class Player:
         elif(thumby.buttonL.pressed() == True):
             while(thumby.buttonL.pressed() == True): 
                 pass
-            moved = 1
+            #moved = 1
             if currentRoom.floor[self.currentPos-1].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos - 1
@@ -77,7 +77,7 @@ class Player:
         elif(thumby.buttonR.pressed() == True):
             while(thumby.buttonR.pressed() == True): 
                 pass
-            moved = 1
+            #moved = 1
             if currentRoom.floor[self.currentPos+1].isObjectHere >= 1:
                 self.position[self.currentPos] = 0
                 self.currentPos = self.currentPos + 1
