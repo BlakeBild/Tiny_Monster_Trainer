@@ -9,7 +9,7 @@ import sys
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtian/")
 from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
 from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
-#import micropython
+import micropython
 
 
 #player3_sprite = [0,46,251,127,123,255,46,0]
@@ -796,15 +796,25 @@ def makeRandomStats(monToStat, trainerLevel):
 def makeRandomMon(roomElm):
     gc.collect()
     random.seed(time.ticks_ms())
+    micropython.mem_info()
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
     f = open('/Games/Tiny_Monster_Trainer/Curtian/here_be_monsters.ujson')
     monsterJson = ujson.load(f)
+    micropython.mem_info()
+    print("after loading json")
     tempMon = Monster()
+    gc.collect()
+    micropython.mem_info()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
-    print("Length numberOfMons = ", numberOfMons)
-    for x in range(0,10):
+    #print("Length numberOfMons = ", numberOfMons)
+    for x in range(0,5):
+        print("in loop")
+        micropython.mem_info()
         randomNumber = random.randint(0,numberOfMons-1)
+        #thumby.display.fill(0)
+        #thingAquired("try", "mon", str(randomNumber)," ", 0)
+        #thumby.display.update()
         tempMon = Monster()
         tempMon.statBlock = monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat'].copy()
         tempMon.bodyBlock = monsterJson[0]['monsterInfo'][1]['mon' + str(randomNumber) + 'body'].copy()
@@ -827,6 +837,9 @@ def makeRandomMon(roomElm):
             noDupAtk(tempMon.attackList)
             f.close()
             del monsterJson
+            #thumby.display.fill(0)
+            #thingAquired("before", "first", "return"," ", 0)
+            #thumby.display.update()
             return tempMon
     tempMon = makeRandomStats(tempMon, 0)
     newMonAtk = AttackMove()
@@ -841,6 +854,9 @@ def makeRandomMon(roomElm):
     else:
         newMonAtk.getAnAttackMove(random.randint(1,4), tempMon.statBlock['Type1'])
     tempMon.attackList.append(newMonAtk)
+    #thumby.display.fill(0)
+    #thingAquired("before", "last", "return"," ", 0)
+    #thumby.display.update()
     noDupAtk(tempMon.attackList)
     return tempMon
     
@@ -877,7 +893,7 @@ tempPlayerPos = myGuy.currentPos
 
 while(1):
     gc.collect()
-    #micropython.mem_info()
+    micropython.mem_info()
     while(battle != 1):
         if myGuy.playerBlock['friendMax'] > 5: # remove friendMax checks after around 6/1/22
             myGuy.playerBlock['friendMax'] = 5
@@ -901,10 +917,16 @@ while(1):
             npcMonRoaming.removeMonster()
             battle = 1
             battleStartAnimation(1)
+    #try:
     npcMon = makeRandomMon(world[room].elementType)
+    #except Exception as e:
+    #    f = open("/Games/Tiny_Monster_Trainer/Curtian/crash.log", "w")
+    #    f.write(str(e))
+    #    f.close() 
     npcTL = random.randint(myGuy.playerBlock['trainerLevel'] - 3, myGuy.playerBlock['trainerLevel'] + 3) + random.randint(-2, 2)
     if npcTL < 0:
         npcTL = 0
+
     battleMon = makeRandomStats(npcMon, random.randint(0, npcTL))
     while(battle == 1):
         victory = 0
