@@ -6,7 +6,7 @@ import math
 import random
 import ujson
 import sys 
-sys.path.append("/Games/Tiny_Monster_Trainer/Curtian/")
+sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
 from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
 #import micropython
@@ -523,8 +523,51 @@ def optionScreen(playerInfo):
             thumby.display.update()
 
 
+def mutateMon(self):
+    #micropython.mem_info()
+    if self.statBlock['trainingPoints'] > 4:
+        tempBody = self.bodyBlock.copy()
+        if self.mutateSeed[1] < 4:
+            random.seed(self.mutateSeed[0] + (self.mutateSeed[1] * 100))
+            mutation = random.randint(1, 5)
+            if mutation > 2 :
+                mutation = random.randint(4, 8) 
+                if mutation == 0 or mutation > 3 :
+                  self.statBlock['max' + self.keyList[mutation]] = self.statBlock['max' + self.keyList[mutation]] + 10
+            else:
+                if (random.randint(1,3)) != 1:
+                    self.makeMonBody()
+                if self.statBlock['Type2'] == "":
+                    self.statBlock['Type2'] = self.makeType()
+                    myAttack = AttackMove()
+                    randoNum = random.randint(1,4)
+                    myAttack.getAnAttackMove(randoNum, self.statBlock['Type2'])
+                    self.attackList.append(myAttack)
+                    noDupAtk(self.attackList)
+                elif self.statBlock['Type3'] == "":
+                    self.statBlock['Type3'] = self.makeType()
+                    myAttack = AttackMove()
+                    randoNum = random.randint(1,4)
+                    myAttack.getAnAttackMove(randoNum, self.statBlock['Type3'])
+                    noDupAtk(self.attackList)
+                self.statBlock['maxHealth'] = self.statBlock['maxHealth'] + 10
+                for mutateX in range(4, 9):
+                    self.statBlock['max' + self.keyList[mutateX]] = self.statBlock['max' + self.keyList[mutateX]] + 2
+            self.mutateSeed[1] = self.mutateSeed[1] + 1
+            self.statBlock['trainingPoints'] = self.statBlock['trainingPoints'] - 5 
+            gc.collect()
+            #micropython.mem_info()
+            mutateAnimation(tempBody, self.bodyBlock)
+            thingAquired(self.statBlock['given_name'], "has", "mutated!", "", 2)
+        else:
+            thingAquired(self.statBlock['given_name'], "is unable to", "mutate", "again", 2)
+    else:
+        howManyPoints = self.statBlock['trainingPoints']
+        thingAquired(self.statBlock['given_name'], ("needs " + str(5 - howManyPoints) + " more"), "Training", "Points", 2)
+
+
 def trainAnAttackMove(attackList, statBlock, keyList):
-        gc.collect()
+        #gc.collect()
         howManyTypes = 0
         newAttack = AttackMove()
         attacksKnown = len(attackList)
@@ -555,7 +598,6 @@ def trainAnAttackMove(attackList, statBlock, keyList):
             thingAquired(statBlock['given_name'], ("needs " + str(3 - howManyPoints) + " more"), "Training", "Points", 2)
 
 
- 
 def makeWorld(wSeed):
     gc.collect()
     thingAquired("", "Generating", "World","", 0)
@@ -569,7 +611,7 @@ def makeWorld(wSeed):
 
 
 def findAnItem(playerInv, maxItems):
-    gc.collect()
+    #gc.collect()
     newItem = Item("GenHeal", 1)
     newItem.getItem()
     playerInv.append(newItem)
@@ -599,7 +641,7 @@ def mutateAnimation(tempBody, monsterBody):
     t0 = 0
     ct0 = time.ticks_ms()
     # BITMAP: width: 20, height: 30
-    f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtain/Other.ujson')
     images = ujson.load(f)
     
     while(t0 - ct0 < 6000):
@@ -625,7 +667,7 @@ def mutateAnimation(tempBody, monsterBody):
         
 
 def trainAnimation(monsterBody):
-    f = open('/Games/Tiny_Monster_Trainer/Curtian/Other.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtain/Other.ujson')
     images = ujson.load(f)
     t0 = 0
     ct0 = time.ticks_ms()
@@ -645,7 +687,7 @@ def trainAnimation(monsterBody):
 def loadGame():
     gc.collect()
     tempPlayer = Player()
-    f = open('/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson')
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
     if bigJson[0]['items'] != [{}]:
@@ -696,12 +738,12 @@ def makeRandomMon(roomElm):
     #micropython.mem_info()
     spawnType = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
                 "Mind", "Physical", "Mystical", "Ethereal"]
-    f = open('/Games/Tiny_Monster_Trainer/Curtian/here_be_monsters.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtain/here_be_monsters.ujson')
     monsterJson = ujson.load(f)
     #micropython.mem_info()
     #print("after loading json")
     tempMon = Monster()
-    gc.collect()
+    #gc.collect()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
     #print("Length numberOfMons = ", numberOfMons)
     for x in range(0,5):
@@ -807,7 +849,7 @@ while(1):
     #try:
     npcMon = makeRandomMon(world[room].elementType)
     #except Exception as e:
-    #    f = open("/Games/Tiny_Monster_Trainer/Curtian/crash.log", "w")
+    #    f = open("/Games/Tiny_Monster_Trainer/Curtain/crash.log", "w")
     #    f.write(str(e))
     #    f.close() 
     npcTL = random.randint(myGuy.playerBlock['trainerLevel'] - 3, myGuy.playerBlock['trainerLevel'] + 3) + random.randint(-2, 2)
