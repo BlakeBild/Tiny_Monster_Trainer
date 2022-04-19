@@ -6,7 +6,7 @@ import math
 import random
 import ujson
 import sys
-sys.path.append("/Games/Tiny_Monster_Trainer/Curtian/")
+sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Player, Monster, Item, AttackMove
 from funcLib import thingAquired, buttonInput, noDupAtk, giveName, tameMon, save, showMonInfo
 
@@ -35,13 +35,13 @@ def makeMonsterList(mSeed):
     
     MonsterDict = [{"monsterInfo": [statDict, bodyDict, mutateDict], "monsterGenSeed" : [mSeed]}]
     #print("BMD = ", MonsterDict)
-    with open('/Games/Tiny_Monster_Trainer/Curtian/here_be_monsters.ujson', 'w') as f:
+    with open('/Games/Tiny_Monster_Trainer/Curtain/here_be_monsters.ujson', 'w') as f:
         ujson.dump(MonsterDict, f)
         f.close()
     del MonsterDict
     gc.collect()
     try:
-        p = open("/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
+        p = open("/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson", "r")
         p.close()
     except OSError:
         randomNum1 = 0
@@ -64,6 +64,7 @@ def makeMonsterList(mSeed):
         newMonAtk = AttackMove()
         newMonAtk.getAnAttackMove(random.randint(1,4), myGuy.friends[0].statBlock['Type1'])
         myGuy.friends[0].attackList.append(newMonAtk)
+        noDupAtk(myGuy.friends[0].attackList)
         noDupAtk(myGuy.friends[0].attackList)
         save(myGuy)
 
@@ -101,13 +102,12 @@ def makePlayer(monster1, monster2, monster3, seed):
 
     
 try:
-    p = open("/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson", "r")
+    p = open("/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson", "r")
     p.close()
-    p = open("/Games/Tiny_Monster_Trainer/Curtian/here_be_monsters.ujson", "r")
+    p = open("/Games/Tiny_Monster_Trainer/Curtain/here_be_monsters.ujson", "r")
     p.close()
 except OSError:
     theWorldSeed = time.ticks_us()
     random.seed(theWorldSeed)
     #print("world seed = ", theWorldSeed)
     monsterList = makeMonsterList(theWorldSeed) 
-
