@@ -267,15 +267,15 @@ class Monster:
     
     def makeMonBody(self):
         gc.collect()
-        f = open('/Games/Tiny_Monster_Trainer/Curtian/MonsterParts.ujson')
+        f = open('/Games/Tiny_Monster_Trainer/Curtain/MonsterParts.ujson')
         monsterParts = ujson.load(f)
 
         if random.randint(0,120) != 1:
-            randoNum = random.randint(0,15)
+            randoNum = random.randint(0,17)
             self.bodyBlock['head'] = monsterParts["heads"][str(randoNum)]
-            randoNum = random.randint(1,15)
+            randoNum = random.randint(1,17)
             self.bodyBlock['body'] = monsterParts["bodies"][str(randoNum)]
-            randoNum = random.randint(1,15)
+            randoNum = random.randint(1,17)
             self.bodyBlock['legs'] = monsterParts["legs"][str(randoNum)]
         else:
             self.bodyBlock['head'] = monsterParts["special"]["birbHead"]
@@ -380,7 +380,7 @@ class AttackMove():
 
 
     def getAnAttackMove(self, selectionNum, elmType=""):
-        f = open('/Games/Tiny_Monster_Trainer/Curtian/Attacks.ujson')
+        f = open('/Games/Tiny_Monster_Trainer/Curtain/Attacks.ujson')
         attackJson = ujson.load(f)
 
         self.name = attackJson[elmType][str(selectionNum)]["name"]
