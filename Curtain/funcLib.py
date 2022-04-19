@@ -6,7 +6,7 @@ import math
 import sys
 import ujson
 import micropython
-sys.path.append("/Games/Tiny_Monster_Trainer/Curtian/")
+sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Monster, TextForScroller
 
 
@@ -338,8 +338,8 @@ def save(playerInfo):
         itemDict["item" + str(x)] = obj_to_dict(playerInfo.inventory[x])
     playerDict = [{"player" : playerInfo.playerBlock, "items" : [itemDict], "monsterInfo": [statDict, bodyDict, attackDict, mutateDict]}]
     #print(playerDict)
-    with open('/Games/Tiny_Monster_Trainer/Curtian/tmt.ujson', 'w') as f:
+    with open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson', 'w') as f:
         ujson.dump(playerDict, f)
         f.close()
     del playerDict
-    gc.collect()   
+    gc.collect()    
