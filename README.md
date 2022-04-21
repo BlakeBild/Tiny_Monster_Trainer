@@ -2,7 +2,7 @@
 A game for the Thumby  
 (I don't know what I'm doing 🥳)    
   
-(If you're here for the most recent version of tiny monster trainer, that not on the thumby arcade yet. You just need to put Tiny_Monster_Trainer.py and the /Curtain folder on the thumby.)  
+(If you're here for the most recent version of tiny monster trainer, that is not on the thumby arcade yet. You just need to put Tiny_Monster_Trainer.py and the /Curtain folder on the thumby.)  
 
 Move around, fight monsters, collect monsters, train monsters.  
 
