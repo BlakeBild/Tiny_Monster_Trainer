@@ -119,6 +119,7 @@ def chopUpMovesToSend():
                     pass
                 else:
                     dataToSend.append({})
+                dataToSend[numberOfAtks]['Monster'] = { 'Monster' : myGuyBattleJson[0]['monsterInfo'][0]['mon' + str(x) + 'stat']['given_name'] } 
                 dataToSend[numberOfAtks]['name'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['name'] 
                 dataToSend[numberOfAtks]['numUses'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['numUses']
                 dataToSend[numberOfAtks]['baseDamage'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['baseDamage']
@@ -267,7 +268,8 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
 
     keyList = getKeyList(listNumber)
     sendCheck = {'key0' : 0}
-    dataBeingRcvd = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
+    dataBeingRcvd = [{}]
+    xSame = 0
     
     for c in range(0, (checkCheckOther[0])):
         sendCheck['key' + str(c)] =  0
@@ -318,9 +320,19 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                                 dictToRcv = ujson.loads(received2.decode())
                                 thingAquired("rcv. " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + " " + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
                                 if dictToRcv['key2'] == dictToSend['key2']:
+                                    if x > 0 and xSame != x+y:                                    
+                                        dataBeingRcvd.append({})
+                                        xSame = x+y
                                     dataBeingRcvd[x][keyList[dictToRcv['key']]] = dictToRcv[keyList[dictToRcv['key']]] #original line: dataBeingRcvd[x][keyList[dictToRcv['key']]] = dictToRcv[keyList[y]]
                                     sendCheck['key' + str(y+(x*numOfData))] = 1
                                     thingAquired("rcv " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + "v" + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
+                                    adjustment = len(dataBeingRcvd)
+                                    for m in range(0, len(dataBeingRcvd):
+                                        try:
+                                            if dataBeingRcvd[m] == {}:
+                                                dataBeingRcvd.pop(m)
+                                        except:
+                                            pass
                                     #time.sleep(.5)
                                 #thingAquired("rcv " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + "v" + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
                             except Exception as e:
