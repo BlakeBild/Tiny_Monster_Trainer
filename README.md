@@ -162,6 +162,11 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Superlunary"   | Ethereal   | Mysticism   
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
+  
+  
+
+Updates as of 9/1/22:  
+Geeze it's been a minute, work got busy. Also I couldn't figure out a bug with the code for the longest time. But I rounded that corner and I've mostly added ghost battles, I still need to do some testing to make sure it's working right. Right now multiplayer.py just sends ghost files over to the other thumby, I need to add a way to cycle through ghost files, ghost file ujsons need to be manually changed in ghostBattle.py code
 
    
 Updates as of 04/18/22:  
