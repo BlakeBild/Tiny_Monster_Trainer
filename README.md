@@ -2,7 +2,7 @@
 A game for the Thumby  
 (I don't know what I'm doing 🥳)    
   
-(If you're here for the most recent version of tiny monster trainer, that is not on the thumby arcade yet. You just need to put Tiny_Monster_Trainer.py and the /Curtain folder on the thumby.)  
+(If you're here for the most recent version of tiny monster trainer, that is not on the thumby arcade yet. You just need to put Tiny_Monster_Trainer.py, the /Curtain folder, and the /Ghost folder on the thumby.)  
 
 Move around, fight monsters, collect monsters, train monsters.  
 
@@ -165,7 +165,8 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
   
   
   
-Updates as of 9/1/22: 
+Updates as of 9/1/22:   
+  
 Offline ghost battles are a thing now! I'm not going to add it to the arcade yet because I want to make sure that I didn't miss any bugs & I want to try to add legit multiplay first.  
 
   
