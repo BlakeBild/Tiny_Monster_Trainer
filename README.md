@@ -164,6 +164,19 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
   
   
+  
+Updates as of 9/1/22: 
+Offline ghost battles are a thing now! I'm not going to add it to the arcade yet because I want to make sure that I didn't miss any bugs & I want to try to add legit multiplay first.  
+
+  
+To get offline ghost battles to work you need to create a '/Ghost/' folder in the tiny monster trainer directory.   
+Update the Tiny_Monster_Tainer.py to the one above on GitHub.  
+Then add the multiplayer.py & ghostbattles.py to the '/Curtain/' folder.  
+After that you can connect two thumbys together via the link cable, and have them start tiny monster trainer, then have both select multiplayer under game modes.  
+It will do it's thing and both thumbys will have a .ujson file in their ghost folder with the opposing trainer's name.  
+Select the ghost battle mode to pick the ghost you want to fight.   
+You can download Blake.ujson in the ghost folder above to fight my trainer from my longest saved game.   
+  
 
 Updates as of 9/1/22:  
 Geeze it's been a minute, work got busy. Also I couldn't figure out a bug with the code for the longest time. But I rounded that corner and I've mostly added ghost battles, I still need to do some testing to make sure it's working right. Right now multiplayer.py just sends ghost files over to the other thumby, I need to add a way to cycle through ghost files, ghost file ujsons need to be manually changed in ghostBattle.py code
