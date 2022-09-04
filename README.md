@@ -165,7 +165,7 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
   
   
   
-Updates as of 9/1/22:   
+Updates as of 9/4/22:   
   
 Offline ghost battles are a thing now! I'm not going to add it to the arcade yet because I want to make sure that I didn't miss any bugs & I want to try to add legit multiplay first.  
 
