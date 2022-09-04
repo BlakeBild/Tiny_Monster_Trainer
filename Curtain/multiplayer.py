@@ -45,7 +45,11 @@ def getKeyList(whatList=0):
     if whatList == 1:
         thisList = ['name', 'given_name','Health','Type1','Type2','Type3','Agility','Strength','Endurance','Mysticism','Tinfoil','head', 'body','legs']
     elif whatList == 2:
-        thisList = ['name', 'numUses', 'baseDamage', 'magic', 'moveElementType']
+        thisList = ['monster', 'name', 'numUses', 'baseDamage', 'magic', 'moveElementType']
+    elif whatList == 3:
+        thisList = ['name', 'given_name','Health','Type1','Type2','Type3','Agility','Strength','Endurance','Mysticism','Tinfoil'] #,'head', 'body','legs']        
+    elif whatList == 4: 
+        thisList = ['head', 'body','legs'] 
     else:
         thisList = ['name', 'given_name','Health','Type1','Type2','Type3','Agility','Strength','Endurance','Mysticism','Tinfoil','head', 'body','legs']
     return thisList
@@ -119,16 +123,16 @@ def chopUpMovesToSend():
                     pass
                 else:
                     dataToSend.append({})
-                dataToSend[numberOfAtks]['Monster'] = { 'Monster' : myGuyBattleJson[0]['monsterInfo'][0]['mon' + str(x) + 'stat']['given_name'] } 
+                dataToSend[numberOfAtks]['monster'] =  x  
                 dataToSend[numberOfAtks]['name'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['name'] 
                 dataToSend[numberOfAtks]['numUses'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['numUses']
                 dataToSend[numberOfAtks]['baseDamage'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['baseDamage']
                 dataToSend[numberOfAtks]['magic'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['magic']
                 dataToSend[numberOfAtks]['moveElementType'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['moveElementType']
                 numberOfAtks = numberOfAtks + 1
-        f = open("/Games/Tiny_Monster_Trainer/log15.log", "w")
-        f.write( " Line 117 ish " + str(dataToSend) + "  x:" + str(x) + "  y:" + str(y))
-        f.close()
+        #f = open("/Games/Tiny_Monster_Trainer/log15.log", "w")
+        #f.write( " Line 117 ish " + str(dataToSend) + "  x:" + str(x) + "  y:" + str(y))
+        #f.close()
     except Exception as e:
             f = open("/Games/Tiny_Monster_Trainer/crashChop.log", "w")
             f.write(str(e) + " on Line 131 ish")
@@ -155,9 +159,9 @@ def getNumberOfKeyChecksMoves(rcvCheckOrCheck, rangeNum):
             print(dataToSend)
             dataToSend.append({})
             print(dataToSend)'''
-    f = open("/Games/Tiny_Monster_Trainer/checksM.log", "w")
-    f.write(str(checkCheckM[0]) + " on Line 142 ish " + str(rcvCheck))
-    f.close() 
+    #f = open("/Games/Tiny_Monster_Trainer/checksM.log", "w")
+    #f.write(str(checkCheckM[0]) + " on Line 142 ish " + str(rcvCheck))
+    #f.close() 
     if rcvCheckOrCheck == 0:
         return checkCheckM
     elif rcvCheckOrCheck == 1:
@@ -327,7 +331,7 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                                     sendCheck['key' + str(y+(x*numOfData))] = 1
                                     thingAquired("rcv " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + "v" + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
                                     adjustment = len(dataBeingRcvd)
-                                    for m in range(0, len(dataBeingRcvd):
+                                    for m in range(0, len(dataBeingRcvd)):
                                         try:
                                             if dataBeingRcvd[m] == {}:
                                                 dataBeingRcvd.pop(m)
@@ -358,7 +362,58 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
     thingAquired("out", "of", "send/rcv", "loops", 1, 0, 0)
     return dataBeingRcvd
     
-    
+
+def putGhostTogether(otrMonData, otrMonMoves, yourGuyJson):
+    monKeys = getKeyList(3)
+    bodKeys = getKeyList(4)
+    opponent = Player()
+    opponent.playerBlock['name'] = yourGuyJson['name']
+    opponent.playerBlock['trainerLevel'] = yourGuyJson['trainerLevel']
+    opponent.playerBlock['experience'] = yourGuyJson['experience']
+    opponent.playerBlock['friendMax'] = yourGuyJson['friendMax']
+    opponent.playerBlock['worldSeed'] = yourGuyJson['worldSeed']
+    for x in range(0, len(otrMonData)):
+        rezMon = Monster()
+        for y in range(0, len(monKeys)):
+            monKeys = getKeyList(1)
+            rezMon.statBlock[monKeys[y]] = otrMonData[x][monKeys[y]]
+        for b in range(0, len(bodKeys)):
+            rezMon.bodyBlock[bodKeys[b]] = otrMonData[x][bodKeys[b]]
+        for z in range(0, len(rcvOtrMonMoves)):
+            if rcvOtrMonMoves[z]['monster'] == x:
+                tempAttackMove = AttackMove(otrMonMoves[z]['name'],
+                                    otrMonMoves[z]['numUses'],
+                                    otrMonMoves[z]['baseDamage'],
+                                    otrMonMoves[z]['magic'],
+                                    otrMonMoves[z]['moveElementType'])
+                tempAttackMove.currentUses = otrMonMoves[z]['numUses']
+                rezMon.attackList.append(tempAttackMove) 
+        rezMon.attackList = rezMon.attackList.copy()
+        opponent.friends.append(rezMon)
+        opponent.friends = opponent.friends.copy()
+        
+    saveGhost(opponent)    
+        
+
+def saveGhost(ghostInfo):
+    gc.collect()
+    statDict = {}
+    bodyDict = {}
+    attackDict = {}
+
+    for x in range(0, len(ghostInfo.friends)):
+        tempAttackDict = {}
+        for y in range (0, len(ghostInfo.friends[x].attackList)):
+            tempAttackDict["attack" + str(y)] = obj_to_dict(ghostInfo.friends[x].attackList[y])
+            attackDict["mon" + str(x) + "atk"] = tempAttackDict
+        statDict["mon" + str(x) + "stat"] = ghostInfo.friends[x].statBlock
+        bodyDict["mon" + str(x) + "body"] = ghostInfo.friends[x].bodyBlock
+    playerDict = [{"player" : ghostInfo.playerBlock, "monsterInfo": [statDict, bodyDict, attackDict]}]
+    with open('/Games/Tiny_Monster_Trainer/Ghosts/'+ghostInfo.playerBlock['name']+'.ujson', 'w') as f:
+        ujson.dump(playerDict, f)
+        f.close()
+    del playerDict
+    gc.collect()            
     
     
 
@@ -370,9 +425,9 @@ checkCheck1 = bytearray([0])
 checkCheck1 = getNumberOfKeyChecks(0, 14)
 rcvCheck1 = {'key0' : 0} 
 rcvCheck1 = getNumberOfKeyChecks(1, 14)
-f = open("/Games/Tiny_Monster_Trainer/rcvCheck1.log", "w")
-f.write(str(rcvCheck1) + " on Line 349 ish")
-f.close() 
+#f = open("/Games/Tiny_Monster_Trainer/rcvCheck1.log", "w")
+#f.write(str(rcvCheck1) + " on Line 349 ish")
+#f.close() 
 
     
 dataToSend =  chopUpGuyToSend()   
@@ -404,14 +459,14 @@ except Exception as e:
 
 time.sleep(1)
 checkCheck2 = bytearray([0]) 
-checkCheck2 = getNumberOfKeyChecksMoves(0, 5)
+checkCheck2 = getNumberOfKeyChecksMoves(0, 6)
 thingAquired("checkCheck2", " = ", str(checkCheck2[0]), "", 2,0,0) 
 rcvCheck2 = {'key0' : 0} 
-rcvCheck2 = getNumberOfKeyChecksMoves(1, 5)
+rcvCheck2 = getNumberOfKeyChecksMoves(1, 6)
 thingAquired("rcvCheck2", " = ", str(rcvCheck2['key0']), "", 2,0,0)
-f = open("/Games/Tiny_Monster_Trainer/rcvCheck2.log", "w")
-f.write(str(rcvCheck2) + " on Line 382 ish")
-f.close() 
+#f = open("/Games/Tiny_Monster_Trainer/rcvCheck2.log", "w")
+#f.write(str(rcvCheck2) + " on Line 382 ish")
+#f.close() 
 dataToSend2 =  chopUpMovesToSend()  
 thingAquired("dataToSend[0]['name']", " = ", dataToSend[0]['name'], "", 2,0,0)
 #sendOrReceive1 = findWhoSendsFirst()
@@ -428,7 +483,7 @@ time.sleep(1)
 #thingAquired("sendOrReceive1", " = ", str(sendOrReceive1), "", 2,0,0)
 try:
     thingAquired("about to send", " ", "Moves", "", 2,0,0)    
-    rcvOtrMonMoves = sendAndReceive(dataToSend2, checkCheck2, checkCheckOther2, sendOrReceive2, rcvCheck2, 5, 2)
+    rcvOtrMonMoves = sendAndReceive(dataToSend2, checkCheck2, checkCheckOther2, sendOrReceive2, rcvCheck2, 6, 2)
 except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
     f.write(str(e) + " on Line 336 ish")
@@ -436,26 +491,38 @@ except Exception as e:
 
 
 
-while(1):
-    #print(checkCheck[0], " ", rcvCheck['key12'])
-    #print(sendOrReceive)
-    thingAquired("Hi!", yourGuyJson['name'] , "", "", 0, 0, 0)
-    try:
-        thingAquired("Hi!", yourGuyJson['name'] , rcvOtrMonData[0]['name'], rcvOtrMonMoves[0]['name'], 1, 0, 0)
-        thumby.display.fill(0)
-        thumby.display.blit(bytearray(dataToSend[0]['head']), 10, 10, 20, 9, 0, 0, 0)
-        thumby.display.blit(bytearray(dataToSend[0]['body']), 10, 10+9, 20, 9, 0, 0, 0)
-        thumby.display.blit(bytearray(dataToSend[0]['legs']), 10, 10+18, 20, 9, 0, 0, 0)
-        thumby.display.blit(bytearray(rcvOtrMonData[0]['head']), 40, 10, 20, 9, 0, 1, 0)
-        thumby.display.blit(bytearray(rcvOtrMonData[0]['body']), 40, 10+9, 20, 9, 0, 1, 0)
-        thumby.display.blit(bytearray(rcvOtrMonData[0]['legs']), 40, 10+18, 20, 9, 0, 1, 0)
-        thumby.display.update()
-        time.sleep(1)
-        f = open("/Games/Tiny_Monster_Trainer/DataRcvd.log", "w")
-        f.write(" on Line 443 ish " + str(rcvOtrMonData) + " " + str(rcvOtrMonMoves))
-        f.close()
-    except Exception as e:
-            f = open("/Games/Tiny_Monster_Trainer/crash46.log", "w")
-            f.write(str(e) + " on Line 317 ish \n " + str(rcvOtrMonData) + " \n " + str(rcvOtrMonMoves))
-            f.close()  
+#while(1):
+#print(checkCheck[0], " ", rcvCheck['key12'])
+#print(sendOrReceive)
+thingAquired("Hi!", yourGuyJson['name'] , "", "", 0, 0, 0)
+try:
+    thingAquired("Hi!", yourGuyJson['name'] , rcvOtrMonData[0]['name'], rcvOtrMonMoves[0]['name'], 1, 0, 0)
+    thumby.display.fill(0)
+    thumby.display.blit(bytearray(dataToSend[0]['head']), 10, 10, 20, 9, 0, 0, 0)
+    thumby.display.blit(bytearray(dataToSend[0]['body']), 10, 10+9, 20, 9, 0, 0, 0)
+    thumby.display.blit(bytearray(dataToSend[0]['legs']), 10, 10+18, 20, 9, 0, 0, 0)
+    thumby.display.blit(bytearray(rcvOtrMonData[0]['head']), 40, 10, 20, 9, 0, 1, 0)
+    thumby.display.blit(bytearray(rcvOtrMonData[0]['body']), 40, 10+9, 20, 9, 0, 1, 0)
+    thumby.display.blit(bytearray(rcvOtrMonData[0]['legs']), 40, 10+18, 20, 9, 0, 1, 0)
+    thumby.display.update()
+    time.sleep(1)
+    f = open("/Games/Tiny_Monster_Trainer/DataRcvd.log", "w")
+    f.write(" on Line 443 ish " + str(rcvOtrMonData) + " " + str(rcvOtrMonMoves))
+    f.close()
+except Exception as e:
+        f = open("/Games/Tiny_Monster_Trainer/crash46.log", "w")
+        f.write(str(e))
+        f.close()  
     #print(dataToSend)
+try:
+    del dataToSend
+    del dataToSend2
+    gc.collect()
+    putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
+except Exception as e:
+        f = open("/Games/Tiny_Monster_Trainer/crash76.log", "w")
+        f.write(str(e) + " on Line 466 ish ")
+        f.close()  
+    
+thingAquired("","Yay!","<3","", 1,0,0)
+    
