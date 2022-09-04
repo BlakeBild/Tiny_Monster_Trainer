@@ -43,10 +43,10 @@ def loadGame():
     return tempPlayer
 
 
-def loadGhost():
+def loadGhost(ghostFile):
     gc.collect()
     tempPlayer = Player()
-    f = open('/Games/Tiny_Monster_Trainer/Ghosts/OnionGhost.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Ghosts/'+ghostFile+'.ujson')
     bigGhostJson = ujson.load(f)
     tempPlayer.playerBlock = bigGhostJson[0]['player'].copy()
     for x in range(0, len(bigGhostJson[0]['monsterInfo'][0])):
@@ -64,6 +64,7 @@ def loadGhost():
         tempMon.attackList = tempMon.attackList.copy()
         tempPlayer.friends.append(tempMon)
         tempPlayer.friends = tempPlayer.friends.copy()
+    tempPlayer.lOrR = 0
     f.close()
     del bigGhostJson
     return tempPlayer
@@ -284,7 +285,7 @@ def attackOptionMenu(monInfo):
             
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
     #print("Hi, you are in a fight!")
-    myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with " + nmeMon.statBlock['name'] + "!")
+    myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with " + nmeMon.statBlock['name'] + "! Their trainer's level is " + str(npcTrainLevel) +"!" )
     currentSelect = 1
     tempSelect = currentSelect
     options = ["Info", "Atk", "Swap"] 
@@ -313,7 +314,7 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
                             playerMon.attackList[selectCheck].currentUses = playerMon.attackList[selectCheck].currentUses -1
                             if playerMon.attackList[selectCheck].currentUses < 0:
                                 playerMon.attackList[selectCheck].currentUses = 0
-                            return 1 
+                            return 
                         junk = afterAttackSelect(nmeMon, (len(nmeMon.attackList) -1), playerMon, npcTrainLevel, playerTrainLevel, 0) 
                         del junk
                     else:
@@ -326,7 +327,7 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
                     if playerMon.attackList[selectCheck].currentUses < 0:
                         playerMon.attackList[selectCheck].currentUses = 0
                     if nmeMon.statBlock['currentHealth'] <= 0:
-                        return 1 
+                        return  
             elif options[currentSelect] == "Info": 
                 tempPlayer = Player()
                 tempPlayer.friends.append(nmeMon)
@@ -344,53 +345,130 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
         thumby.display.update()
     return 0  
     
-
+'''
 def refresh(curMon):
     curMon.statBlock['currentHealth'] = curMon.statBlock['Health']
     for attacks in range(0, len(curMon.attackList)):
         curMon.attackList[attacks-1].currentUses = curMon.attackList[attacks-1].numUses
-        print(str(curMon['currentHealth']))
+        print(str(curMon['currentHealth']))'''
 
+
+def drawArrowsGhost(d, u): # x, y):
+    #arrowLR = [4,4,4,31,14,4] # 6 x 5
+    arrowUD = [8,24,63,24,8] # 5 x 6    # last three are: key, mirrorX, mirrorY
+
+    thumby.display.blit(bytearray(arrowUD), 66, 20, 5, 6, d, 0, 0)
+    thumby.display.blit(bytearray(arrowUD), 66, 3, 5, 6, u, 0, 1)
+
+
+def pickGhost():
+    import os
+    curSelect = 0
+    cancelCheck = 0
+    tempSelect = curSelect
+    bottomText = "Pick a Ghost"
+    files = os.listdir("/Games/Tiny_Monster_Trainer/Ghosts/")
+    for x in range(len(files)):
+        files[x] = files[x].replace('.ujson', '')
+    while cancelCheck != 1:
+        curSelect = showOptions(files, curSelect, bottomText)
+        drawArrowsGhost(0, 0)
+        if curSelect == 28 or curSelect == 29:
+            curSelect = tempSelect
+        if curSelect == 31:
+            curSelect = tempSelect
+            return files[curSelect] 
+        if curSelect == 30:
+            cancelCheck = 1
+            thumby.display.fill(0)
+            return ""
+        tempSelect = curSelect
+        thumby.display.update()
+
+
+def drawIntro(player, ghost):
+    thingAquired(player.playerBlock['name'], "Vs.", "Spooky", ghost.playerBlock['name'],0,1,1)
     
-
-myGuy = Player()
-myGuy = loadGame()
-ghost = Player()
-ghost = loadGhost()
-
-victory=0
-activeMon=0
-battle=1
-
-for x in range(0,len(myGuy.friends)):
-    myGuy.friends[x].statBlock['currentHealth'] = myGuy.friends[x].statBlock['Health']
-    for attacks in range(0, len(myGuy.friends[x].attackList)):
-        myGuy.friends[x].attackList[attacks-1].currentUses = myGuy.friends[x].attackList[attacks-1].numUses
-for x in range(0,len(ghost.friends)):
-    ghost.friends[x].statBlock['currentHealth'] = ghost.friends[x].statBlock['Health']
-    for attacks in range(0, len(ghost.friends[x].attackList)):
-        ghost.friends[x].attackList[attacks-1].currentUses = ghost.friends[x].attackList[attacks-1].numUses
-
-while(battle == 1):
-    victory = 0
+    t0 = 0
+    ct0 = time.ticks_ms()
+    x = 10 
+    y = 11
+    animateCount = 0
+    '''while(1):
+        t0 = 0
+        ct0 = time.ticks_ms()  '''
+    animateCount = 0
     thumby.display.fill(0)
-    victory = battleScreen(myGuy.friends[activeMon], ghost.friends[activeMon], myGuy.playerBlock['trainerLevel'], ghost.playerBlock['trainerLevel'])
-    autoSwitchMon(myGuy)
-    autoSwitchMon(ghost)
-    if myGuy.friends[activeMon].statBlock['currentHealth'] == 0:
-        battle = 0
-        loss(myGuy.friends[random.randint(0, len(myGuy.friends) - 1)])
-    if ghost.friends[activeMon].statBlock['currentHealth'] == 0:
-        battle = 0
-    if victory == 4:
-        showMonInfo(myGuy, 0, 2)
-        victory = 0
     thumby.display.update()
-    battleStartAnimation(0) 
-    if victory == 1:
-        battle = 0
+    time.sleep(1)
+    while(t0 - ct0 < 5000):
+        t0 = time.ticks_ms()
+        randoNumber = random.randint(-1,1)
+        randoNumber2 = random.randint(-1,1)
+        randoNumber3 = random.randint(-1,1)
+        thumby.display.fill(0)
+        if(t0 - ct0 > 2800):
+            thingAquired(player.playerBlock['name'], "Vs", "Spooky", ghost.playerBlock['name'],0,1,1)
+            thumby.display.blit(bytearray(player.sprite), x+randoNumber-8 , y+randoNumber2, 8, 8, -1, 1, 0)
+            thumby.display.blit(bytearray(ghost.sprite), 72-(x+randoNumber2) , y+randoNumber3, 8, 8, -1, ghost.lOrR, 0)
+        #if (t0%10==0):
+        animateCount = animateCount + 1 
+        thumby.display.drawFilledRectangle(-36+animateCount, 0, 36, 40, 1)
+        thumby.display.drawFilledRectangle(72-animateCount, 0, 36, 40, 1)
         
-if victory == 1:        
-    thingAquired("","You Win!","","",5,0,0)
-else:
-    thingAquired("","You Lost!","","",5,0,0)
+        thumby.display.update()
+        
+ghostFile = pickGhost()
+thumby.display.fill(0)
+thumby.display.update()
+#print(ghostFile)
+if ghostFile != "":
+    myGuy = Player()
+    myGuy = loadGame()
+    ghost = Player()
+    ghost = loadGhost(ghostFile)
+    
+    drawIntro(myGuy, ghost)
+    
+    victory=0
+    activeMon=0
+    battle=1
+    
+    
+    
+    for x in range(0,len(myGuy.friends)):
+        myGuy.friends[x].statBlock['currentHealth'] = myGuy.friends[x].statBlock['Health']
+        for attacks in range(0, len(myGuy.friends[x].attackList)):
+            myGuy.friends[x].attackList[attacks-1].currentUses = myGuy.friends[x].attackList[attacks-1].numUses
+    for x in range(0,len(ghost.friends)):
+        ghost.friends[x].statBlock['currentHealth'] = ghost.friends[x].statBlock['Health']
+        for attacks in range(0, len(ghost.friends[x].attackList)):
+            ghost.friends[x].attackList[attacks-1].currentUses = ghost.friends[x].attackList[attacks-1].numUses
+    
+    while(battle == 1):
+        victory = 0
+        thumby.display.fill(0)
+        victory = battleScreen(myGuy.friends[activeMon], ghost.friends[activeMon], myGuy.playerBlock['trainerLevel'], ghost.playerBlock['trainerLevel'])
+        autoSwitchMon(ghost)
+        autoSwitchMon(myGuy)
+
+        if myGuy.friends[activeMon].statBlock['currentHealth'] == 0:
+            battle = 0
+            #loss(myGuy.friends[random.randint(0, len(myGuy.friends) - 1)])
+        if ghost.friends[activeMon].statBlock['currentHealth'] == 0:
+            battle = 0
+            victory = 1
+        if victory == 4:
+            showMonInfo(myGuy, 0, 2)
+            victory = 0
+        thumby.display.update()
+        #battleStartAnimation(0) 
+        if victory == 1:
+            battle = 0
+            
+    if victory == 1:        
+        battleStartAnimation(0)
+        thingAquired("","You Win!","","",4,0,0)
+    else:
+        battleStartAnimation(0)
+        thingAquired("","You Lost!","","",4,0,0)
