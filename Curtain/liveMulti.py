@@ -356,7 +356,7 @@ def attackOptionMenu(monInfo):
         elif currentSelect == 28 or currentSelect == 29:
             currentSelect = tempSelect
 
-Def attackInfoSend(): # chnge this to send or receive attacks 
+def attackInfoSend(): # chnge this to send or receive attacks 
     while True:
         # Unless a button is pressed later, a blank message will be sent
         message = ""
@@ -377,7 +377,7 @@ Def attackInfoSend(): # chnge this to send or receive attacks
             if received != "":
                 lastReceivedMessage = received
         
-            
+'''            
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel, sOr):
     #print("Hi, you are in a fight!")
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with " + nmeMon.statBlock['name'] + "! Their trainer's level is " + str(npcTrainLevel) +"!" )
@@ -440,7 +440,9 @@ def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel, sOr):
         printMon(nmeMon.bodyBlock, 25, 1, 1)
         thumby.display.update()
     return 0  
-    
+'''
+
+
 '''
 def refresh(curMon):
     curMon.statBlock['currentHealth'] = curMon.statBlock['Health']
@@ -504,7 +506,7 @@ def drawIntro(player, ghost):
         randoNumber3 = random.randint(-1,1)
         thumby.display.fill(0)
         if(t0 - ct0 > 2800):
-            thingAquired(player.playerBlock['name'], "Vs", "Spooky", ghost.playerBlock['name'],0,1,1)
+            thingAquired(player.playerBlock['name'], "Vs", ghost.playerBlock['name'], "",0,1,1)
             thumby.display.blit(bytearray(player.sprite), x+randoNumber-8 , y+randoNumber2, 8, 8, -1, 1, 0)
             thumby.display.blit(bytearray(ghost.sprite), 72-(x+randoNumber2) , y+randoNumber3, 8, 8, -1, ghost.lOrR, 0)
         #if (t0%10==0):
@@ -515,7 +517,7 @@ def drawIntro(player, ghost):
         thumby.display.update()
  
  
- def sendCheckAndGetCheck(checkCheckNum):
+def sendCheckAndGetCheck(checkCheckNum):
     t0 = 0
     handshakeTimer = 0
     timerTrigger = 0
@@ -573,23 +575,35 @@ def multiPlayerAttack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, d
         damage = 1
     return damage
 
-def MultiPlayerBattleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel, sOr):
+def MultiPlayerBattleScreen(player, nmePlayer, sOr):
     #print("Hi, you are in a fight!")
-    myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with " + nmeMon.statBlock['name'] + "! Their trainer's level is " + str(npcTrainLevel) +"!" )
+    myScroller = TextForScroller(player.friends[0].statBlock['given_name'] + " has entered into battle with " + nmePlayer.friends[0].statBlock['given_name'] + "! Their trainer's level is " + str(nmePlayer.playerBlock['trainerLevel']) +"!" )
     currentSelect = 1
      
-    myData = [playerMon.statBlock['given_name'], "", 0]
-    oppData = [nmeMon.statBlock['given_name'], "", 0]
+    #myData = [player.friends[0].statBlock['given_name'], "", 0]
+    #oppData = [nmePlayer.friends[0].statBlock['given_name'], "", 0]
     tempSelect = currentSelect
     mySelectedAttack = ""
+    #nmeActiveMonName = ""
+    nmeActiveInfo = [{"sAndrKey" : "", "given_name" : nmePlayer.friends[0].statBlock['given_name'], "attackNameStr" : ""}]
     swapCheck = 0
     myMoveOutOfStam = 0
     oppMoveOutOfStam = 0
     options = ["Info", "Atk", "Swap"] 
+    nmeAttackRdy = 0
+    mySelectedAttackName = ""
+    mySelectedAttackNum = 0
+    myAttackRdy = 0
+    nmeAtkToUse = 0
     
-    while((playerMon.statBlock['currentHealth'] >= 1) and (nmeMon.statBlock['currentHealth'] >= 1)):
+    '''f = open("/Games/Tiny_Monster_Trainer/nmeActiveInfo2.log", "w")
+    f.write(str(nmeActiveInfo) + " on Line 599. ish " + str(nmePlayer.friends[0].attackList))
+    f.close() '''
+    
+    
+    while((player.friends[0].statBlock['currentHealth'] >= 1) and (nmePlayer.friends[0].statBlock['currentHealth'] >= 1)):
         thumby.display.fill(0)
-        oppData = sOrPlayerInfo(nmeMon.statBlock['given_name'], mySelectedAttack, swapCheck)
+        #oppData = sOrPlayerInfo(nmePlayer.friends[0].statBlock['given_name'], mySelectedAttack, swapCheck)
         
         myDmg = 0
         oppDmg = 0
@@ -602,97 +616,170 @@ def MultiPlayerBattleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel, 
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
         if currentSelect == 31: 
             currentSelect = tempSelect
-            if options[currentSelect] == "Atk": 
-                selectCheck = attackOptionMenu(playerMon.attackList)
+            if options[currentSelect] == "Atk" and myAttackRdy == 0: 
+                selectCheck = attackOptionMenu(player.friends[0].attackList)
                 if selectCheck < 30:
-                    mySelectedAttackName = playerMon.attackList[selectCheck]['name']
+                    mySelectedAttackName = player.friends[0].attackList[selectCheck].name
                     mySelectedAttackNum = selectCheck
+                    myAttackRdy = 1
             elif options[currentSelect] == "Info": 
                 tempPlayer = Player()
-                tempPlayer.friends.append(nmeMon)
-                tempPlayer.friends.append(playerMon)
+                tempPlayer.friends.append(nmePlayer.friends[0])
+                tempPlayer.friends.append(player.friends[0])
                 showMonInfo(tempPlayer, 0 , 1)
                 del tempPlayer
             elif options[currentSelect] == "Swap":
                 if swapCheck == 1:
                     pass #make something to say already swapped
-                tempCurrentMon = playerMon.statBlock['name']
+                tempCurrentMon = player.friends[0].statBlock['given_name']
                 showMonInfo(myGuy, 0, 2)
-                if tempCurrentMon != playerMon.statBlock['name']
+                if tempCurrentMon != player.friends[0].statBlock['given_name']:
                     swapCheck = 1
+                    #might need to do auto switch here
         if currentSelect == 30 or currentSelect == 28 or currentSelect == 29 :
             currentSelect = tempSelect    
-        printMon(playerMon.bodyBlock, 0, 1, 0)
-        printMon(nmeMon.bodyBlock, 25, 1, 1)
+        
+        #need to send and receive if active monster changed
+        #try:
+        
+        nmeActiveInfo = sAndrCheckActiveMon(player.friends[0].statBlock['given_name'], mySelectedAttackName, nmeActiveInfo)
+        #except Exception as e:
+        #    print(e)
+        #    f = open("/Games/Tiny_Monster_Trainer/liveMulti2.log", "w")
+        #    f.write(str(e) + " on Line 642. ish " + str(nmeActiveInfo) )
+        #    f.close() 
+        
+        #try:
+        #    f = open("/Games/Tiny_Monster_Trainer/nmeActiveInfo.log", "w")
+        #    f.write(str(nmeActiveInfo) + " on Line 647. ish " + str(nmeActiveInfo) )
+        #    f.close() 
+        #except:
+        #    pass
+        
+        #try:
+        if nmeActiveInfo != None:
+            if nmeActiveInfo[0]['given_name'] != nmePlayer.friends[0].statBlock['given_name']:
+                for x in range(0, len(nmePlayer.friends)): 
+                    if nmePlayer.friends[x].statBlock['given_name'] == nmeActiveInfo[0]['given_name']:
+                        tempName = nmePlayer.friends[0].statBlock['given_name']
+                        switchActiveMon(nmePlayer, nmePlayer.friends[0], nmePlayer.friends[x], x) #y'know i think some of this looks redundant now? but it works
+                        nmeAttackRdy = 0
+                        myAttackRdy = 0
+                        thingAquired(nmePlayer.playerBlock['name'], "told", tempName, "to retreat!", 1,0,0)
+                        thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)
+        #except Exception as e:
+        #    print(e)
+        #    f = open("/Games/Tiny_Monster_Trainer/liveMulti3.log", "w")
+        #    f.write(str(e) + " on Line 657. ish " )
+        #    f.close() 
+        
+        #if nmeActiveMon != nmePlayer.friends[0].statBlock['given_name']
+            #set up a thing to cycle through until the name matches once found return the new active mon
+                
+            
+        #try:
+        if nmeActiveInfo != None:
+            if nmeAttackRdy == 0:
+                if nmeActiveInfo[0]['attackNameStr'] != "":
+                    for x in range(0, len(nmePlayer.friends[0].attackList)): 
+                        if nmePlayer.friends[0].attackList[x].name == nmeActiveInfo[0]['attackNameStr']:
+                            #tempName = nmePlayer.friends[0].attackList[x].name
+                            thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)#Set switch check to 1 in case I try to change mon after I picked an attack, actually should make it so they have to wait after attack is made
+                            thingAquired(nmePlayer.friends[0].statBlock['given_name'], "uses", nmePlayer.friends[0].attackList[x].name, 1,0,0)
+                            nmeAtkToUse = x 
+                            nmeAttackRdy = 1
+        #except Exception as e:
+        #    print(e)
+        #    f = open("/Games/Tiny_Monster_Trainer/liveMulti4.log", "w")
+        #    f.write(str(e) + " on Line 675. ish " )
+        #    f.close() 
+        
+
+        printMon(player.friends[0].bodyBlock, 0, 1, 0)
+        printMon(nmePlayer.friends[0].bodyBlock, 25, 1, 1)
         thumby.display.update()
         
-        ##need to do a loop to find the opp selected attack from nmeMon.attackList[]
+        ##need to do a loop to find the opp selected attack from nmePlayer.friends[0].attackList[]
+        '''
+        if sOr == 1 and receivedAttack[0] == 0:
+            receivedAttack = sendAndRecAttack()
         
-        if sOr == 1 and both attacks are ready:
-            myDodge = multiPlayerDodge(playerMon, nmeMon, playerMon.attackList[mySelectedAttackNum], playerTrainLevel, npcTrainLevel) 
-            oppDodge = multiPlayerDodge(playerMon, nmeMon, mySelectedAttack, playerTrainLevel, npcTrainLevel)
+        
+        if sOr == 1 and myAttackRdy == 1 and nmeAttackRdy == 1:
+            myDodge = multiPlayerDodge(player.friends[0], nmePlayer.friends[0], player.friends[0].attackList[mySelectedAttackNum], player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel']) 
+            oppDodge = multiPlayerDodge(player.friends[0], nmePlayer.friends[0], mySelectedAttack, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])
             if myDodge > 0:
-                myDmg = multiPlayerAttack(playerMon, nmeMon, mySelectedAttack, playerTrainLevel, npcTrainLevel)
+                myDmg = multiPlayerAttack(player.friends[0], nmePlayer.friends[0], mySelectedAttack, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])
                 myDmg = myDmg /  myDodge
             if oppDodge > 0: #  "what's oppDodge? Not much, what's up with you?"
-                oppDmg = multiPlayerAttack(nmeMon, playerMon, mySelectedAttack, npcTrainLevel, playerTrainLevel)
+                oppDmg = multiPlayerAttack(nmePlayer.friends[0], player.friends[0], mySelectedAttack, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
                 oppDmg = oppDmg / oppDodge
             agileTie = 0
-            if (playerMon.statBlock['Agility'] + playerTrainLevel) == (nmeMon.statBlock['Agility'] + npcTrainLevel):
+            if (player.friends[0].statBlock['Agility'] + player.playerBlock['trainerLevel']) == (nmePlayer.friends[0].statBlock['Agility'] + nmePlayer.playerBlock['trainerLevel']):
                     agileTie = random.randint(-2,1)
         
             
-            if (playerMon.statBlock['Agility'] + playerTrainLevel + agileTie) >= (nmeMon.statBlock['Agility'] + npcTrainLevel):
+            if (player.friends[0].statBlock['Agility'] + player.playerBlock['trainerLevel'] + agileTie) >= (nmePlayer.friends[0].statBlock['Agility'] + nmePlayer.playerBlock['trainerLevel']):
                 whoWentFirst = 1
-                if playerMon.attackList[selectCheck].currentUses <= 0:
-                    playerMon.statBlock['currentHealth'] = math.floor(playerMon.statBlock['currentHealth'] * 0.7)
+                if player.friends[0].attackList[selectCheck].currentUses <= 0:
+                    player.friends[0].statBlock['currentHealth'] = math.floor(player.friends[0].statBlock['currentHealth'] * 0.7)
                     myMoveOutOfStam = 1
-                playerMon.attackList[mySelectedAttackNum].currentUses = playerMon.attackList[mySelectedAttackNum].currentUses -1                            
-                if playerMon.attackList[selectCheck].currentUses < 0:
-                    playerMon.attackList[selectCheck].currentUses = 0
-                if playerMon.statBlock['currentHealth'] > 0:
-                    nmeMon.statBlock['currentHealth'] = playerMon.statBlock['currentHealth'] - myDmg 
-                    if nmeMon.statBlock['currentHealth'] > 0:
-                        if nmeMon.attackList[   -   ].currentUses <= 0:
-                            nmeMon.statBlock['currentHealth'] = math.floor(nmeMon.statBlock['currentHealth'] * 0.7)
+                player.friends[0].attackList[mySelectedAttackNum].currentUses = player.friends[0].attackList[mySelectedAttackNum].currentUses -1                            
+                if player.friends[0].attackList[selectCheck].currentUses < 0:
+                    player.friends[0].attackList[selectCheck].currentUses = 0
+                if player.friends[0].statBlock['currentHealth'] > 0:
+                    nmePlayer.friends[0].statBlock['currentHealth'] = player.friends[0].statBlock['currentHealth'] - myDmg 
+                    if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+                        if nmePlayer.friends[0].attackList[   -   ].currentUses <= 0:
+                            nmePlayer.friends[0].statBlock['currentHealth'] = math.floor(nmePlayer.friends[0].statBlock['currentHealth'] * 0.7)
                             OppMoveOutOfStam = 1
-                        if nmeMon.statBlock['currentHealth'] > 0:
+                        if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
                             oppMoveOutOfStam = 1
-                        nmeMon.attackList[   -   ].currentUses = nmeMon.attackList[   -   ].currentUses -1 
-                        if nmeMon.attackList[selectCheck].currentUses < 0:
-                            nmeMon.attackList[selectCheck].currentUses = 0
-                        if nmeMon.statBlock['currentHealth'] > 0:
-                            playerMon.statBlock['currentHealth'] = playerMon.statBlock['currentHealth'] - oppDmg 
+                        nmePlayer.friends[0].attackList[   -   ].currentUses = nmePlayer.friends[0].attackList[   -   ].currentUses -1 
+                        if nmePlayer.friends[0].attackList[selectCheck].currentUses < 0:
+                            nmePlayer.friends[0].attackList[selectCheck].currentUses = 0
+                        if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+                            player.friends[0].statBlock['currentHealth'] = player.friends[0].statBlock['currentHealth'] - oppDmg 
             else:
                 whoWentFirst = 0
-                if nmeMon.statBlock['currentHealth'] > 0:
-                    if nmeMon.attackList[   -   ].currentUses <= 0:
-                        nmeMon.statBlock['currentHealth'] = math.floor(nmeMon.statBlock['currentHealth'] * 0.7)
+                if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+                    if nmePlayer.friends[0].attackList[   -   ].currentUses <= 0:
+                        nmePlayer.friends[0].statBlock['currentHealth'] = math.floor(nmePlayer.friends[0].statBlock['currentHealth'] * 0.7)
                         OppMoveOutOfStam = 1
-                if nmeMon.statBlock['currentHealth'] > 0:
+                if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
                     oppMoveOutOfStam = 1
-                nmeMon.attackList[   -   ].currentUses = nmeMon.attackList[   -   ].currentUses -1 
-                if nmeMon.attackList[selectCheck].currentUses < 0:
-                    nmeMon.attackList[selectCheck].currentUses = 0
-                if nmeMon.statBlock['currentHealth'] > 0:
-                    playerMon.statBlock['currentHealth'] = playerMon.statBlock['currentHealth'] - oppDmg 
-                    if playerMon.statBlock['currentHealth'] > 0:
-                        if playerMon.attackList[selectCheck].currentUses <= 0:
-                            playerMon.statBlock['currentHealth'] = math.floor(playerMon.statBlock['currentHealth'] * 0.7)
+                nmePlayer.friends[0].attackList[   -   ].currentUses = nmePlayer.friends[0].attackList[   -   ].currentUses -1 
+                if nmePlayer.friends[0].attackList[selectCheck].currentUses < 0:
+                    nmePlayer.friends[0].attackList[selectCheck].currentUses = 0
+                if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+                    player.friends[0].statBlock['currentHealth'] = player.friends[0].statBlock['currentHealth'] - oppDmg 
+                    if player.friends[0].statBlock['currentHealth'] > 0:
+                        if player.friends[0].attackList[selectCheck].currentUses <= 0:
+                            player.friends[0].statBlock['currentHealth'] = math.floor(player.friends[0].statBlock['currentHealth'] * 0.7)
                             myMoveOutOfStam = 1
-                        playerMon.attackList[mySelectedAttackNum].currentUses = playerMon.attackList[mySelectedAttackNum].currentUses -1                            
-                        if playerMon.attackList[selectCheck].currentUses < 0:
-                            playerMon.attackList[selectCheck].currentUses = 0
-                        if playerMon.statBlock['currentHealth'] > 0:
-                            nmeMon.statBlock['currentHealth'] = playerMon.statBlock['currentHealth'] - myDmg 
+                        player.friends[0].attackList[mySelectedAttackNum].currentUses = player.friends[0].attackList[mySelectedAttackNum].currentUses -1                            
+                        if player.friends[0].attackList[selectCheck].currentUses < 0:
+                            player.friends[0].attackList[selectCheck].currentUses = 0
+                        if player.friends[0].statBlock['currentHealth'] > 0:
+                            nmePlayer.friends[0].statBlock['currentHealth'] = player.friends[0].statBlock['currentHealth'] - myDmg 
                         
                         
                     
             #need to send attack results then animate the attack
             
-            playerMon.statBlock['currentHealth'] =
-                
-                
+            battleKey = 0
+            attackResults = [nmePlayer.friends[0].statBlock['currentHealth'], oppMoveOutOfStam, player.friends[0].statBlock['currentHealth'], myMoveOutOfStam, battleKey] ]
+            sAndrAfterDmg(attackResults) #need to put a loop in sAndrAfterDmg
+            
+            
+        
+            
+        #need to do else for if sOr = 0
+        if sOr == 0:
+            attackResults = sAndrAfterDmg # just send a code like 22 or something
+            
+            
+        #anime battle if attack happened        
                 
                 
                 #################################################  
@@ -728,11 +815,42 @@ def MultiPlayerBattleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel, 
                 
                 return 4 
             else: 
-                pass
+                pass'''
 
-    return 0
+    #return 0
 
-def sAndrPlayerInfo(monsterStuff, attackName, switchCheck) ###########
+
+'''def sAndrActiveAtk(atkName):
+    thingToSend = [{'sAndrKey' : "test2", 'attackName' : atkName}]
+    theirName = ""
+    thumby.link.send(ujson.dumps(thingToSend).encode())
+    received = thumby.link.receive()
+
+    if received != None:
+        theirStuff = ujson.loads(received.decode())
+        if theirStuff[0]['sAndrKey'] == "test2":        #not sure yet if [0] is needed
+            theirName = theirStuff[0]['attackName'] 
+            return theirName
+        else:
+            pass '''
+
+
+def sAndrCheckActiveMon(playerCurMonGName, activeAttack, theirPrevInfo):
+    thingToSend = [{"sAndrKey" : "test1", "given_name" : str(playerCurMonGName), "attackNameStr" : str(activeAttack)}]
+    #theirName = ""
+    #print(thingToSend)
+    thumby.link.send(ujson.dumps(thingToSend).encode())
+    received = thumby.link.receive()
+
+    if received != None:
+        theirStuff = ujson.loads(received.decode())
+        if theirStuff[0]['sAndrKey'] == "test1":        #not sure yet if [0] is needed
+            #theirName = theirStuff[0]['given_name'] 
+            return theirStuff
+    else:
+        return theirPrevInfo 
+
+def sAndrPlayerInfo(monsterStuff, attackName, switchCheck): ###########
         
     myStuff = [monsterStuff.statBlock['given_name'], attack, switchCheck]
     thumby.link.send(ujson.dumps(stuffToSend).encode())
@@ -742,11 +860,25 @@ def sAndrPlayerInfo(monsterStuff, attackName, switchCheck) ###########
         theirStuff = ujson.loads(received.decode())
     return theirStuff
 
+
+def sAndrAfterDmg(resultInfoList): ###########
+        
+    thumby.link.send(ujson.dumps(resultInfoList).encode())
+    received = thumby.link.receive()
+
+    if received != None:
+        if received[4] == 22:
+            theirStuff = ujson.loads(received.decode())
+            return theirStuff
+        else:
+            pass #might need to return a junk value or something, dunno yet
+
         
 ghostFile = pickGhost()
 thumby.display.fill(0)
 thumby.display.update()
 sendOrReceive = findWhoSendsFirst()
+#sendOrReceive = 1
 #print(ghostFile)
 if ghostFile != "":
     myGuy = Player()
@@ -773,7 +905,13 @@ if ghostFile != "":
     while(battle == 1):
         victory = 0
         thumby.display.fill(0)
-        victory = battleScreen(myGuy.friends[activeMon], ghost.friends[activeMon], myGuy.playerBlock['trainerLevel'], ghost.playerBlock['trainerLevel'], sendOrReceive)
+        try:
+            victory = MultiPlayerBattleScreen(myGuy, ghost, sendOrReceive)
+        except Exception as e:
+            print(e)
+            f = open("/Games/Tiny_Monster_Trainer/liveMulti1.log", "w")
+            f.write(str(e) + " on Line 837. ish " )
+            f.close() 
         autoSwitchMon(ghost)
         autoSwitchMon(myGuy)
 
