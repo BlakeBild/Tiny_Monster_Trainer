@@ -479,7 +479,7 @@ f.write(str(e) + " on Line 333 ish" + str(rcvCheck2))
 f.close()'''  
         
 time.sleep(1)        
-
+del dataToSend
 #thingAquired("sendOrReceive1", " = ", str(sendOrReceive1), "", 2,0,0)
 try:
     thingAquired("about to send", " ", "Moves", "", 2,0,0)    
@@ -495,7 +495,7 @@ except Exception as e:
 #print(checkCheck[0], " ", rcvCheck['key12'])
 #print(sendOrReceive)
 thingAquired("Hi!", yourGuyJson['name'] , "", "", 0, 0, 0)
-try:
+'''try:
     thingAquired("Hi!", yourGuyJson['name'] , rcvOtrMonData[0]['name'], rcvOtrMonMoves[0]['name'], 1, 0, 0)
     thumby.display.fill(0)
     thumby.display.blit(bytearray(dataToSend[0]['head']), 10, 10, 20, 9, 0, 0, 0)
@@ -506,16 +506,16 @@ try:
     thumby.display.blit(bytearray(rcvOtrMonData[0]['legs']), 40, 10+18, 20, 9, 0, 1, 0)
     thumby.display.update()
     time.sleep(1)
-    f = open("/Games/Tiny_Monster_Trainer/DataRcvd.log", "w")
-    f.write(" on Line 443 ish " + str(rcvOtrMonData) + " " + str(rcvOtrMonMoves))
-    f.close()
+    #f = open("/Games/Tiny_Monster_Trainer/DataRcvd.log", "w")
+    #f.write(" on Line 443 ish " + str(rcvOtrMonData) + " " + str(rcvOtrMonMoves))
+    #f.close()
 except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash46.log", "w")
         f.write(str(e))
         f.close()  
-    #print(dataToSend)
+    #print(dataToSend)'''
 try:
-    del dataToSend
+    #del dataToSend
     del dataToSend2
     gc.collect()
     putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
@@ -525,4 +525,3 @@ except Exception as e:
         f.close()  
     
 thingAquired("","Yay!","<3","", 1,0,0)
-    
