@@ -165,6 +165,12 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
   
   
   
+ 
+  
+Updates as of 11/1/22:   
+I've added live vs battes, but it's super janky right now. To get it to work you need to make sure you have a ghost folder per the update as of 9/4/22, then you need to make sure you have all the .py files that are in the /Curtain folder. update the Tiny_Monster_Trainer.py to the one above. then to get it to work you need to open tiny monster trainer on the thumby. have both thumbys select "multiplay" in the game mode menu, let it do its thing. Then go into game mode menu and select Live. After that select the name of the trainer you are fighting. Then it will load into a multi player battle. It's going to pop up with a bunch of debugging stuff and it won't animate the battle. but you can at least hit eachother. only one of the thumbys is keeping tack of the battle HP so it will show the wrong HP on one of the thumby's between attacks, but it should show the correct HP on the scroller at the bottom of the screen, after the attack happens. Let me know if you have any questions. I'll be cleaning this mess up over the next few weeks.   
+
+  
 Updates as of 9/4/22:   
   
 Offline ghost battles are a thing now! I'm not going to add it to the arcade yet because I want to make sure that I didn't miss any bugs & I want to try to add legit multiplay first.  
