@@ -537,41 +537,42 @@ def MultiPlayerBattleScreen(player, nmePlayer, sOr):
         #    f.close() 
         #need to send and receive if active monster changed
 
-        #try:        
-        if nmeActiveInfo != None:
-            if nmeActiveInfo[0]['given_name'] != nmePlayer.friends[0].statBlock['given_name']:
-                for x in range(0, len(nmePlayer.friends)): 
-                    if nmePlayer.friends[x].statBlock['given_name'] == nmeActiveInfo[0]['given_name']:
-                        tempName = nmePlayer.friends[0].statBlock['given_name']
-                        switchActiveMon(nmePlayer, nmePlayer.friends[0], nmePlayer.friends[x], x) #y'know i think some of this looks redundant now? but it works
-                        nmeAttackRdy = 0
-                        myAttackRdy = 0
-                        thingAquired(nmePlayer.playerBlock['name'], "told", tempName, "to retreat!", 1,0,0)
-                        thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)
-        #except Exception as e:
-        #    print(e)
-        #    f = open("/Games/Tiny_Monster_Trainer/liveMulti56.log", "w")
-        #    f.write(str(e) + " on Line 679. ish " )
-        #    f.close() 
+        try:        
+            if nmeActiveInfo != None:
+                if nmeActiveInfo[0]['given_name'] != nmePlayer.friends[0].statBlock['given_name'] or (nmeActiveInfo[0]['given_name'] != None and nmeActiveInfo[0]['given_name'] != nmePlayer.friends[0].statBlock['given_name']):
+                    for x in range(0, len(nmePlayer.friends)): 
+                        if nmePlayer.friends[x].statBlock['given_name'] == nmeActiveInfo[0]['given_name']:
+                            tempName = nmePlayer.friends[0].statBlock['given_name']
+                            switchActiveMon(nmePlayer, nmePlayer.friends[0], nmePlayer.friends[x], x) #y'know i think some of this looks redundant now? but it works
+                            nmeAttackRdy = 0
+                            myAttackRdy = 0
+                            thingAquired(nmePlayer.playerBlock['name'], "told", tempName, "to retreat!", 1,0,0)
+                            thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)
+        except Exception as e:
+            print(e)
+            f = open("/Games/Tiny_Monster_Trainer/liveMulti56.log", "w")
+            f.write(str(e) + " on Line 679. ish " )
+            f.close() 
                 
             
-        #try:
-        if nmeActiveInfo != None:
-            if nmeAttackRdy == 0:
-                if nmeActiveInfo[0]['attackNameStr'] != "":
-                    for x in range(0, len(nmePlayer.friends[0].attackList)): 
-                        if nmePlayer.friends[0].attackList[x].name == nmeActiveInfo[0]['attackNameStr']:
-                            tempName = nmePlayer.friends[0].attackList[x].name
-                            #thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)#Set switch check to 1 in case I try to change mon after I picked an attack, actually should make it so they have to wait after attack is made
-                            #thingAquired(nmePlayer.friends[0].statBlock['given_name'], "uses", nmePlayer.friends[0].attackList[x].name, "", 1,0,0)
-                            nmeAtkToUse = x 
-                            nmeAttackRdy = 1
-            
-        #except Exception as e:
-        #    print(e)
-        #    f = open("/Games/Tiny_Monster_Trainer/liveMulti4.log", "w")
-        #    f.write(str(e) + " on Line 675. ish " )
-        #    f.close() 
+        try:
+            if nmeActiveInfo != None:
+                if nmeAttackRdy == 0:
+                    if nmeActiveInfo[0]['attackNameStr'] != "" or (nmeActiveInfo[0]['attackNameStr'] != None and nmeActiveInfo[0]['attackNameStr'] != "") :
+                        for x in range(0, len(nmePlayer.friends[0].attackList)): 
+                            if nmePlayer.friends[0].attackList[x].name == nmeActiveInfo[0]['attackNameStr']:
+                                tempName = nmePlayer.friends[0].attackList[x].name
+                                #thingAquired(nmePlayer.playerBlock['name'], "told", nmePlayer.friends[0].statBlock['given_name'], "to attack!", 1,0,0)#Set switch check to 1 in case I try to change mon after I picked an attack, actually should make it so they have to wait after attack is made
+                                #thingAquired(nmePlayer.friends[0].statBlock['given_name'], "uses", nmePlayer.friends[0].attackList[x].name, "", 1,0,0)
+                                nmeAtkToUse = x 
+                                nmeAttackRdy = 1
+                    else:
+                        nmeAttackRdy = 0
+        except Exception as e:
+            print(e)
+            f = open("/Games/Tiny_Monster_Trainer/liveMulti4.log", "w")
+            f.write(str(e) + " on Line 675. ish " )
+            f.close() 
         
         nmeActiveInfo = sAndrCheckActiveMon(player.friends[0].statBlock['given_name'], mySelectedAttackName, nmeActiveInfo, ("test"+str(myAttackRdy)))
         if nmeActiveInfo != None:
@@ -662,8 +663,8 @@ def MultiPlayerBattleScreen(player, nmePlayer, sOr):
                 thingAquired("in sor 1", "while", str(loopCount), attackResultsSend[0]['sAndrKey'], 0,0,0)
                 loopCount = loopCount + 1
             if attackResultsSend[0]['sAndrKey'] == "test5" or attackResultsSend[0]['sAndrKey'] == "test6" :
-                for x in range(0,100):
-                    attackResultsSend = sAndrAfterDmg(attackResultsSend)
+                for x in range(0,15):
+                    attackResultsSend = sAndrAfterDmg(attackResultsKeep)
                     thingAquired("in sor 1", "for", str(x), attackResultsSend[0]['sAndrKey'] + " " + str(attackResultsSend[0]['nmeMonHP']) + " " + str(attackResultsSend[0]['myMonHP']), 0,0,0)
                 #time.sleep(1)
             del attackResultsSend
@@ -702,7 +703,7 @@ def MultiPlayerBattleScreen(player, nmePlayer, sOr):
                 thingAquired("in sor 0", "while", str(loopCount), attackResultsKeep[0]['sAndrKey'], 0,0,0) 
                 loopCount = loopCount + 1 
             if attackResultsKeep[0]['sAndrKey'] == "test5" or attackResultsKeep[0]['sAndrKey'] == "test6" :
-                for x in range(0,100):
+                for x in range(0,15):
                     attackResultsKeep = sAndrAfterDmg(attackResultsKeep)
                     thingAquired("in sor 0", "for", str(x), attackResultsKeep[0]['sAndrKey'] + " " + str(attackResultsKeep[0]['nmeMonHP']) + " " + str(attackResultsKeep[0]['myMonHP']), 0,0,0)
                 #time.sleep(1)
@@ -754,7 +755,8 @@ def MultiPlayerBattleScreen(player, nmePlayer, sOr):
         
           
         # need to animate battle if attack happened        
-                
+        
+    
                 
         #thingAquired("at end", "of", "while", "", 0,0,0)
     thingAquired("at end", "of", "function", "", 5,0,0)
