@@ -56,7 +56,7 @@ def getKeyList(whatList=0):
 
 
 def waitingForResponse(loadingStr, whatDoing):                
-    thingAquired(whatDoing, "", "othr trainer!", loadingStr,0,0,0)
+    thingAquired(whatDoing, "to other", "trainer!", loadingStr,0,0,0)
     loadingStr = loadingStr + "."
     if loadingStr == "...":
         loadingStr = ""
@@ -226,7 +226,7 @@ def sendOrReceiveGuy(sOr):
                     rcvCheckPlayer = ujson.loads(received.decode())
                     if rcvCheckPlayer['key0'] != 1:
                         rcvCheckPlayer['key0'] = 0
-                        print("Rcv check did not = 1, in while == 0")
+                        #print("Rcv check did not = 1, in while == 0")
         if sOr == 0:
             while(rcvCheckPlayer['key0'] == 0):
                 loadingStr = waitingForResponse(loadingStr, str(z) + " Receiving")
@@ -274,13 +274,13 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
     sendCheck = {'key0' : 0}
     dataBeingRcvd = [{}]
     xSame = 0
+    loadingStr = ""
     
+    time.sleep(.1) #11*3*22
     for c in range(0, (checkCheckOther[0])):
         sendCheck['key' + str(c)] =  0
-        thingAquired("sendCheck", "key" + str(c) + " = ", str(sendCheck['key' + str(c)]), "",0,0,0)
+        #thingAquired("sendCheck", "key" + str(c) + " = ", str(sendCheck['key' + str(c)]), "",0,0,0)
     for z in range(0,2):
-        #x = 0 #?
-        #y = 0 #?
         if sendOrReceive == 1:
             for x in range (0, ((checkCheck[0])/numOfData)): 
                 for y in range (0, numOfData):
@@ -297,17 +297,12 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                         if received1 != None:
                             try:
                                 dictToRcv = ujson.loads(received1.decode())
-                                thingAquired(str(x) + " " + str(y) + " " + str(y+(x*numOfData)) + " send.",  str(dictToSend['key']) + " " + str(dictToSend['key2']) + " " + str(dictToRcv['key2']) , "x*y,k,k2,sk2", "rcvChk" + str(y+(x*numOfData)) + " " + str(rcvCheckNum['key' + str(y+(x*numOfData))]), 0, 0, 0)                                            
+                                loadingStr = waitingForResponse(loadingStr, "Speaking")
                                 if dictToRcv['key2'] != dictToSend['key2']: #if key2 isn't different, don't advance rcvCheckNum so that it'll keep trying to send the same information to the other thumby
                                     rcvCheckNum['key'+str(y+(x*numOfData))] = 1 #if key2 is different advance change it to once so that the while ends and the x/y loops can adv
-                                    thingAquired(str(x) + " " + str(y) + " " + str(y+(x*numOfData)) + " send",  str(dictToSend['key']) + " " + str(dictToSend['key2']) + "v" + str(dictToRcv['key2']) , "x*y,k,k2,sk2", "rcvChk" + str(y+(x*numOfData)) + " " + str(rcvCheckNum['key' + str(y+(x*numOfData))]), 0, 0, 0)                                            
-                                    #time.sleep(.5)
-                                #thingAquired(str(x) + " " + str(y) + " " + str(y+(x*numOfData)) + " send",  str(dictToSend['key']) + " " + str(dictToSend['key2']) + "v" + str(dictToRcv['key2']) , "x*y,k,k2,sk2", "rcvChk" + str(y+(x*numOfData)) + " " + str(rcvCheckNum['key' + str(y+(x*numOfData))]), 0, 0, 0)                                            
+                                    loadingStr = waitingForResponse(loadingStr, "Speaking")
                             except:
                                 pass
-                y=0
-            x=0
-        # rcvCheckNum['key' + str(y+(x*numOfData))] is staying at 0 after x goes to 1, not 
         sendLoopExit = math.ceil((checkCheckOther[0])/numOfData)
         if sendOrReceive == 0:
             for x in range (0, ((checkCheckOther[0])/numOfData)): #+1? -1?
@@ -322,37 +317,29 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                         if received2 != None: 
                             try:   #dictToRcv['key2'] == dictToSend['key2'] == the same, y no change?
                                 dictToRcv = ujson.loads(received2.decode())
-                                thingAquired("rcv. " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + " " + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
+                                #thingAquired("rcv. " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + " " + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
+                                #time.sleep(.01)
+                                loadingStr = waitingForResponse(loadingStr, "Listening")
                                 if dictToRcv['key2'] == dictToSend['key2']:
                                     if x > 0 and xSame != x+y:                                    
                                         dataBeingRcvd.append({})
                                         xSame = x+y
                                     dataBeingRcvd[x][keyList[dictToRcv['key']]] = dictToRcv[keyList[dictToRcv['key']]] #original line: dataBeingRcvd[x][keyList[dictToRcv['key']]] = dictToRcv[keyList[y]]
                                     sendCheck['key' + str(y+(x*numOfData))] = 1
-                                    thingAquired("rcv " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + "v" + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
-                                    adjustment = len(dataBeingRcvd)
+                                    loadingStr = waitingForResponse(loadingStr, "Listening")
                                     for m in range(0, len(dataBeingRcvd)):
                                         try:
                                             if dataBeingRcvd[m] == {}:
                                                 dataBeingRcvd.pop(m)
                                         except:
                                             pass
-                                    #time.sleep(.5)
-                                #thingAquired("rcv " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + "v" + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
                             except Exception as e:
                                 f = open("/Games/Tiny_Monster_Trainer/Rcv2.log", "w")
                                 f.write(str(e) + " on Line 323 ish " + str(dictToRcv) + " " + str(dictToRcv['key']) + " " + str(dictToRcv['key2']))
                                 f.close() 
-                #maybe try this one more time? 8-30-22
                 if y == (numOfData - 1) and x == (sendLoopExit - 1):
                     dictToSend['key2'] = (y+(x*numOfData)+1)
                     thumby.link.send(ujson.dumps(dictToSend).encode())
-                    #thingAquired("in end of","y if","","",0,0,0)
-                    #time.sleep(1)
-                #thingAquired("out of y","","","",0,0,0)
-                #time.sleep(.1)
-                y=0
-            x=0
         if sendOrReceive == 0:
             sendOrReceive = 1
         else:
@@ -420,7 +407,7 @@ def saveGhost(ghostInfo):
 
 
 
-thingAquired("about to send", " ", "Monsters", "", 2,0,0)    
+thingAquired("about to send", " ", "Monsters", "", 1,0,0)    
 checkCheck1 = bytearray([0]) 
 checkCheck1 = getNumberOfKeyChecks(0, 14)
 rcvCheck1 = {'key0' : 0} 
@@ -460,24 +447,24 @@ del dataToSend
 time.sleep(1)
 checkCheck2 = bytearray([0]) 
 checkCheck2 = getNumberOfKeyChecksMoves(0, 6)
-thingAquired("checkCheck2", " = ", str(checkCheck2[0]), "", 2,0,0) 
+thingAquired("checkCheck2", " = ", str(checkCheck2[0]), "", 1,0,0) 
 
 rcvCheck2 = {'key0' : 0} 
 rcvCheck2 = getNumberOfKeyChecksMoves(1, 6)
-thingAquired("rcvCheck2", " = ", str(rcvCheck2['key0']), "", 2,0,0)
+thingAquired("rcvCheck2", " = ", str(rcvCheck2['key0']), "", 1,0,0)
 
 dataToSend2 =  chopUpMovesToSend()  
 #thingAquired("dataToSend[0]['name']", " = ", dataToSend[0]['name'], "", 2,0,0)
 time.sleep(1)
 
 checkCheckOther2 = sendCheckAndGetCheck(checkCheck2)
-thingAquired("checkCheckOther2", " = ", str(checkCheckOther2[0]), "", 2,0,0) 
+thingAquired("checkCheckOther2", " = ", str(checkCheckOther2[0]), "", 1,0,0) 
 time.sleep(1)        
 
 
 #thingAquired("sendOrReceive1", " = ", str(sendOrReceive1), "", 2,0,0)
 try:
-    thingAquired("about to send", " ", "Moves", "", 2,0,0)    
+    thingAquired("about to send", " ", "Moves", "", 1,0,0)    
     rcvOtrMonMoves = sendAndReceive(dataToSend2, checkCheck2, checkCheckOther2, sendOrReceive2, rcvCheck2, 6, 2)
 except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
