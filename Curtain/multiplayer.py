@@ -7,8 +7,8 @@ import random
 import ujson
 import sys 
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
-from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
-from funcLib import thingAquired, battleStartAnimation, printMon, obj_to_dict, save, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, switchActiveMon, showMonInfo
+from classLib import Player, Monster, TextForScroller, AttackMove
+from funcLib import thingAquired, obj_to_dict
 
 
 def loadGame():
@@ -440,9 +440,6 @@ yourGuyJson = {}
 yourGuyJson = sendOrReceiveGuy(sendOrReceive2)    
 thingAquired("Hi!!", yourGuyJson['name'] , "", "", 0, 0, 0)
 
-
-
-
 checkCheckOther1 = sendCheckAndGetCheck(checkCheck1)
  
 try:
@@ -453,33 +450,31 @@ except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash48.log", "w")
         f.write(str(e) + " on Line 307 ish")
         f.close()  
-    
+del checkCheck1
+del checkCheckOther1
+del rcvCheck1
+del dataToSend    
+
 
 ### v- sending moves -v
-
 time.sleep(1)
 checkCheck2 = bytearray([0]) 
 checkCheck2 = getNumberOfKeyChecksMoves(0, 6)
 thingAquired("checkCheck2", " = ", str(checkCheck2[0]), "", 2,0,0) 
+
 rcvCheck2 = {'key0' : 0} 
 rcvCheck2 = getNumberOfKeyChecksMoves(1, 6)
 thingAquired("rcvCheck2", " = ", str(rcvCheck2['key0']), "", 2,0,0)
-#f = open("/Games/Tiny_Monster_Trainer/rcvCheck2.log", "w")
-#f.write(str(rcvCheck2) + " on Line 382 ish")
-#f.close() 
+
 dataToSend2 =  chopUpMovesToSend()  
-thingAquired("dataToSend[0]['name']", " = ", dataToSend[0]['name'], "", 2,0,0)
-#sendOrReceive1 = findWhoSendsFirst()
-#try:
+#thingAquired("dataToSend[0]['name']", " = ", dataToSend[0]['name'], "", 2,0,0)
+time.sleep(1)
+
 checkCheckOther2 = sendCheckAndGetCheck(checkCheck2)
 thingAquired("checkCheckOther2", " = ", str(checkCheckOther2[0]), "", 2,0,0) 
-#except Exception as e:
-'''f = open("/Games/Tiny_Monster_Trainer/crashB.log", "w")
-f.write(str(e) + " on Line 333 ish" + str(rcvCheck2))
-f.close()'''  
-        
 time.sleep(1)        
-del dataToSend
+
+
 #thingAquired("sendOrReceive1", " = ", str(sendOrReceive1), "", 2,0,0)
 try:
     thingAquired("about to send", " ", "Moves", "", 2,0,0)    
@@ -488,36 +483,17 @@ except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
     f.write(str(e) + " on Line 336 ish")
     f.close() 
+del checkCheck2
+del checkCheckOther2
+del rcvCheck2
+del dataToSend2
 
 
+yourGuyJson = {}
+yourGuyJson = sendOrReceiveGuy(sendOrReceive2)    
+thingAquired("Hi!!", yourGuyJson['name'] , "", "", 0, 0, 0)
 
-#while(1):
-#print(checkCheck[0], " ", rcvCheck['key12'])
-#print(sendOrReceive)
-thingAquired("Hi!", yourGuyJson['name'] , "", "", 0, 0, 0)
-'''try:
-    thingAquired("Hi!", yourGuyJson['name'] , rcvOtrMonData[0]['name'], rcvOtrMonMoves[0]['name'], 1, 0, 0)
-    thumby.display.fill(0)
-    thumby.display.blit(bytearray(dataToSend[0]['head']), 10, 10, 20, 9, 0, 0, 0)
-    thumby.display.blit(bytearray(dataToSend[0]['body']), 10, 10+9, 20, 9, 0, 0, 0)
-    thumby.display.blit(bytearray(dataToSend[0]['legs']), 10, 10+18, 20, 9, 0, 0, 0)
-    thumby.display.blit(bytearray(rcvOtrMonData[0]['head']), 40, 10, 20, 9, 0, 1, 0)
-    thumby.display.blit(bytearray(rcvOtrMonData[0]['body']), 40, 10+9, 20, 9, 0, 1, 0)
-    thumby.display.blit(bytearray(rcvOtrMonData[0]['legs']), 40, 10+18, 20, 9, 0, 1, 0)
-    thumby.display.update()
-    time.sleep(1)
-    #f = open("/Games/Tiny_Monster_Trainer/DataRcvd.log", "w")
-    #f.write(" on Line 443 ish " + str(rcvOtrMonData) + " " + str(rcvOtrMonMoves))
-    #f.close()
-except Exception as e:
-        f = open("/Games/Tiny_Monster_Trainer/crash46.log", "w")
-        f.write(str(e))
-        f.close()  
-    #print(dataToSend)'''
 try:
-    #del dataToSend
-    del dataToSend2
-    gc.collect()
     putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
 except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash76.log", "w")
