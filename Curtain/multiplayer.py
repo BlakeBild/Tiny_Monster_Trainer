@@ -7,7 +7,7 @@ import random
 import ujson
 import sys 
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
-from classLib import Player, Monster, TextForScroller, AttackMove
+from classLib import Player, Monster, AttackMove
 from funcLib import thingAquired, obj_to_dict
 
 
@@ -70,21 +70,13 @@ def getNumberOfKeyChecks(rcvCheckOrCheck, rangeNum):
     for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
         for y in range(0,rangeNum):
             rcvCheck['key' + str(y+(x*rangeNum))] =  0 
-            thingAquired("rcvCheck", "key" + str(y+(x*rangeNum)) + " = ", str(rcvCheck['key' + str(y+(x*rangeNum))]), "",0,0,0)
+            #thingAquired("rcvCheck", "key" + str(y+(x*rangeNum)) + " = ", str(rcvCheck['key' + str(y+(x*rangeNum))]), "",0,0,0)
             checkCheck[0] = checkCheck[0] + 1
-            thingAquired("checkCheck",str(checkCheck[0]),str(rcvCheck['key' + str(y+(x*rangeNum))]),"",0,0,0)
-        y=0
-        '''if x > 0:
-            #print(dataToSend)
-            dataToSend.append({})
-            print(dataToSend)'''
     if rcvCheckOrCheck == 0:
         return checkCheck
     elif rcvCheckOrCheck == 1:
         return rcvCheck
 
-
-#make sure moves are chopped up right, check how data looks in logs 15 & 16 to compare structure
 
 def chopUpGuyToSend():
     dataToSend=[{}]
@@ -106,9 +98,6 @@ def chopUpGuyToSend():
         dataToSend[x]['head'] = myGuyBattleJson[0]['monsterInfo'][1]['mon' + str(x) + 'body']['head']
         dataToSend[x]['body'] = myGuyBattleJson[0]['monsterInfo'][1]['mon' + str(x) + 'body']['body']
         dataToSend[x]['legs'] = myGuyBattleJson[0]['monsterInfo'][1]['mon' + str(x) + 'body']['legs'] 
-    #f = open("/Games/Tiny_Monster_Trainer/log16.log", "w")
-    #f.write( " Line 117 ish " + str(dataToSend) + "  x:" + str(x))
-    #f.close()  
     return dataToSend
 
     
@@ -116,27 +105,19 @@ def chopUpMovesToSend():
     dataToSend=[{}]
     myGuyBattleJson = loadGame()
     numberOfAtks = 0
-    try:
-        for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
-            for y in range(0, len(myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk'])): 
-                if y == 0 and x == 0:
-                    pass
-                else:
-                    dataToSend.append({})
-                dataToSend[numberOfAtks]['monster'] =  x  
-                dataToSend[numberOfAtks]['name'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['name'] 
-                dataToSend[numberOfAtks]['numUses'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['numUses']
-                dataToSend[numberOfAtks]['baseDamage'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['baseDamage']
-                dataToSend[numberOfAtks]['magic'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['magic']
-                dataToSend[numberOfAtks]['moveElementType'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['moveElementType']
-                numberOfAtks = numberOfAtks + 1
-        #f = open("/Games/Tiny_Monster_Trainer/log15.log", "w")
-        #f.write( " Line 117 ish " + str(dataToSend) + "  x:" + str(x) + "  y:" + str(y))
-        #f.close()
-    except Exception as e:
-            f = open("/Games/Tiny_Monster_Trainer/crashChop.log", "w")
-            f.write(str(e) + " on Line 131 ish")
-            f.close()  
+    for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
+        for y in range(0, len(myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk'])): 
+            if y == 0 and x == 0:
+                pass
+            else:
+                dataToSend.append({})
+            dataToSend[numberOfAtks]['monster'] =  x  
+            dataToSend[numberOfAtks]['name'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['name'] 
+            dataToSend[numberOfAtks]['numUses'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['numUses']
+            dataToSend[numberOfAtks]['baseDamage'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['baseDamage']
+            dataToSend[numberOfAtks]['magic'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['magic']
+            dataToSend[numberOfAtks]['moveElementType'] = myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['moveElementType']
+            numberOfAtks = numberOfAtks + 1
     return dataToSend
     
 
@@ -149,25 +130,11 @@ def getNumberOfKeyChecksMoves(rcvCheckOrCheck, rangeNum):
             for z in range(0,rangeNum):
                 checkCheckM[0] = checkCheckM[0] + 1
                 rcvCheck['key' + str(checkCheckM[0])] =  0
-                #old way: rcvCheck['key' + str(z+(x*rangeNum)+(y*rangeNum))] =  0 
-                # old way: thingAquired("rcvCheck", "key" + str(z+(x*rangeNum)+(y*rangeNum)) + " = ", str(rcvCheck['key' + str(z+(x*rangeNum)+(y*rangeNum))]), "",0,0,0)
-                # old way: checkCheckM[0] = checkCheckM[0] + 1
-                #thingAquired("checkCheck",str(checkCheck[0]),str(rcvCheck['key' + str(y+(x*3))]),"",0,0,0)
-            z=0
-        y=0
-        '''if x > 0:
-            print(dataToSend)
-            dataToSend.append({})
-            print(dataToSend)'''
-    #f = open("/Games/Tiny_Monster_Trainer/checksM.log", "w")
-    #f.write(str(checkCheckM[0]) + " on Line 142 ish " + str(rcvCheck))
-    #f.close() 
     if rcvCheckOrCheck == 0:
         return checkCheckM
     elif rcvCheckOrCheck == 1:
         return rcvCheck    
 
-#def chopUpMovesToSend --- add function to grab moves from monster
 
 def findWhoSendsFirst():
     t0 = 0
@@ -177,27 +144,19 @@ def findWhoSendsFirst():
     whoSendsFirst[0] = random.randint(1, 255)
     whoSendsFirstRcvd = bytearray([0]) 
     loadingStr = ""
-    
-    thingAquired("Send / Rcv", str(whoSendsFirst[0]), "", "",1,0,0)
     timerTrigger = 0
-    #uncomment to test on actual thumby
     while(t0 - handshakeTimer < 30):
         if timerTrigger == 1:
             t0 = time.ticks_ms()
-        loadingStr = waitingForResponse(loadingStr, "Contacting")
-    
+        loadingStr = waitingForResponse(loadingStr, "Calling")
         thumby.link.send(whoSendsFirst)
         received = thumby.link.receive()
-        
         if received != None:
             if handshakeTimer == 0:
                 whoSendsFirstRcvd = received
                 handshakeTimer = time.ticks_ms()
                 timerTrigger = 1
-                '''if whoSendsFirst[0] == whoSendsFirstRcvd[0]:
-                    whoSendsFirst[0] = random.randint(1, 255)'''
-                    
-    
+                #i should do something if whoSendsFirst[0] == whoSendsFirstRcvd[0] but the odds of that are so low that i probably won't
     if whoSendsFirst[0] > whoSendsFirstRcvd[0]:
         sOr = 1
     else:
@@ -215,21 +174,19 @@ def sendOrReceiveGuy(sOr):
     myGuyBattleJson = loadGame()
     justMyGuy = myGuyBattleJson[0]['player']
     del myGuyBattleJson
- 
     for z in range(0,2):
         if sOr == 1:
             while(rcvCheckPlayer['key0'] == 0):
-                loadingStr = waitingForResponse(loadingStr, str(z) + " Sending to") 
+                loadingStr = waitingForResponse(loadingStr, "Calling") 
                 thumby.link.send(ujson.dumps(justMyGuy).encode())
                 received = thumby.link.receive()
                 if received != None:
                     rcvCheckPlayer = ujson.loads(received.decode())
                     if rcvCheckPlayer['key0'] != 1:
                         rcvCheckPlayer['key0'] = 0
-                        #print("Rcv check did not = 1, in while == 0")
         if sOr == 0:
             while(rcvCheckPlayer['key0'] == 0):
-                loadingStr = waitingForResponse(loadingStr, str(z) + " Receiving")
+                loadingStr = waitingForResponse(loadingStr, "Calling")
                 sendCheckPlayer['key0'] = 1
                 received1 = thumby.link.receive()
                 if received1 != None:
@@ -254,11 +211,9 @@ def sendCheckAndGetCheck(checkCheckNum):
     while(t0 - handshakeTimer < 300):
         if timerTrigger == 1:
             t0 = time.ticks_ms()
-        loadingStr = waitingForResponse(loadingStr, "Checks")
-    
+        loadingStr = waitingForResponse(loadingStr, "Sending Vibe")
         thumby.link.send(checkCheckNum)
         received = thumby.link.receive()
-        
         if received != None:
             if handshakeTimer == 0:
                 checkCheckOther = received
@@ -267,33 +222,28 @@ def sendCheckAndGetCheck(checkCheckNum):
     return checkCheckOther
                         
 
-# once it goes to x = 1 data is not being sent, make it print what it's trying to send    
 def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCheckNum, numOfData=0, listNumber=0):
-
     keyList = getKeyList(listNumber)
     sendCheck = {'key0' : 0}
     dataBeingRcvd = [{}]
     xSame = 0
     loadingStr = ""
-    
     time.sleep(.1) #11*3*22
     for c in range(0, (checkCheckOther[0])):
         sendCheck['key' + str(c)] =  0
-        #thingAquired("sendCheck", "key" + str(c) + " = ", str(sendCheck['key' + str(c)]), "",0,0,0)
     for z in range(0,2):
         if sendOrReceive == 1:
             for x in range (0, ((checkCheck[0])/numOfData)): 
                 for y in range (0, numOfData):
                     dictToSend = {}
                     dictToRcv = {}
-                    while rcvCheckNum['key' + str(y+(x*numOfData))] == 0: # need to check that key is right
+                    while rcvCheckNum['key' + str(y+(x*numOfData))] == 0: 
                         dictToSend['key'] = y
                         dictToSend['key2'] = y+(x*numOfData)
                         dictToSend[keyList[y]] = dataToSend[x][keyList[y]] #this is where the data I care about is being sent
                         thumby.link.send(ujson.dumps(dictToSend).encode()) 
                         received1 = thumby.link.receive()
                         dictToSend.pop(keyList[y])
-                        
                         if received1 != None:
                             try:
                                 dictToRcv = ujson.loads(received1.decode())
@@ -305,20 +255,18 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                                 pass
         sendLoopExit = math.ceil((checkCheckOther[0])/numOfData)
         if sendOrReceive == 0:
-            for x in range (0, ((checkCheckOther[0])/numOfData)): #+1? -1?
+            for x in range (0, ((checkCheckOther[0])/numOfData)): 
                 for y in range (0, numOfData):
                     dictToSend = {} 
                     dictToRcv = {}
-                    while sendCheck['key' + str(y+(x*numOfData))] == 0: # need to check that key is right
+                    while sendCheck['key' + str(y+(x*numOfData))] == 0:
                         dictToSend['key'] = y
                         dictToSend['key2'] = y+(x*numOfData)
                         thumby.link.send(ujson.dumps(dictToSend).encode())
                         received2 = thumby.link.receive()
                         if received2 != None: 
-                            try:   #dictToRcv['key2'] == dictToSend['key2'] == the same, y no change?
+                            try:   
                                 dictToRcv = ujson.loads(received2.decode())
-                                #thingAquired("rcv. " + str(x) + " " + str(y) + " " + str(y+(x*numOfData)), str(dictToRcv['key']) + " " + str(dictToRcv['key2']) + " " + str(dictToSend['key2']), "x*y,k,k2,sk2", "sendChk" + str(y+(x*numOfData)) + " " + str(sendCheck['key' + str(y+(x*numOfData))]), 0, 0, 0)
-                                #time.sleep(.01)
                                 loadingStr = waitingForResponse(loadingStr, "Listening")
                                 if dictToRcv['key2'] == dictToSend['key2']:
                                     if x > 0 and xSame != x+y:                                    
@@ -333,10 +281,8 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                                                 dataBeingRcvd.pop(m)
                                         except:
                                             pass
-                            except Exception as e:
-                                f = open("/Games/Tiny_Monster_Trainer/Rcv2.log", "w")
-                                f.write(str(e) + " on Line 323 ish " + str(dictToRcv) + " " + str(dictToRcv['key']) + " " + str(dictToRcv['key2']))
-                                f.close() 
+                            except:
+                                pass
                 if y == (numOfData - 1) and x == (sendLoopExit - 1):
                     dictToSend['key2'] = (y+(x*numOfData)+1)
                     thumby.link.send(ujson.dumps(dictToSend).encode())
@@ -344,9 +290,7 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
             sendOrReceive = 1
         else:
             sendOrReceive = 0 
-        thingAquired("", "switch", "over", "", 1, 0, 0)
-        #time.sleep(1)
-    thingAquired("out", "of", "send/rcv", "loops", 1, 0, 0)
+        time.sleep(.5)
     return dataBeingRcvd
     
 
@@ -378,7 +322,6 @@ def putGhostTogether(otrMonData, otrMonMoves, yourGuyJson):
         rezMon.attackList = rezMon.attackList.copy()
         opponent.friends.append(rezMon)
         opponent.friends = opponent.friends.copy()
-        
     saveGhost(opponent)    
         
 
@@ -387,7 +330,6 @@ def saveGhost(ghostInfo):
     statDict = {}
     bodyDict = {}
     attackDict = {}
-
     for x in range(0, len(ghostInfo.friends)):
         tempAttackDict = {}
         for y in range (0, len(ghostInfo.friends[x].attackList)):
@@ -401,90 +343,55 @@ def saveGhost(ghostInfo):
         f.close()
     del playerDict
     gc.collect()            
-    
-    
-
-
-
-
-thingAquired("about to send", " ", "Monsters", "", 1,0,0)    
-checkCheck1 = bytearray([0]) 
-checkCheck1 = getNumberOfKeyChecks(0, 14)
-rcvCheck1 = {'key0' : 0} 
-rcvCheck1 = getNumberOfKeyChecks(1, 14)
-#f = open("/Games/Tiny_Monster_Trainer/rcvCheck1.log", "w")
-#f.write(str(rcvCheck1) + " on Line 349 ish")
-#f.close() 
 
     
-dataToSend =  chopUpGuyToSend()   
-#thumby.display.setFPS(40) dunno if i need to do this, may delete later
+def doTheThing(dataNum, sOr):
+    dataToSend=[{}]
+    listNum = 0
+    checkCheck1 = bytearray([0]) 
+    checkCheck1 = getNumberOfKeyChecks(0, dataNum)
+    rcvCheck1 = {'key0' : 0} 
+    rcvCheck1 = getNumberOfKeyChecks(1, dataNum)
+    if dataNum == 14:
+        dataToSend =  chopUpGuyToSend() 
+        listNum = 1
+    else:
+        dataToSend = chopUpMovesToSend()
+        listNum = 2
+    time.sleep(1)
+    checkCheckOther1 = sendCheckAndGetCheck(checkCheck1)
+    time.sleep(1)
+    dataFromOtherThumby = sendAndReceive(dataToSend, checkCheck1, checkCheckOther1, sendOrReceive2, rcvCheck1,  dataNum, listNum)   
+    return dataFromOtherThumby   
 
-sendOrReceive2 = findWhoSendsFirst() #original place for sendOrReceive
-#thingAquired("sendOrReceive", " = ", str(sendOrReceive), "", 0,0,0) just used for debugging, can be deleted later
-#time.sleep(1) crashed once, worked 4 other times, watch and see if a delay is needed here.
+
+#find out who sends first
+sendOrReceive2 = findWhoSendsFirst()
+
+### v- sending guy -v
+time.sleep(.5)
 yourGuyJson = {}
 yourGuyJson = sendOrReceiveGuy(sendOrReceive2)    
-thingAquired("Hi!!", yourGuyJson['name'] , "", "", 0, 0, 0)
 
-checkCheckOther1 = sendCheckAndGetCheck(checkCheck1)
- 
-try:
-    time.sleep(1)
-    #rcvOtrMonData = [{},{},{}]
-    rcvOtrMonData = sendAndReceive(dataToSend, checkCheck1, checkCheckOther1, sendOrReceive2, rcvCheck1,  14, 1)    
-except Exception as e:
+
+### v- sending monsters -v
+#try: #Add this try and except back in, if game crashes in the middle of speaking and listening
+time.sleep(1)
+rcvOtrMonData = doTheThing(14, sendOrReceive2)
+'''except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash48.log", "w")
-        f.write(str(e) + " on Line 307 ish")
-        f.close()  
-del checkCheck1
-del checkCheckOther1
-del rcvCheck1
-del dataToSend    
-
+        f.write(str(e) + " on Line 401 ish")
+        f.close()'''
 
 ### v- sending moves -v
-time.sleep(1)
-checkCheck2 = bytearray([0]) 
-checkCheck2 = getNumberOfKeyChecksMoves(0, 6)
-thingAquired("checkCheck2", " = ", str(checkCheck2[0]), "", 1,0,0) 
-
-rcvCheck2 = {'key0' : 0} 
-rcvCheck2 = getNumberOfKeyChecksMoves(1, 6)
-thingAquired("rcvCheck2", " = ", str(rcvCheck2['key0']), "", 1,0,0)
-
-dataToSend2 =  chopUpMovesToSend()  
-#thingAquired("dataToSend[0]['name']", " = ", dataToSend[0]['name'], "", 2,0,0)
-time.sleep(1)
-
-checkCheckOther2 = sendCheckAndGetCheck(checkCheck2)
-thingAquired("checkCheckOther2", " = ", str(checkCheckOther2[0]), "", 1,0,0) 
-time.sleep(1)        
-
-
-#thingAquired("sendOrReceive1", " = ", str(sendOrReceive1), "", 2,0,0)
-try:
-    thingAquired("about to send", " ", "Moves", "", 1,0,0)    
-    rcvOtrMonMoves = sendAndReceive(dataToSend2, checkCheck2, checkCheckOther2, sendOrReceive2, rcvCheck2, 6, 2)
-except Exception as e:
+#try: #Add this try and except back in, if game crashes in the middle of speaking and listening
+time.sleep(1)  
+rcvOtrMonMoves = doTheThing(6, sendOrReceive2)
+'''except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
-    f.write(str(e) + " on Line 336 ish")
-    f.close() 
-del checkCheck2
-del checkCheckOther2
-del rcvCheck2
-del dataToSend2
+    f.write(str(e) + " on Line 410 ish")
+    f.close() '''
 
-
-yourGuyJson = {}
-yourGuyJson = sendOrReceiveGuy(sendOrReceive2)    
 thingAquired("Hi!!", yourGuyJson['name'] , "", "", 0, 0, 0)
-
-try:
-    putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
-except Exception as e:
-        f = open("/Games/Tiny_Monster_Trainer/crash76.log", "w")
-        f.write(str(e) + " on Line 466 ish ")
-        f.close()  
-    
+putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
 thingAquired("","Yay!","<3","", 1,0,0)
