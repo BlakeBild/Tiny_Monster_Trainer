@@ -47,7 +47,7 @@ def optionScreen():
     curSelect = 0
     tempSelect = curSelect
     cancelCheck = 0
-    optionList = ["Wilderness", "Multiplayer", "Link Battle", "Ghost Battle"]
+    optionList = ["Wilderness", "Link Battle", "Ghost Battle"]
     while cancelCheck != 1:
         gc.collect()
         if curSelect == 28 or curSelect == 29:
