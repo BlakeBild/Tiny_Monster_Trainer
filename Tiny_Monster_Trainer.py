@@ -47,8 +47,9 @@ def optionScreen():
     curSelect = 0
     tempSelect = curSelect
     cancelCheck = 0
-    optionList = ["Wilderness", "Multiplayer", "Ghost Battle", "Live"]
+    optionList = ["Wilderness", "Multiplayer", "Link Battle", "Ghost Battle"]
     while cancelCheck != 1:
+        gc.collect()
         if curSelect == 28 or curSelect == 29:
             curSelect = tempSelect
         tempSelect = curSelect
@@ -61,7 +62,7 @@ def optionScreen():
                 #micropython.mem_info()
                 import wilderness
             if optionList[curSelect] == optionList[1]:
-                thingAquired( "vvvvvvvvvvvvv", "Loading", "Multiplayer!", "^^^^^^^^^^^^^", 0, 0, 0)
+                thingAquired( "vvvvvvvvvvvvv", "Loading", "Link Battle!", "^^^^^^^^^^^^^", 0, 0, 0)
                 gc.collect()
                 #micropython.mem_info()
                 import multiplayer
@@ -72,12 +73,6 @@ def optionScreen():
                 #micropython.mem_info()
                 import ghostBattle
                 del sys.modules["ghostBattle"]
-            if optionList[curSelect] == optionList[3]:
-                thingAquired( "vvvvvvvvvvvvv", "Loading", "Live Battle", "^^^^^^^^^^^^^", 0, 0, 0)
-                gc.collect()
-                #micropython.mem_info()
-                import liveMulti
-                del sys.modules["liveMulti"]
         if curSelect == 30:
             cancelCheck = 1
             thumby.display.fill(0)
