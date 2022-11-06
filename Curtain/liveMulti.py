@@ -7,8 +7,8 @@ import random
 import ujson
 import sys 
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
-from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
-from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
+from classLib import Player, Monster, TextForScroller, AttackMove
+from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, switchActiveMon, showMonInfo
 #from wilderness import loadGame
 
 
@@ -44,11 +44,6 @@ def loadGame():
     f = open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson')
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
-    if bigJson[0]['items'] != [{}]:
-        for x in range(0, len(bigJson[0]['items'][0])):
-            tempPlayer.inventory.append(Item(bigJson[0]['items'][0]['item' + str(x)]['name'],
-                                            bigJson[0]['items'][0]['item' + str(x)]['key'],
-                                            bigJson[0]['items'][0]['item' + str(x)]['bonus']))
     for x in range(0, len(bigJson[0]['monsterInfo'][0])):
         tempMon = Monster()
         tempMon.statBlock = bigJson[0]['monsterInfo'][0]['mon' + str(x) + 'stat'].copy()
@@ -149,8 +144,8 @@ def autoSwitchMon(playerInfo):
             if playerInfo.friends[x].statBlock['currentHealth'] > 0:
                 switchActiveMon(playerInfo, playerInfo.friends[0], playerInfo.friends[x], x)
             x = x + 1
-        if playerInfo.friends[0].statBlock['currentHealth'] > 0:
-            thingAquired(playerInfo.playerBlock['name']+"'s", playerInfo.friends[0].statBlock['given_name'], "is now",  "Acvtive!", 2)
+        #if playerInfo.friends[0].statBlock['currentHealth'] > 0:
+        #    thingAquired(playerInfo.playerBlock['name']+"'s", playerInfo.friends[0].statBlock['given_name'], "is now",  "Acvtive!", 2)
 
 
 '''
@@ -757,8 +752,12 @@ def MultiPlayerBattleScreen(player, nmePlayer, sOr):
           
         # need to animate battle if attack happened        
         
-    
-                
+        checkAutoSwitch = nmePlayer.friends[0].statBlock['given_name']
+        autoSwitchMon(ghost)
+        autoSwitchMon(myGuy)
+        if nmePlayer.friends[0].statBlock['given_name'] != checkAutoSwitch:
+            nmeActiveInfo = None
+            
         #thingAquired("at end", "of", "while", "", 0,0,0)
     thingAquired("at end", "of", "function", "", 5,0,0)
     return 0
@@ -813,48 +812,52 @@ if ghostFile != "":
     ghost = Player()
     ghost = loadGhost(ghostFile)
     
-    drawIntro(myGuy, ghost)
     
-    victory=0
-    activeMon=0
-    battle=1
+    playAgain = 1
     
-    random.seed(time.ticks_ms())
-   
-    for x in range(0,len(myGuy.friends)):
-        myGuy.friends[x].statBlock['currentHealth'] = myGuy.friends[x].statBlock['Health']
-        for attacks in range(0, len(myGuy.friends[x].attackList)):
-            myGuy.friends[x].attackList[attacks-1].currentUses = myGuy.friends[x].attackList[attacks-1].numUses
-    for x in range(0,len(ghost.friends)):
-        ghost.friends[x].statBlock['currentHealth'] = ghost.friends[x].statBlock['Health']
-        for attacks in range(0, len(ghost.friends[x].attackList)):
-            ghost.friends[x].attackList[attacks-1].currentUses = ghost.friends[x].attackList[attacks-1].numUses
+    while(playAgain == 1):
+        drawIntro(myGuy, ghost)
+        
+        victory=0
+        activeMon=0
+        battle=1
+        
+        random.seed(time.ticks_ms())
+       
+        for x in range(0,len(myGuy.friends)):
+            myGuy.friends[x].statBlock['currentHealth'] = myGuy.friends[x].statBlock['Health']
+            for attacks in range(0, len(myGuy.friends[x].attackList)):
+                myGuy.friends[x].attackList[attacks-1].currentUses = myGuy.friends[x].attackList[attacks-1].numUses
+        for x in range(0,len(ghost.friends)):
+            ghost.friends[x].statBlock['currentHealth'] = ghost.friends[x].statBlock['Health']
+            for attacks in range(0, len(ghost.friends[x].attackList)):
+                ghost.friends[x].attackList[attacks-1].currentUses = ghost.friends[x].attackList[attacks-1].numUses
+        
+        while(battle == 1):
+            victory = 0
+            thumby.display.fill(0)
+            try:
+                victory = MultiPlayerBattleScreen(myGuy, ghost, sendOrReceive)
+            except Exception as e:
+                print(e)
+                f = open("/Games/Tiny_Monster_Trainer/liveMulti1.log", "w")
+                f.write(str(e) + " on Line 837. ish " )
+                f.close() 
+            #autoSwitchMon(ghost)
+            #autoSwitchMon(myGuy)
     
-    while(battle == 1):
-        victory = 0
-        thumby.display.fill(0)
-        try:
-            victory = MultiPlayerBattleScreen(myGuy, ghost, sendOrReceive)
-        except Exception as e:
-            print(e)
-            f = open("/Games/Tiny_Monster_Trainer/liveMulti1.log", "w")
-            f.write(str(e) + " on Line 837. ish " )
-            f.close() 
-        autoSwitchMon(ghost)
-        autoSwitchMon(myGuy)
-
-        if myGuy.friends[activeMon].statBlock['currentHealth'] <= 0:
-            battle = 0
-        if ghost.friends[activeMon].statBlock['currentHealth'] <= 0:
-            battle = 0
-            victory = 1
-        thumby.display.update()
-
-        thingAquired("M:"+str(myGuy.friends[activeMon].statBlock['currentHealth'])+" E:"+str(ghost.friends[x].statBlock['currentHealth']),"out of","battle",str(victory),1,0,0)
-            
-    if victory == 1:        
-        battleStartAnimation(0)
-        thingAquired("","You Win!","","",4,0,0)
-    else:
-        battleStartAnimation(0)
-        thingAquired("","You Lost!","","",4,0,0)
+            if myGuy.friends[activeMon].statBlock['currentHealth'] <= 0:
+                battle = 0
+            if ghost.friends[activeMon].statBlock['currentHealth'] <= 0:
+                battle = 0
+                victory = 1
+            thumby.display.update()
+    
+            thingAquired("M:"+str(myGuy.friends[activeMon].statBlock['currentHealth'])+" E:"+str(ghost.friends[x].statBlock['currentHealth']),"out of","battle",str(victory),1,0,0)
+                
+        if victory == 1:        
+            battleStartAnimation(0)
+            thingAquired("","You Win!","","",4,0,0)
+        else:
+            battleStartAnimation(0)
+            thingAquired("","You Lost!","","",4,0,0)
