@@ -11,7 +11,7 @@ from classLib import Player, Monster, AttackMove
 from funcLib import thingAquired, obj_to_dict
 
 
-def loadGame():
+def loadGameString():
     gc.collect()
     f = open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson')
     bigJson = ujson.load(f)
@@ -66,7 +66,7 @@ def waitingForResponse(loadingStr, whatDoing):
 def getNumberOfKeyChecks(rcvCheckOrCheck, rangeNum):
     rcvCheck = {'key0' : 0}
     checkCheck = bytearray([0]) 
-    myGuyBattleJson = loadGame()
+    myGuyBattleJson = loadGameString()
     for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
         for y in range(0,rangeNum):
             rcvCheck['key' + str(y+(x*rangeNum))] =  0 
@@ -80,7 +80,7 @@ def getNumberOfKeyChecks(rcvCheckOrCheck, rangeNum):
 
 def chopUpGuyToSend():
     dataToSend=[{}]
-    myGuyBattleJson = loadGame()
+    myGuyBattleJson = loadGameString()
     for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
         if x > 0:
             dataToSend.append({})  # for data to send, might be able to go to the def with the list names and cycle through those to make this smaller
@@ -103,7 +103,7 @@ def chopUpGuyToSend():
     
 def chopUpMovesToSend():   
     dataToSend=[{}]
-    myGuyBattleJson = loadGame()
+    myGuyBattleJson = loadGameString()
     numberOfAtks = 0
     for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
         for y in range(0, len(myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk'])): 
@@ -124,7 +124,7 @@ def chopUpMovesToSend():
 def getNumberOfKeyChecksMoves(rcvCheckOrCheck, rangeNum):
     rcvCheck = {'key0' : 0}
     checkCheckM = bytearray([0]) 
-    myGuyBattleJson = loadGame()
+    myGuyBattleJson = loadGameString()
     for x in range(0, len(myGuyBattleJson[0]['monsterInfo'][0])):
         for y in range(0, len(myGuyBattleJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk'])):
             for z in range(0,rangeNum):
@@ -171,7 +171,7 @@ def sendOrReceiveGuy(sOr):
     sendCheckPlayer = {'key0' : {}}
     rcvCheckPlayer['key0'] = 0 
     sendCheckPlayer['key0'] = 0
-    myGuyBattleJson = loadGame()
+    myGuyBattleJson = loadGameString()
     justMyGuy = myGuyBattleJson[0]['player']
     del myGuyBattleJson
     for z in range(0,2):
@@ -281,8 +281,10 @@ def sendAndReceive(dataToSend, checkCheck, checkCheckOther, sendOrReceive, rcvCh
                                                 dataBeingRcvd.pop(m)
                                         except:
                                             pass
-                            except:
-                                pass
+                            except Exception as e:
+                                f = open("/Games/Tiny_Monster_Trainer/crashWat.log", "w")
+                                f.write(str(e) + " " + str(dictToRcv)+ " on Line 401 ish")
+                                f.close()
                 if y == (numOfData - 1) and x == (sendLoopExit - 1):
                     dictToSend['key2'] = (y+(x*numOfData)+1)
                     thumby.link.send(ujson.dumps(dictToSend).encode())
@@ -310,8 +312,8 @@ def putGhostTogether(otrMonData, otrMonMoves, yourGuyJson):
             rezMon.statBlock[monKeys[y]] = otrMonData[x][monKeys[y]]
         for b in range(0, len(bodKeys)):
             rezMon.bodyBlock[bodKeys[b]] = otrMonData[x][bodKeys[b]]
-        for z in range(0, len(rcvOtrMonMoves)):
-            if rcvOtrMonMoves[z]['monster'] == x:
+        for z in range(0, len(otrMonMoves)):
+            if otrMonMoves[z]['monster'] == x:
                 tempAttackMove = AttackMove(otrMonMoves[z]['name'],
                                     otrMonMoves[z]['numUses'],
                                     otrMonMoves[z]['baseDamage'],
@@ -346,22 +348,25 @@ def saveGhost(ghostInfo):
 
     
 def doTheThing(dataNum, sOr):
-    dataToSend=[{}]
+    dataToSend1=[{}]
     listNum = 0
     checkCheck1 = bytearray([0]) 
     checkCheck1 = getNumberOfKeyChecks(0, dataNum)
     rcvCheck1 = {'key0' : 0} 
-    rcvCheck1 = getNumberOfKeyChecks(1, dataNum)
     if dataNum == 14:
-        dataToSend =  chopUpGuyToSend() 
+        checkCheck1 = getNumberOfKeyChecks(0, dataNum)
+        rcvCheck1 = getNumberOfKeyChecks(1, dataNum)
+        dataToSend1 =  chopUpGuyToSend() 
         listNum = 1
     else:
-        dataToSend = chopUpMovesToSend()
+        checkCheck1 = getNumberOfKeyChecksMoves(0, 6)
+        rcvCheck1 = getNumberOfKeyChecksMoves(1, 6)
+        dataToSend1 = chopUpMovesToSend()
         listNum = 2
     time.sleep(1)
     checkCheckOther1 = sendCheckAndGetCheck(checkCheck1)
     time.sleep(1)
-    dataFromOtherThumby = sendAndReceive(dataToSend, checkCheck1, checkCheckOther1, sendOrReceive2, rcvCheck1,  dataNum, listNum)   
+    dataFromOtherThumby = sendAndReceive(dataToSend1, checkCheck1, checkCheckOther1, sOr, rcvCheck1,  dataNum, listNum)   
     return dataFromOtherThumby   
 
 
@@ -377,6 +382,7 @@ yourGuyJson = sendOrReceiveGuy(sendOrReceive2)
 ### v- sending monsters -v
 #try: #Add this try and except back in, if game crashes in the middle of speaking and listening
 time.sleep(1)
+gc.collect()
 rcvOtrMonData = doTheThing(14, sendOrReceive2)
 '''except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash48.log", "w")
@@ -386,6 +392,7 @@ rcvOtrMonData = doTheThing(14, sendOrReceive2)
 ### v- sending moves -v
 #try: #Add this try and except back in, if game crashes in the middle of speaking and listening
 time.sleep(1)  
+gc.collect()
 rcvOtrMonMoves = doTheThing(6, sendOrReceive2)
 '''except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
