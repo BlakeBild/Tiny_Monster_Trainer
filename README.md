@@ -163,7 +163,9 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
   
-  
+    
+Updates as of 11/06/22:  
+Versus modes have been added. You can fight other players via the link cable though the Link Battle mode. After you've fought someone over a link cable their data is saved so you can fight them offline via the Ghost Battle mode.  
   
  
   
