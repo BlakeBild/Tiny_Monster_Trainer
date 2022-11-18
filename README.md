@@ -54,17 +54,27 @@ Mutate:       5 TP
 
 ############# **Items** ##############  
 Items are not usable during combat.  
+  
+For items that increase the a stat's maximum trainable amount:
+  You can only do this 30 times. If you give a monster more than 30 items that do this the maximum number will not go up anymore, but the monster will still recover any HP that the item is set to restore.
+
+
 
 #######  
 **Item List**  
 #######  
   
-Bandaids - Heals 8 HP  
-PushPops - Heals 20 HP  
-Stickers - Raises max trainable HP by 1 and heals for 1  
-Ribbons  - Raises max trainable HP by 2 and heals for 2  
-Crystals - Will restore all stamina for all moves that the active Monster knows.
-         - Crystals are also needed for Taming Monsters. They are consumed by the opposing monster while attempting to Tame
+**Bandaids** - Heals 8 HP  
+**PushPops** - Heals 20 HP  
+  
+**Stickers** - Raises max trainable HP by 1 and heals for 10  
+**Vitamins** - Raises max trainable Strength by 1 and heals for 9  
+**Helium** - Raises max trainable Agility by 1 and heals for 8  
+**Pillows** - Raises max trainable Endurance by 1 and heals for 7  
+**Stardust** - Raises max trainable Mysticism by 1 and heals for 6  
+**Tinfoil** - Raises max trainable Tinfoil by 1 and heals for 5  
+
+**Crystals** - Will restore all stamina for all moves that the active Monster knows.  **Crystals are also needed for Taming Monsters.** They are consumed by the opposing monster while attempting to Tame
 
 ############# **Types: Strengths and Weakness** ##############  
 
@@ -167,7 +177,7 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
   
       
 Updates as of 11/18/22:    
-Changed some screens to look better, to hopefully show information better. Lowered number of moves a monster can move from 6 to 5. (Five makes my life easier and is easier on memory.)  
+"Various bug fixes and adjustments have been made to make your gameplay experience more enjoyable" ... Changed some screens to look better, to hopefully show information better. Lowered number of attack moves a monster can have from 6 to 5. (Five makes my life easier and is easier on memory.)  Added new items that can increase how high you can train your stats. (you can give a monster 30 different items before this stops working) all new items increase HP by a set amount. Monsters need to have unique names so that multiplayer won't bug out (I think this issue would have been really rare, but it's better to just make all monsters have different given names)  
   
 
 
@@ -177,7 +187,7 @@ Versus modes have been added. You can fight other players via the link cable tho
  
   
 Updates as of 11/1/22:   
-I've added live vs battes, but it's super janky right now. To get it to work you need to make sure you have a ghost folder per the update as of 9/4/22, then you need to make sure you have all the .py files that are in the /Curtain folder. update the Tiny_Monster_Trainer.py to the one above. then to get it to work you need to open tiny monster trainer on the thumby. have both thumbys select "multiplay" in the game mode menu, let it do its thing. Then go into game mode menu and select Live. After that select the name of the trainer you are fighting. Then it will load into a multi player battle. It's going to pop up with a bunch of debugging stuff and it won't animate the battle. but you can at least hit eachother. only one of the thumbys is keeping tack of the battle HP so it will show the wrong HP on one of the thumby's between attacks, but it should show the correct HP on the scroller at the bottom of the screen, after the attack happens. Let me know if you have any questions. I'll be cleaning this mess up over the next few weeks.   
+I've added live vs battes, but it's super janky right now. To get it to work you need to make sure you have a ghost folder per the update as of 9/4/22, then you need to make sure you have all the .py files that are in the /Curtain folder. update the Tiny_Monster_Trainer.py to the one above. then to get it to work you need to open tiny monster trainer on the thumby. have both thumbys select "multiplayer" in the game mode menu, let it do its thing. Then go into game mode menu and select Live. After that select the name of the trainer you are fighting. Then it will load into a multi player battle. It's going to pop up with a bunch of debugging stuff and it won't animate the battle. but you can at least hit eachother. only one of the thumbys is keeping tack of the battle HP so it will show the wrong HP on one of the thumby's between attacks, but it should show the correct HP on the scroller at the bottom of the screen, after the attack happens. Let me know if you have any questions. I'll be cleaning this mess up over the next few weeks.   
 
   
 Updates as of 9/4/22:   
