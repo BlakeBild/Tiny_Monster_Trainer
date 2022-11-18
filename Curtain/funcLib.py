@@ -190,6 +190,7 @@ def tameMon(playerInfo, npcMon):
     newMon.bodyBlock = npcMon.bodyBlock.copy()
     newMon.attackList = npcMon.attackList.copy()
     newMon.mutateSeed = npcMon.mutateSeed.copy()
+    newMon.bonusStats = {'item' : 0, 'trained' : 0}    
     playerInfo.friends.append(newMon)
     if len(playerInfo.friends) > playerInfo.playerBlock['friendMax']:
             popItOff(playerInfo.friends, "monsters, please let one go!")
@@ -243,7 +244,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
     tempSelect2 = tempSelect
     goBack = 0
     monsterListInfo = playerInfo.friends
-    while(goBack != 1): 
+    while(goBack != 1):
         if currentSelect == 3:
             currentSelect = 0
         if currentSelect == -1:
@@ -340,6 +341,7 @@ def save(playerInfo):
     attackDict = {}
     mutateDict = {}
     itemDict = {}
+    bonusDict = {}
     for x in range(0, len(playerInfo.friends)):
         tempAttackDict = {}
         for y in range (0, len(playerInfo.friends[x].attackList)):
@@ -348,13 +350,13 @@ def save(playerInfo):
         statDict["mon" + str(x) + "stat"] = playerInfo.friends[x].statBlock
         bodyDict["mon" + str(x) + "body"] = playerInfo.friends[x].bodyBlock
         mutateDict["mon" + str(x) + "mutate"] = playerInfo.friends[x].mutateSeed
+        bonusDict["mon" + str(x) + "bonus"] = playerInfo.friends[x].bonusStats
     for x in range(0, len(playerInfo.inventory)):
         itemDict["item" + str(x)] = obj_to_dict(playerInfo.inventory[x])
-    playerDict = [{"player" : playerInfo.playerBlock, "items" : [itemDict], "monsterInfo": [statDict, bodyDict, attackDict, mutateDict]}]
+    playerDict = [{"player" : playerInfo.playerBlock, "items" : [itemDict], "monsterInfo": [statDict, bodyDict, attackDict, mutateDict, bonusDict]}]
     #print(playerDict)
     with open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson', 'w') as f:
         ujson.dump(playerDict, f)
         f.close()
     del playerDict
     gc.collect()    
-
