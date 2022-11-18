@@ -6,6 +6,7 @@ import math
 import random
 import ujson
 import sys 
+import machine
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Player, Monster, TextForScroller, AttackMove
 from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, switchActiveMon, showMonInfo, obj_to_dict
@@ -1054,6 +1055,21 @@ thumby.display.fill(0)
 thumby.display.update()
 
 
+def wantToPlayAgain():
+    waiting = True
+    t0 = 0
+    ct0 = time.ticks_ms()
+    while(waiting):
+        thingAquired("","Play"," Again?", "A:Y, B:N", 0, 0,0)
+        t0 = time.ticks_ms()
+        if(t0 - ct0 >= 10000):
+                waiting = False
+        if thumby.buttonA.justPressed():
+            waiting = False
+        if thumby.buttonB.justPressed():
+            machine.reset()
+
+
 #################################################################################
 try:
     myGuy = Player()
@@ -1070,9 +1086,8 @@ except Exception as e:
     f.write(str(e) + " on Line 1062 ish")
     f.close() 
 
-playAgain = 1
 
-while(playAgain == 1):
+while(1):
     drawIntro(myGuy, ghost)
     
     victory=0
@@ -1116,3 +1131,5 @@ while(playAgain == 1):
     else:
         battleStartAnimation(0)
         thingAquired("................", "You", "Lost!", "................", 4, 0, 0)
+        
+    wantToPlayAgain()    
