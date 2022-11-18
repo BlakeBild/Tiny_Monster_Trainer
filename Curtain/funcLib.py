@@ -313,7 +313,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
             if x < 0:
                 x = x + 1
         elif currentSelect >= 30:
-            currentSelect = -2
+            currentSelect = 0
         else:
             pass
         if x > 0 and x < (xMonRange-1):
