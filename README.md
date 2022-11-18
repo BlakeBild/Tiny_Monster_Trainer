@@ -39,7 +39,7 @@ The higher your Trainer Level, you'll seek out stronger Roaming Monsters to figh
 ############ **Training** #############  
 
 Train is used to increase a stat by 1 point, up to a maximum amount.  
-Learning a new attack cost 3 Training Points, a Monster can know up to 6 attacks.  
+Learning a new attack cost 3 Training Points, a Monster can know up to 5 attacks.  
 A monster can Mutate to increase a procedurally determined stat's maximum training amount.  
 A monster can mutate up to 5 times, if you have duplicates of a monster they will mutate in the same ways.  
 Mutating can potentially Change the look of a monster.  
@@ -163,7 +163,14 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
   
-    
+
+  
+      
+Updates as of 11/18/22:    
+Changed some screens to look better, to hopefully show information better. Lowered number of moves a monster can move from 6 to 5. (Five makes my life easier and is easier on memory.)  
+  
+
+
 Updates as of 11/06/22:  
 Versus modes have been added. You can fight other players via the link cable though the Link Battle mode. After you've fought someone over a link cable their data is saved so you can fight them offline via the Ghost Battle mode.  
   
