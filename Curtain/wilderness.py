@@ -513,8 +513,10 @@ def optionScreen(playerInfo):
                     displayItems(playerInfo)
                 if optionList[curSelect] == optionList[3]:
                     save(playerInfo)
-                    #thumby.display.drawRectangle(15, 8, 40, 20, 1)
-                    thingAquired("","Game","Saved","", 1, 0)
+                    thingAquired("","Game","Saved","", 0, 1, 0)
+                    thumby.display.drawRectangle(15, 8, 41, 21, 1)
+                    thumby.display.update()
+                    time.sleep(1)
                 if optionList[curSelect] == optionList[4]: 
                     cancelCheck = 1
             if curSelect == 30:
@@ -700,6 +702,10 @@ def loadGame():
         tempMon.statBlock = bigJson[0]['monsterInfo'][0]['mon' + str(x) + 'stat'].copy()
         tempMon.bodyBlock = bigJson[0]['monsterInfo'][1]['mon' + str(x) + 'body'].copy()
         tempMon.mutateSeed = bigJson[0]['monsterInfo'][3]['mon' + str(x) + 'mutate'].copy()
+        try:
+            tempMon.friends[x].bonusStats = bigJson[4]['mon' + str(x) + 'bonus'] 
+        except:
+            pass
         for y in range(0, len(bigJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk'])): 
             tempAttackMove = AttackMove(bigJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['name'], 
                                         bigJson[0]['monsterInfo'][2]['mon' + str(x) + 'atk']['attack' + str(y)]['numUses'],
@@ -818,16 +824,36 @@ battle = 0
 victory = 0
 tempPlayerPos = myGuy.currentPos
 
+### start of patching in variables 11-18-22
+for x in range(len(myGuy.friends)): 
+    try:
+        if myGuy.friends[x].bonusStats[item] >= 0:
+            pass
+    except:
+        myGuy.friends[x].bonusStats = {'item' : 0, 'trained' : 0}
+
+
 ## Pretty much the game after this point :D ##
 
 while(1):
     gc.collect()
     #micropython.mem_info()
     while(battle != 1):
-        if myGuy.playerBlock['friendMax'] > 5: # remove friendMax checks after around 6/1/22
-            myGuy.playerBlock['friendMax'] = 5 # this is to fix any old saves
+        allUnique = 0
+        nameChanged = 1
+        while(allUnique != 1): # need to make sure that all given names are different for multiplayer battles
+            for x in range(len(myGuy.friends)):
+                for y in range(len(myGuy.friends)):
+                    if myGuy.friends[x].statBlock['given_name'] == myGuy.friends[y].statBlock['given_name'] and x != y:
+                        nameChanged = 1
+                        thingAquired("Monsters", "need", "unique", "names", 2, 0, 0)
+                        myGuy.friends[y].statBlock['given_name'] = giveName(myGuy.friends[y].statBlock['given_name'])
+            if nameChanged == 1:
+                nameChanged = 0
+                allUnique = 1   
         if len(myGuy.friends) > myGuy.playerBlock['friendMax']:
             popItOff(myGuy.friends, "monsters, please let one go!")
+
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room) # draw world map
         if tempRoom != room:
@@ -846,12 +872,7 @@ while(1):
             npcMonRoaming.removeMonster()
             battle = 1
             battleStartAnimation(1)
-    #try:
     npcMon = makeRandomMon(world[room].elementType)
-    #except Exception as e:
-    #    f = open("/Games/Tiny_Monster_Trainer/Curtain/crash.log", "w")
-    #    f.write(str(e))
-    #    f.close() 
     npcTL = random.randint(myGuy.playerBlock['trainerLevel'] - 3, myGuy.playerBlock['trainerLevel'] + 3) + random.randint(-2, 2)
     if npcTL < 0:
         npcTL = 0
