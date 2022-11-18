@@ -468,7 +468,7 @@ def optionScreen(playerInfo):
         tempSelect = curSelect
         cancelCheck = 0
         optionList = ["My Info", "My Monsters", "Items", "Save", "Back"]
-        subOptionsFriends = ["Swap Active", "Train", "Learn Attack", "Give Name", "Mutate", "Back"]
+        subOptionsFriends = ["Info / Swap", "Train", "Learn Attack", "Give Name", "Mutate", "Back"]
         while cancelCheck != 1:
             bottomScreenText = ("CurHP:" + str(playerInfo.friends[0].statBlock['currentHealth']))
             if curSelect == 28 or curSelect == 29:
@@ -496,7 +496,7 @@ def optionScreen(playerInfo):
                                 trainActiveMon(playerInfo.friends[0].statBlock, playerInfo.friends[0].bodyBlock)
                             if subOptionsFriends[curSelect] == subOptionsFriends[2]:
                                 trainAnAttackMove(playerInfo.friends[0].attackList, playerInfo.friends[0].statBlock, playerInfo.friends[0].keyList)
-                                while len(playerInfo.friends[0].attackList) > 6:
+                                while len(playerInfo.friends[0].attackList) > 5:
                                     popItOff(playerInfo.friends[0].attackList, "moves! Please forget one!")
                             if subOptionsFriends[curSelect] == subOptionsFriends[3]:
                                 playerInfo.friends[0].statBlock['given_name'] = giveName(playerInfo.friends[0].statBlock['given_name'])
