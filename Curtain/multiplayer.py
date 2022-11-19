@@ -9,7 +9,7 @@ import sys
 import machine
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Player, Monster, TextForScroller, AttackMove
-from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, switchActiveMon, showMonInfo, obj_to_dict
+from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, switchActiveMon, showMonInfo, obj_to_dict, buttonInput
 
 
 
@@ -987,7 +987,7 @@ def sAndrCheckActiveMon(playerCurMonGName, activeAttack, theirPrevInfo, testKey)
 
 
 
-def sAndrAfterDmg(resultInfoList): ###########
+def sAndrAfterDmg(resultInfoList): 
         
     thumby.link.send(ujson.dumps(resultInfoList).encode())
     received = thumby.link.receive()
@@ -1004,8 +1004,26 @@ def sAndrAfterDmg(resultInfoList): ###########
             return resultInfoList #might need to return a junk value or something, dunno yet
     else:
         return resultInfoList 
+        
+
+def wantToPlayAgain():
+    battleStartAnimation(0)
+    waiting = True
+    againSelect = 0
+    while(waiting):
+        thingAquired("Play", " Again?", "", "A:Y B:N", 0, 0, 0)
+        if againSelect == 0:
+            againSelect = buttonInput(againSelect)
+            if againSelect == 31:
+                waiting = False
+            elif againSelect == 30:
+                machine.reset()
+            else:
+                againSelect = 0
+
 
 ################################################################################        
+#All the sending and receiving stuff
 thumby.display.fill(0)
 thumby.display.update()
 
@@ -1020,13 +1038,13 @@ yourGuyJson = sendOrReceiveGuy(sendOrReceive2)
 
 
 ### v- sending monsters -v
-try: #Add this try and except back in, if game crashes in the middle of speaking and listening
-    time.sleep(1)
-    rcvOtrMonData = doTheThing(14, sendOrReceive2)
-except Exception as e:
+#try: #Add this try and except back in, if game crashes in the middle of speaking and listening
+time.sleep(1)
+rcvOtrMonData = doTheThing(14, sendOrReceive2)
+'''except Exception as e:
         f = open("/Games/Tiny_Monster_Trainer/crash48.log", "w")
         f.write(str(e) + " on Line 1021 ish")
-        f.close()
+        f.close()'''
 
 ### v- sending moves -v
 #try: #Add this try and except back in, if game crashes in the middle of speaking and listening
@@ -1036,7 +1054,8 @@ rcvOtrMonMoves = doTheThing(6, sendOrReceive2)
     f = open("/Games/Tiny_Monster_Trainer/crashA.log", "w")
     f.write(str(e) + " on Line 1030 ish")
     f.close() '''
-#thingAquired("Hi!!", yourGuyJson['name'] , "", "", 0, 0, 0)
+
+#getting ghost setup for multiplayer
 #try:
 putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
 '''except Exception as e:
@@ -1044,8 +1063,8 @@ putGhostTogether(rcvOtrMonData, rcvOtrMonMoves, yourGuyJson)
     f.write(str(e) + " on Line 1037 ish")
     f.close() '''
 
+
 ghostName = yourGuyJson['name']
-#thingAquired(ghostName,"Yay!","<3","", 1,0,0)
 del rcvOtrMonData
 del rcvOtrMonMoves
 del yourGuyJson
@@ -1055,36 +1074,22 @@ thumby.display.fill(0)
 thumby.display.update()
 
 
-def wantToPlayAgain():
-    waiting = True
-    t0 = 0
-    ct0 = time.ticks_ms()
-    while(waiting):
-        thingAquired("","Play"," Again?", "A:Y, B:N", 0, 0,0)
-        t0 = time.ticks_ms()
-        if(t0 - ct0 >= 10000):
-                waiting = False
-        if thumby.buttonA.justPressed():
-            waiting = False
-        if thumby.buttonB.justPressed():
-            machine.reset()
-
 
 #################################################################################
-try:
-    myGuy = Player()
-    myGuy = loadGame()
-except Exception as e:
+#try:
+myGuy = Player()
+myGuy = loadGame()
+'''except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashB.log", "w")
     f.write(str(e) + " on Line 1056 ish")
-    f.close() 
-try:
-    ghost = Player()
-    ghost = loadGhost(ghostName)
-except Exception as e:
+    f.close()''' 
+#try:
+ghost = Player()
+ghost = loadGhost(ghostName)
+'''except Exception as e:
     f = open("/Games/Tiny_Monster_Trainer/crashD.log", "w")
     f.write(str(e) + " on Line 1062 ish")
-    f.close() 
+    f.close()''' 
 
 
 while(1):
@@ -1122,14 +1127,17 @@ while(1):
             battle = 0
             victory = 1
         thumby.display.update()
-
-        #thingAquired("M:"+str(myGuy.friends[activeMon].statBlock['currentHealth'])+" E:"+str(ghost.friends[x].statBlock['currentHealth']),"out of","battle",str(victory),1,0,0)
             
     if victory == 1:        
         battleStartAnimation(0)
-        thingAquired("****************", "You", " Win!", "****************", 4, 0, 0)
+        thingAquired("***************", "You", " Win!", "***************", 3, 0, 0)
     else:
         battleStartAnimation(0)
-        thingAquired("................", "You", "Lost!", "................", 4, 0, 0)
+        thingAquired("...............", "You", " Lost!", "...............", 3, 0, 0)
         
-    wantToPlayAgain()    
+    try:
+        wantToPlayAgain()
+    except Exception as e:
+        f = open("/Games/Tiny_Monster_Trainer/crashV.log", "w")
+        f.write(str(e) + " on Line 1062 ish")
+        f.close()
