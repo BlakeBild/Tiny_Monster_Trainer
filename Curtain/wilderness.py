@@ -668,6 +668,19 @@ def mutateAnimation(tempBody, monsterBody):
         thumby.display.update()
         
 
+def extraTrain(activeMonster, fighter):
+    extraTPChance = random.randint(0,12)
+    if extraTPChance < 2:
+        etp = [0,1,1,1,2,2,3,5]
+        extraTPChance = random.randint(0, 7)
+        if etp[extraTPChance] > 0 and  fighter == 1:
+            thingAquired(activeMonster, "fought", "hard & got", str(etp[extraTPChance]) + " extra TP!", 2, 0, 0)
+        if etp[extraTPChance] > 0 and fighter == 0:
+            thingAquired(activeMonster, "got " + str(etp[extraTPChance]) + " TP", "by watching", " & learning!", 2, 0, 0)
+        return etp[extraTPChance]
+    else:
+        return 0
+
 def trainAnimation(monsterBody):
     f = open('/Games/Tiny_Monster_Trainer/Curtain/Other.ujson')
     images = ujson.load(f)
@@ -914,7 +927,13 @@ while(1):
     battleStartAnimation(0) 
     if victory == 1:
         myGuy.levelUpCheck()
-        myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1
+        if len(myGuy.friends) > 1:
+            if random.randint(0,15) < 2: 
+                obsTP = random.randint(2, len(myGuy.friends)) - 1
+                extraTP = extraTrain(myGuy.friends[obsTP].statBlock['given_name'], 0)
+                myGuy.friends[obsTP].statBlock['trainingPoints'] = myGuy.friends[obsTP].statBlock['trainingPoints'] + extraTP
+        extraTP = extraTrain(myGuy.friends[0].statBlock['given_name'], 1)
+        myGuy.friends[0].statBlock['trainingPoints'] = myGuy.friends[0].statBlock['trainingPoints'] + 1 + extraTP
         if len(myGuy.inventory) < myGuy.maxHelditems:
             randoNum = random.randint(1,10)
             if randoNum > 2:
