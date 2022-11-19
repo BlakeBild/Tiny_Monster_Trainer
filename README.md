@@ -173,7 +173,8 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
   
-
+Updates as of 11/19/22:    
+Added the chance for monsters to receive extra training points, if they fought or not. Added an option to play again while doing versus, added titles for ghost assigned based on thier worldseed.   
   
       
 Updates as of 11/18/22:    
