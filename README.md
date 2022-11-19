@@ -55,8 +55,8 @@ Mutate:       5 TP
 ############# **Items** ##############  
 Items are not usable during combat.  
   
-For items that increase the a stat's maximum trainable amount:
-  You can only do this 30 times. If you give a monster more than 30 items that do this the maximum number will not go up anymore, but the monster will still recover any HP that the item is set to restore.
+**For items that increase the a stat's maximum trainable amount:**  
+  You can only do this 30 times per monster. If you give a monster more than 30 items that do this the maximum number will not go up anymore, but the monster will still recover any HP that the item is set to restore.
 
 
 
