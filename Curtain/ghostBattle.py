@@ -286,6 +286,7 @@ def attackOptionMenu(monInfo):
             
 def battleScreen(playerMon, nmeMon, playerTrainLevel, npcTrainLevel):
     #print("Hi, you are in a fight!")
+    random.seed(time.ticks_ms())
     myScroller = TextForScroller(playerMon.statBlock['given_name'] + " has entered into battle with " + nmeMon.statBlock['name'] + "! Their trainer's level is " + str(npcTrainLevel) +"!" )
     currentSelect = 1
     tempSelect = currentSelect
@@ -388,16 +389,14 @@ def pickGhost():
 
 
 def drawIntro(player, ghost):
-    thingAquired(player.playerBlock['name'], "Vs.", "Spooky", ghost.playerBlock['name'],0,1,1)
+    
+    ghostTitle = getTitle(ghost.playerBlock['worldSeed'])
+    #thingAquired(player.playerBlock['name'], "Vs.", ghostTitle, ghost.playerBlock['name'],0,1,1)
     
     t0 = 0
     ct0 = time.ticks_ms()
     x = 10 
     y = 11
-    animateCount = 0
-    '''while(1):
-        t0 = 0
-        ct0 = time.ticks_ms()  '''
     animateCount = 0
     thumby.display.fill(0)
     thumby.display.update()
@@ -409,7 +408,7 @@ def drawIntro(player, ghost):
         randoNumber3 = random.randint(-1,1)
         thumby.display.fill(0)
         if(t0 - ct0 > 2800):
-            thingAquired(player.playerBlock['name'], "Vs", "Spooky", ghost.playerBlock['name'],0,1,1)
+            thingAquired(player.playerBlock['name'], "Vs", ghostTitle, ghost.playerBlock['name'],0,1,1)
             thumby.display.blit(bytearray(player.sprite), x+randoNumber-8 , y+randoNumber2, 8, 8, -1, 1, 0)
             thumby.display.blit(bytearray(ghost.sprite), 72-(x+randoNumber2) , y+randoNumber3, 8, 8, -1, ghost.lOrR, 0)
         animateCount = animateCount + 1 
@@ -418,19 +417,34 @@ def drawIntro(player, ghost):
         thumby.display.update()
 
 
+def getTitle(rSeed):
+    random.seed(rSeed)
+    titleList=["Eldritch", "Murky", "The Lich", "Elder",
+                "Ye Old", "Undead", "Spooky", "Spooky",
+                "Spooky", "Gastly", "Haunting", "Just"]
+    title = random.randint(0,11)
+    return titleList[title]
+    
+    
 def wantToPlayAgain():
+    battleStartAnimation(0)
     waiting = True
+    currentSelect = 0
     t0 = 0
     ct0 = time.ticks_ms()
     while(waiting):
-        thingAquired("","Play"," Again?", "A:Y, B:N", 0, 0,0)
+        thingAquired("", "Play", " Again?", "A:Y B:N", 0, 0, 0)
         t0 = time.ticks_ms()
         if(t0 - ct0 >= 10000):
-                waiting = False
-        if thumby.buttonA.justPressed():
             waiting = False
-        if thumby.buttonB.justPressed():
-            machine.reset()
+        if currentSelect == 0:
+            currentSelect = buttonInput(currentSelect)
+            if currentSelect == 31:
+                waiting = False
+            elif currentSelect == 30:
+                machine.reset()
+            else:
+                currentSelect = 0
 
 
 while(1):
