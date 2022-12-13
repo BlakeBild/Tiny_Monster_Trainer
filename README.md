@@ -52,6 +52,26 @@ Learn Attack: 3 TP
 Mutate:       5 TP  
 
 
+############ **Inspire** #############  
+
+Every time your trainer levels up, they will get an Inspiration Point. Inspiration Points can be used to inspire your active monster.  
+
+When a monster is inspired, their max trainable HP goes up by one and they will receive 2 Training Points.
+
+If you inspire a monster through dancing, their max trainable agility goes up by one
+If you inspire a monster through flexing, their max trainable strength goes up by one
+If you inspire a monster through running, their max trainable endurance goes up by one
+If you inspire a monster through meditation, their max trainable mysticism goes up by one
+If you inspire a monster through origami, their max trainable tinfoil goes up by one  
+
+
+
+**Training Point (TP) Costs**  
+
+Training:     1 TP  
+Learn Attack: 3 TP  
+Mutate:       5 TP  
+
 ############# **Items** ##############  
 Items are not usable during combat.  
   
@@ -174,6 +194,10 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
   
+Updates as of 12/13/22:      
+added a jump rope animation, instead of barbells for training HP & Agility.  
+
+
 Updates as of 11/30/22:    
 Fixed some bugs. Moved some code around to be better? probably added new bugs.
 Changed the odds of getting specific items.
