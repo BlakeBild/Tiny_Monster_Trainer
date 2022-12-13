@@ -434,11 +434,11 @@ def trainActiveMon(myMonStats, monsterBody):
                 if statNameList[currentSelect] == "Health" and myMonStats['Health'] < myMonStats['maxHealth']: 
                     myMonStats['Health'] = myMonStats['Health'] + 1
                     myMonStats['currentHealth'] = myMonStats['Health']
-                    trainAnimation(monsterBody)
+                    trainJumpRope(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "health!", 2) 
                 elif statNameList[currentSelect] == "Agility" and myMonStats['Agility'] < myMonStats['maxAgility']: 
                     myMonStats['Agility'] = myMonStats['Agility'] + 1
-                    trainAnimation(monsterBody)
+                    trainJumpRope(monsterBody)
                     thingAquired(myMonStats['given_name'], "trained", "their", "agility!", 2)
                 elif statNameList[currentSelect] == "Strength" and myMonStats['Strength'] < myMonStats['maxStrength']: 
                     myMonStats['Strength'] = myMonStats['Strength'] + 1
@@ -757,9 +757,41 @@ def trainAnimation(monsterBody):
         thumby.display.fill(0)
         printMon(monsterBody, 26, 12, 0)
         thumby.display.blit(bytearray(images["barbell"]), 21, math.floor(5+bobOffset), 30, 9, 0, 0, 0)
+        thumby.display.drawLine(0, 39, 72, 39, 1)
         thumby.display.update()
     f.close()
     del images
+
+def trainJumpRope(monsterBody):
+    thumby.display.setFPS(60)
+    handle = bytearray([12,30,22,26,30,22,26,30,22,12])     # BITMAP: width: 10, height: 6
+    tempbobOffset = 0
+    bobOffset = 0
+    t0 = 0
+    ct0 = time.ticks_ms()
+    while(t0 - ct0 < 3000):
+        t0 = time.ticks_ms()
+        tempbobOffset = bobOffset
+        bobOffset = math.sin(t0 / 250) * 5
+        bobOffset2 = math.sin(t0 / 225) * 1
+        if round(bobOffset) < -4 or round(bobOffset) > 3:
+            transp = 1
+        elif bobOffset > tempbobOffset:
+            transp = 1
+        else:
+            transp = 0
+        thumby.display.fill(0)
+        thumby.display.drawLine(15, round(22+bobOffset2), 28, round(22+(bobOffset*3)), 1)
+        thumby.display.drawLine(16, round(22+bobOffset2), 29, round(22+(bobOffset*3)), 1)        
+        thumby.display.drawLine(57, round(22+bobOffset2), 44, round(22+(bobOffset*3)), 1)
+        thumby.display.drawLine(56, round(22+bobOffset2), 43, round(22+(bobOffset*3)), 1)
+        thumby.display.drawLine(29,round(22+(bobOffset*3)), 43, round(22+(bobOffset*3)-1), transp)
+        thumby.display.drawLine(29,round(22+(bobOffset*3)-1), 43, round(22+(bobOffset*3)), transp)
+        thumby.display.blit(handle, 6, round(20+bobOffset2), 10, 6, 0, 0, 1)
+        thumby.display.blit(handle, 57, round(20+bobOffset2), 10, 6, 0, 0, 0)
+        printMon(monsterBody, 26, round(8 - bobOffset), 0)
+        thumby.display.drawLine(0, 39, 72, 39, 1)
+        thumby.display.update()
 
 
 def loadGame():
