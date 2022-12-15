@@ -93,7 +93,6 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
     bobRate = 250
     bobRange = 5
     animateX = 0
-    
     thumby.display.setFPS(40)
     while(t0 - ct0 < 4000):
         t0 = time.ticks_ms()
@@ -121,13 +120,19 @@ def attackAnimation(playerBod, nmeBod, attackIsPlayer, missFlag, amountOfDmg, pl
             thumby.display.blit(BoltArray[attackTypeNum], (30 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
             nmeHP = nmeAfterDmg
             combatText = atkTxt
+            #thumby.audio.play(196, 150)
+            #thumby.audio.play(82, 250)
         if missFlag == 1 and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and attackIsPlayer == 0: # nme misses
             thumby.display.drawText("Miss", 25, 30, 0)
             combatText = "Miss"
+            #thumby.audio.play(82, 150)
+            #thumby.audio.play(196, 250)
         if missFlag == 0 and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and attackIsPlayer == 0: # nme hits
             thumby.display.blit(BoltArray[attackTypeNum], (36 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
             combatText = atkTxt
             playerHP = playerAfterDmg
+            #thumby.audio.play(196, 150)
+            #thumby.audio.play(82, 250)
         thumby.display.update()
         y = 0
         nmeY = 0
@@ -450,11 +455,11 @@ def trainActiveMon(myMonStats, monsterBody):
                     thingAquired(myMonStats['given_name'], "trained", "their", "endurance", 2)
                 elif statNameList[currentSelect] == "Mysticism" and myMonStats['Mysticism'] < myMonStats['maxMysticism']: 
                     myMonStats['Mysticism'] = myMonStats['Mysticism'] + 1
-                    trainAnimation(monsterBody)
+                    trainCandles(monsterBody)
                     thingAquired(myMonStats['given_name'], "practiced", "their", "mysticism", 2)
                 elif statNameList[currentSelect] == "Tinfoil" and myMonStats['Tinfoil'] < myMonStats['maxTinfoil']: 
                     myMonStats['Tinfoil'] = myMonStats['Tinfoil'] + 1
-                    trainAnimation(monsterBody)
+                    trainCandles(monsterBody)
                     thingAquired(myMonStats['given_name'], "polished", "their", "tinfoil", 2)
                 else:
                     thingAquired("Stat is", "already", "maxed out", "", 2)
@@ -793,6 +798,61 @@ def trainJumpRope(monsterBody):
         thumby.display.drawLine(0, 39, 72, 39, 1)
         thumby.display.update()
 
+def trainCandles(monsterBody):
+    # BITMAP: width: 7, height: 7
+    flame1 = bytearray([0,56,70,84,104,48,0])
+    flame2 = bytearray([0,56,69,84,106,48,0])
+    flame3 = bytearray([0,48,72,68,106,48,0])
+    flame4 = bytearray([0,48,72,84,104,49,0])
+    flame5 = bytearray([0,48,72,84,104,48,0])
+    flame6 = bytearray([0,48,72,84,106,48,0])
+    flame7 = bytearray([16,40,96,81,106,20,8])
+    #BITMAP: width: 9, height: 14
+    wax = bytearray([0,0,254,2,3,2,254,0,0,32,48,63,48,48,48,63,48,32])
+    smoke1 = bytearray([0,120,204,230,50,18,145,112,32,0,0,3,7,37,25,1,0,0])
+    smoke2 = bytearray([0,120,204,196,64,66,66,64,132,0,0,1,7,37,21,21,9,0])
+    smoke3 = bytearray([0,124,195,225,177,144,224,0,0,0,0,0,1,50,28,0,0,0])         
+    
+    flame = thumby.Sprite(7, 7, flame1+flame2+flame3+flame5+flame6, 11, 18)
+    candle = thumby.Sprite(9, 14, wax, 10, 25)
+    smoke = thumby.Sprite(9, 14, smoke2+smoke2+smoke2+smoke1+smoke1+smoke1+smoke3+smoke3+smoke3, 9, 3)
+    flame2 = thumby.Sprite(7, 7, flame1+flame2+flame3+flame5+flame6, 72-11-8, 18)
+    candle2 = thumby.Sprite(9, 14, wax, 72-20, 25)
+    smoke2 = thumby.Sprite(9, 14, smoke2+smoke2+smoke2+smoke1+smoke1+smoke1+smoke3+smoke3+smoke3, 72-19, 3)
+    
+    # Set the FPS (without this call, the default fps is 30)
+    thumby.display.setFPS(10)
+    flameCtr = 0
+    smokeCtr = random.randint(0, 1)
+    smoke2.mirrorX = 1
+    t0 = 0
+    ct0 = time.ticks_ms()
+    while(t0 - ct0 < 3000):
+        t0 = time.ticks_ms()   # Get time (ms)
+        thumby.display.fill(0) # Fill canvas to black
+    
+        mirrorOrNo = random.randint(0, 1)
+        flameCtr = random.randint(0, 5)
+        flameCtr2 = random.randint(0, 5)
+        smokeCtr += 1
+        if(smokeCtr >= 8): # There are 6 frames in the list, in the placement 0-5
+            smokeCtr = 0
+        flame.mirrorX = mirrorOrNo
+        flame.setFrame(flameCtr)
+        smoke.setFrame(smokeCtr)
+        flame2.mirrorX = mirrorOrNo
+        flame2.setFrame(flameCtr2)
+        smoke2.setFrame(smokeCtr)
+        thumby.display.drawSprite(flame)
+        thumby.display.drawSprite(smoke)
+        thumby.display.drawSprite(candle)
+        thumby.display.drawSprite(flame2)
+        thumby.display.drawSprite(smoke2)
+        thumby.display.drawSprite(candle2)
+        printMon(monsterBody, 26, 12, 0)
+        thumby.display.drawLine(0, 39, 72, 39, 1)
+        thumby.display.update()
+
 
 def loadGame():
     gc.collect()
@@ -856,13 +916,10 @@ def makeRandomMon(roomElm):
     f = open('/Games/Tiny_Monster_Trainer/Curtain/here_be_monsters.ujson')
     monsterJson = ujson.load(f)
     #micropython.mem_info()
-    print("aft ld json")
     tempMon = Monster()
     #gc.collect()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
-    print("Length numberOfMons = ", numberOfMons)
     for x in range(0,5):
-        print("in mk rdm mon lp")
         #micropython.mem_info()
         randomNumber = random.randint(0,numberOfMons-1)
         tempMon = Monster()
@@ -935,7 +992,6 @@ tempPlayerPos = myGuy.currentPos
 
 ### start of patching in variables 11-18-22
 for x in range(0, len(myGuy.friends)): 
-    print(str(x))
     try:
         if myGuy.friends[x].bonusStats['item'] >= 0:
             pass
@@ -951,7 +1007,6 @@ for x in range(0, len(myGuy.friends)):
 
 while(1):
     gc.collect()
-    print("main")
     #micropython.mem_info()
     while(battle != 1):
         allUnique = 0
