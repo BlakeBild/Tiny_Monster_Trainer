@@ -5,23 +5,25 @@ import thumby
 import math
 import random
 
-class BattleScreen:
+class Battle:
     def __init__(self):                                           
-        self.battleBlock = {'myMon' : "",
+        self.battleBlock = {'myMon' : "", #maybe just have an empty dict here
                             'nmeMon' : "",
                             'myTL' : 0,
                             'nmeTL' : 0,
                             'myDmg' : 0,
                             'nmeDmg' : 0,
-                            'textScroll' : "",
+                            'myOutSta' : 0,
+                            'nmeOutSta' : 0,
+                            'textScroll' : ""
                             'curSelect' : 0,
-                            'curAtkSlct' : 15,
-                            'prvAtkSlct': 0,
-                            'nmeAtkSlct':0
+                            'prevSelect' : 0,
+                            'prvAtkSlct': 0
                             }
-        self.options = ["Info", "Atk", "Swap"] 
+        self.options = ["Info", "Atk", "Swap"] #add tame
     
-    def setBattleScreen(player, nmePlayer)
+    
+    def setBattle(player, nmePlayer)
         self.battleBlock = {'myMon' : player.friends[0].statBlock['given_name'],
                             'nmeMon' : nmePlayer.friends[0].statBlock['given_name'],
                             'myTL' : player.playerBlock['trainerLevel'],
@@ -32,7 +34,9 @@ class BattleScreen:
                             'nmeOutSta' : 0,
                             'textScroll' : self.battleBlock['textScroll'] = TextForScroller(self.battleBlock['myMon'] + " has entered into battle with " + self.battleBlock['nmeMon'] + "!"),
                             'curSelect' : 0,
-                            'prvAtkSlct': 0}
+                            'prevSelect' : 0,
+                            'prvAtkSlct': 0
+                            }
     
 
     def attackOptionMenu(monAtkList, prvSlct):  
@@ -107,116 +111,77 @@ class BattleScreen:
         return hit
     
     
-    def outOfStaChk(mon2Chk):
-        if firstMon[0].attackList[self.battleBlock[curAtkSlct]].currentUses <= 0:
+    def staChk(mon2Chk):
+        if mon2Chk.attackList[self.battleBlock[curAtkSlct]].currentUses <= 0:
             player.friends[0].statBlock['currentHealth'] = math.floor(player.friends[0].statBlock['currentHealth'] * 0.7)
-            self.battleBlock['myOutSta'] = 1
-            firstMon[0].attackList[mySelectedAttackNum].currentUses = firstMon[0].attackList[mySelectedAttackNum].currentUses -1                            
-                if player.friends[0].attackList[mySelectedAttackNum].currentUses < 0:
-                    player.friends[0].attackList[mySelectedAttackNum].currentUses = 0
-                if player.friends[0].statBlock['currentHealth'] > 0:
-                    nmePlayer.friends[0].statBlock['currentHealth'] = nmePlayer.friends[0].statBlock['currentHealth'] - myDmg 
-                    if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
-                        if nmePlayer.friends[0].attackList[nmeAtkToUse].currentUses <= 0:
-                            nmePlayer.friends[0].statBlock['currentHealth'] = math.floor(nmePlayer.friends[0].statBlock['currentHealth'] * 0.7)
-                            oppMoveOutOfStam = 1
-                        if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
-                            nmePlayer.friends[0].attackList[nmeAtkToUse].currentUses = nmePlayer.friends[0].attackList[nmeAtkToUse].currentUses -1 
-                        if nmePlayer.friends[0].attackList[nmeAtkToUse].currentUses < 0:
-                            nmePlayer.friends[0].attackList[nmeAtkToUse].currentUses = 0
-                        if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
-                            player.friends[0].statBlock['currentHealth'] = player.friends[0].statBlock['currentHealth'] - oppDmg
+            # display that mon is out of sta for move and that they took damage 
+        mon2Chk.attackList[mySelectedAttackNum].currentUses = mon2Chk.attackList[mySelectedAttackNum].currentUses -1                            
+        if player.friends[0].attackList[mySelectedAttackNum].currentUses < 0:
+            player.friends[0].attackList[mySelectedAttackNum].currentUses = 0
+            
 
     
     def battleCrunch(firstMon, secMon, firstAtk, SecAtk): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
-            firstDodge = btlScn.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
-            secDodge = btlScn.dodge(secMon, firstMon, secMon.attackList[nmeAtkToUse]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
-            firstDmg = btlScn.attack(firstMon, nmeGuy.friends[0], firstMon.attackList[firstAtk]) #, btlScn.battleBlock['myTL'], btlScn.battleBlock['nmeTL'])
-            secDmg = btlScn.attack(secMon, firstMon.friends[0], nmePlayer.friends[0].attackList[nmeAtkToUse]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
+        firstDodge = btl.dodge(secMon, firstMon, secMon.attackList[SecAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
+        secDodge = btl.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
+        firstDmg = btl.attack(firstMon, nmeGuy.friends[0], firstMon.attackList[firstAtk]) #, btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
+        secDmg = btl.attack(secMon, firstMon, secMon.attackList[SecAtk]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
 
-            if secDodge > 0: #"what's oppDodge? Not much, what's up with you?" 
-                firstDmg = math.floor(firstDmg / secDodge) 
-            secDmg = multiPlayerAttack(secMon, firstMon, secMon[0].attackList[nmeAtkToUse]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
-            if firstDodge > 0:
-                secDmg = math.floor(secDmg / firstDodge)      
-            outOfStaChk(firstMon)
-            if player.friends[0].statBlock['currentHealth'] > 0:
-                nmePlayer.friends[0].statBlock['currentHealth'] = nmePlayer.friends[0].statBlock['currentHealth'] - firstDmg 
-                outOfStaChk(secMon)
-                if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
-                    firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
+        if firstDodge > 0:
+            secDmg = math.floor(secDmg / firstDodge)      
+        if secDodge > 0: 
+            firstDmg = math.floor(firstDmg / secDodge)
+        staChk(firstMon)
+        if player.friends[0].statBlock['currentHealth'] > 0:
+            nmePlayer.friends[0].statBlock['currentHealth'] = nmePlayer.friends[0].statBlock['currentHealth'] - firstDmg 
+            staChk(secMon)
+            if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+                firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
     
     def makeSlct(player, nmeFrens):
-         if self.battleBlock['curSelect'] == 31: 
-            self.battleBlock['curSelect'] = tempSelect
-            if self.options[self.battleBlock['curSelect']] == "Atk":# and myAttackRdy == 0: 
-                self.battleBlock['curAtkSlct'] = attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct'])
-                if self.battleBlock['curAtkSlct'] < 30:
-                    #mySelectedAttackName = player.friends[0].attackList[selectCheck].name
+        if self.battleBlock['curSelect'] == 31: # 31 = selection made so go on to see what happens
+            self.battleBlock['curSelect'] = self.battleBlock['prevSelect'] #reset curSelect to prevSelect so it's not 31 anymore
+            if self.options[self.battleBlock['curSelect']] == "Atk": # and myAttackRdy == 0: <-ignore comment
+                self.battleBlock['curAtkSlct'] = attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct']) #get the attack's number from user
+                if self.battleBlock['curAtkSlct'] < 30: # < 30 = an attack is selected, make prvAtkSlct = curAtkSlct
                     self.battleBlock['prvAtkSlct'] = self.battleBlock['curAtkSlct']
-                    
-                    
+                 else:
+                     self.battleBlock['curAtkSlct'] = 15 # 15 = no attack selected
+                     
             elif self.options[self.battleBlock['curSelect']] == "Info": 
                 tempPlayer = Player()
                 tempPlayer.friends.append(nmeFrens[0])
                 tempPlayer.friends.append(player.friends[0])
-                showMonInfo(tempPlayer, 0 , 1)
+                showMonInfo(tempPlayer, 0, 1)
                 del tempPlayer
             elif self.options[self.battleBlock['curSelect']] == "Swap":
                 showMonInfo(player, 0, 2)
         if self.battleBlock['curSelect'] == 30 or self.battleBlock['curSelect'] == 28 or self.battleBlock['curSelect'] == 29 :
-            self.battleBlock['curSelect'] = tempSelect    
+            self.battleBlock['curSelect'] = self.battleBlock['prevSelect']    
             
     def drawScreen(myAttackList):
         self.battleBlock['curSelect'] = showOptions(self.options, self.battleBlock['curSelect'], "", 47)
         thumby.display.drawFilledRectangle(0, 31, 72, 10, 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
-       
+    
+    def npcAtkSel(npcAtkList):
+        self.battleBlock['nmeAtkSlct'] = random.randint(0,len(npcAtkList)) - 1
             
 main:
-    btlScn = BattleScreen()
-    setBattleScreen(myGuy, nmeGuy)
+    btl = Battle()
+    setBattle(myGuy, nmeGuy)
     loop
-        btlScn.drawScreen()
-        ~getInput     
-        btlScn.makeSlct(myGuy, nmeGuy.friends)
-        if btlScn.battleBlock['curAtkSlct'] != 15:
-            agileTie = 0
-            if (player.friends[0].statBlock['Agility'] + player.playerBlock['trainerLevel']) == (nmePlayer.friends[0].statBlock['Agility'] + nmePlayer.playerBlock['trainerLevel']):
-                agileTie = random.randint(-2,1)
-            if (player.friends[0].statBlock['Agility'] + player.playerBlock['trainerLevel'] + agileTie) >= (nmePlayer.friends[0].statBlock['Agility'] + nmePlayer.playerBlock['trainerLevel']):
-                battleCrunch(myGuy, nmeGuy)
+        btl.drawScreen()
+        ~getInput   #set btl.battleBlock['curSelect'] & btl.battleBlock['prevSelect'] here
+        btl.makeSlct(myGuy, nmeGuy.friends)
+        if btl.battleBlock['curAtkSlct'] != 15:
+            agileTie = random.randint(-2,1)
+            if (myGuy.friends[0].statBlock['Agility'] + myGuy.playerBlock['trainerLevel'] + agileTie) >= (nmeGuy.friends[0].statBlock['Agility'] + nmeGuy.playerBlock['trainerLevel']):
+                btl.npcAtkSel(nmeGuy.friends[0].attackList)
+                battleCrunch(myGuy, nmeGuy, self.battleBlock[curAtkSlct], self.battleBlock['nmeAtkSlct'])
             else:
-                battleCrunch(nmeGuy, myGuy)
-            self.battleBlock['prvAtkSlct'] = btlScn.battleBlock['curAtkSlct']
+                battleCrunch(nmeGuy, myGuy, self.battleBlock['nmeAtkSlct'], self.battleBlock[curAtkSlct])
+            self.battleBlock['prvAtkSlct'] = btl.battleBlock['curAtkSlct']
             self.battleBlock['curAtkSlct'] = 15
         
         tempSelect = self.battleBlock['curSelect']
-        
-        nmeActiveInfo = [{"sAndrKey" : "", "given_name" : nmePlayer.friends[0].statBlock['given_name'], "attackNameStr" : ""}]
-        swapCheck = 0
-        myMoveOutOfStam = 0
-        oppMoveOutOfStam = 0
-        options = ["Info", "Atk", "Swap"] 
-        nmeAttackRdy = 0
-        mySelectedAttackName = ""
-        mySelectedAttackNum = 0
-        myAttackRdy = 0
-        nmeAtkToUse = 0
-        attackResultsKeep =  [{'nmeMonHP' : 0, 'OppMooS' : oppMoveOutOfStam, 'myMonHP': player.friends[0].statBlock['currentHealth'], 'myMooS' : myMoveOutOfStam, 'sAndrKey' : "test4"}]
-        playerB4hp = player.friends[0].statBlock['currentHealth']
-        nmeB4hp = nmePlayer.friends[0].statBlock['currentHealth']
-        
-        
-        
-        self.lOrR = 0    
-        self.friends = []
-        self.inventory = []
-        self.maxHelditems = 10
-        self.currentPos = math.ceil((9 * 5) / 2)
-        self.position = []
-        self.sprite = [0,46,251,127,123,255,46,0]
-        for i in range(9 * 5):
-            self.position.append(0)
-        self.position[self.currentPos] = 1
-    
