@@ -4,6 +4,10 @@ A game for the Thumby
   
 (If you're here for the most recent version of tiny monster trainer, that is not on the thumby arcade yet. You just need to put Tiny_Monster_Trainer.py, the /Curtain folder, and the /Ghost folder on the thumby.)  
 
+
+**Play Tiny Monster Trainer via an emulator here:**  
+https://code.thumby.us/play.html?game=Tiny_Monster_Trainer
+
 Move around, fight monsters, collect monsters, train monsters.  
 
 
