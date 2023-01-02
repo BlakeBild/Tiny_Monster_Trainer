@@ -1,4 +1,7 @@
 # This is just a backup of a rewrite in progress, for the battle screen & combat code
+# 1-2-23: seems to be working, I would still like to clean up the attack animation, need to add a way to show a glance, need to add a way for monster training to
+# give a bonus towards glances, need to add more scrolling text to display
+
 
 import time
 import thumby
@@ -16,10 +19,9 @@ class Battle:
                             'myOutSta' : 0,
                             'nmeOutSta' : 0,
                             'textScroll' : "",
-                            'curSelect' : 0,
-                            'prevSelect' : 0,
                             'curAtkSlct' : 15,
-                            'prvAtkSlct': 0
+                            'prvAtkSlct': 0,
+                            'nmeAtkSlct': 0,
                             }
         self.options = ["Info", "Atk", "Swap"] #add tame
     
@@ -34,10 +36,9 @@ class Battle:
                             'myOutSta' : 0,
                             'nmeOutSta' : 0,
                             'textScroll' : player.friends[0].statBlock['given_name'] + " has entered into battle with " + nmePlayer.friends[0].statBlock['given_name'] + "!",
-                            'curSelect' : 0,
-                            'prevSelect' : 0,
                             'curAtkSlct' : 15,
-                            'prvAtkSlct': 0
+                            'prvAtkSlct': 0,
+                            'nmeAtkSlct': 0,
                             }
     
 
@@ -181,43 +182,59 @@ class Battle:
         if firstMon.statBlock['currentHealth'] > 0:
             secMon.statBlock['currentHealth'] = secMon.statBlock['currentHealth'] - firstDmg 
             self.staChk(secMon, SecAtk)
+            self.chkBlw0(secMon)
             if secMon.statBlock['currentHealth'] > 0:
                 firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
-
+        if firstMon.statBlock['currentHealth'] < 0:
+            firstMon.statBlock['currentHealth'] = 0
+        self.chkBlw0(firstMon)
+        
+        
+    def chkBlw0(self, monster):
+        if monster.statBlock['currentHealth'] < 0:
+            monster.statBlock['currentHealth'] = 0
     
-    def makeSlct(self, player, nmeFrens):
-        if curSelect == 31: # 31 = selection made so go on to see what happens
-            self.battleBlock['curSelect'] = prevSelect #reset curSelect to prevSelect so it's not 31 anymore
-            if self.options[prevSelect] == "Atk": # and myAttackRdy == 0: <-ignore comment
+    def makeSlct(self, player, nmeFrens, CS, PS):
+        if CS == 31: # 31 = selection made so go on to see what happens
+            CS = PS #reset curSelect to prevSelect so it's not 31 anymore
+            if self.options[CS] == "Atk": # and myAttackRdy == 0: <-ignore comment
                 self.battleBlock['curAtkSlct'] = self.attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct']) #get the attack's number from user
                 if self.battleBlock['curAtkSlct'] < 30: # < 30 = an attack is selected, make prvAtkSlct = curAtkSlct
                     self.battleBlock['prvAtkSlct'] = self.battleBlock['curAtkSlct']
                 else:
                     self.battleBlock['curAtkSlct'] = 15 # 15 = no attack selected
                      
-            elif self.options[self.battleBlock['curSelect']] == "Info": 
+            elif self.options[CS] == "Info": 
                 tempPlayer = Player()
                 tempPlayer.friends.append(nmeFrens[0])
                 tempPlayer.friends.append(player.friends[0])
                 showMonInfo(tempPlayer, 0, 1)
                 del tempPlayer
-            elif self.options[self.battleBlock['curSelect']] == "Swap":
+            elif self.options[CS] == "Swap":
                 showMonInfo(player, 0, 2)
-        if self.battleBlock['curSelect'] == 30 or self.battleBlock['curSelect'] == 28 or self.battleBlock['curSelect'] == 29 :
-            self.battleBlock['curSelect'] = self.battleBlock['prevSelect']    
-            
-    def drawScreen(self, myAttackList): #need myAttackList?
-        myScroller = TextForScroller(self.battleBlock['textScroll']) #probs move this somewhere else and pass it in??
+        if CS == 30 or CS == 28 or CS == 29 :
+            CS = PS   
+        return CS
+
+    
+    def drawScreen(self, myScroller, player, nme, CS, PS): 
+        thumby.display.setFPS(40)
         thumby.display.fill(0)
-        self.battleBlock['curSelect'] = showOptions(self.options, self.battleBlock['curSelect'], "", 47)
+        CS = showOptions(self.options, curSelect, "", 47)
+        if CS  > 27:
+            CS = btl.makeSlct(myGuy, ghost.friends, CS, PS)
+        printMon(player.friends[0].bodyBlock, 0, 1, 0)
+        printMon(nme.friends[0].bodyBlock, 25, 1, 1)
         thumby.display.drawFilledRectangle(0, 31, 72, 10, 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
         thumby.display.update()
-        
-        
+        return CS
+
+
     def npcAtkSel(self, npcAtkList):
         self.battleBlock['nmeAtkSlct'] = random.randint(0,len(npcAtkList)) - 1
-        
+
+
     def attackAnimation(self, playerBod, nmeBod, whoFirst, sOr, playerHP, playerAfterDmg, nmeHP, nmeAfterDmg, playerAtkElm, nmeAtkElm): #, nmeOos, playerOos):
         # BITMAP: width: 8, height: 8
         sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # ethereal
@@ -327,6 +344,8 @@ class Battle:
                 
             if nmeAfterDmg <= 0 or playerAfterDmg <= 0:
                 break
+                
+                
 '''            
 main:
     btl = Battle()
