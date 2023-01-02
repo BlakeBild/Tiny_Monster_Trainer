@@ -3,11 +3,6 @@
 # give a bonus towards glances, need to add more scrolling text to display
 
 
-import time
-import thumby
-import math
-import random
-
 class Battle:
     def __init__(self):                                           
         self.battleBlock = {'myMon' : "", #maybe just have an empty dict here
@@ -163,8 +158,18 @@ class Battle:
         if mon2Chk.attackList[atkSel].currentUses < 0:
             mon2Chk.attackList[atkSel].currentUses = 0
             
+            
+    def damageTxt(self, player, nme, b4HP):
+        damage = b4HP - nme.friends[0].statBlock['currentHealth']
+        sOrNo = ""
+        if damage > 0:
+            if damage > 1:
+                sOrNo = "s"
+            self.battleBlock['textScroll'] = player.friends[0].statBlock['given_name']+" hit "+nme.friends[0].statBlock['given_name']+" for "+str(damage)+" point"+sOrNo+" of damage!"
+        else:
+            self.battleBlock['textScroll'] = player.friends[0].statBlock['given_name']+" missed "+nme.friends[0].statBlock['given_name']+"!"
 
-    
+
     def battleCrunch(self, firstMon, secMon, firstAtk, SecAtk, firstTL, secTL): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
         firstMonHP = firstMon.statBlock['currentHealth']
         secMonHP = secMon.statBlock['currentHealth']
@@ -193,6 +198,7 @@ class Battle:
     def chkBlw0(self, monster):
         if monster.statBlock['currentHealth'] < 0:
             monster.statBlock['currentHealth'] = 0
+            
     
     def makeSlct(self, player, nmeFrens, CS, PS):
         if CS == 31: # 31 = selection made so go on to see what happens
@@ -344,25 +350,3 @@ class Battle:
                 
             if nmeAfterDmg <= 0 or playerAfterDmg <= 0:
                 break
-                
-                
-'''            
-main:
-    btl = Battle()
-    setBattle(myGuy, nmeGuy)
-    loop
-        btl.drawScreen()
-        ~getInput   #set btl.battleBlock['curSelect'] & btl.battleBlock['prevSelect'] here
-        btl.makeSlct(myGuy, nmeGuy.friends)
-        if btl.battleBlock['curAtkSlct'] != 15:
-            agileTie = random.randint(-2,1)
-            if (myGuy.friends[0].statBlock['Agility'] + myGuy.playerBlock['trainerLevel'] + agileTie) >= (nmeGuy.friends[0].statBlock['Agility'] + nmeGuy.playerBlock['trainerLevel']):
-                btl.npcAtkSel(nmeGuy.friends[0].attackList)
-                battleCrunch(myGuy, nmeGuy, self.battleBlock[curAtkSlct], self.battleBlock['nmeAtkSlct'])
-            else:
-                battleCrunch(nmeGuy, myGuy, self.battleBlock['nmeAtkSlct'], self.battleBlock[curAtkSlct])
-            self.battleBlock['prvAtkSlct'] = btl.battleBlock['curAtkSlct']
-            self.battleBlock['curAtkSlct'] = 15
-        
-        tempSelect = self.battleBlock['curSelect']
-'''
