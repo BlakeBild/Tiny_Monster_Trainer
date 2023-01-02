@@ -15,15 +15,16 @@ class Battle:
                             'nmeDmg' : 0,
                             'myOutSta' : 0,
                             'nmeOutSta' : 0,
-                            'textScroll' : ""
+                            'textScroll' : "",
                             'curSelect' : 0,
                             'prevSelect' : 0,
+                            'curAtkSlct' : 15,
                             'prvAtkSlct': 0
                             }
         self.options = ["Info", "Atk", "Swap"] #add tame
     
     
-    def setBattle(player, nmePlayer)
+    def setBattle(self, player, nmePlayer):
         self.battleBlock = {'myMon' : player.friends[0].statBlock['given_name'],
                             'nmeMon' : nmePlayer.friends[0].statBlock['given_name'],
                             'myTL' : player.playerBlock['trainerLevel'],
@@ -32,14 +33,15 @@ class Battle:
                             'nmeDmg' : 0,
                             'myOutSta' : 0,
                             'nmeOutSta' : 0,
-                            'textScroll' : self.battleBlock['textScroll'] = TextForScroller(self.battleBlock['myMon'] + " has entered into battle with " + self.battleBlock['nmeMon'] + "!"),
+                            'textScroll' : player.friends[0].statBlock['given_name'] + " has entered into battle with " + nmePlayer.friends[0].statBlock['given_name'] + "!",
                             'curSelect' : 0,
                             'prevSelect' : 0,
+                            'curAtkSlct' : 15,
                             'prvAtkSlct': 0
                             }
     
 
-    def attackOptionMenu(monAtkList, prvSlct):  
+    def attackOptionMenu(self, monAtkList, prvSlct):  
         currentSelect = prvSlct
         tempSelect = currentSelect
         playerOptionList = []
@@ -62,8 +64,48 @@ class Battle:
                 return 30 
             elif currentSelect == 28 or currentSelect == 29:
                 currentSelect = tempSelect
+                
+    def typeAsNum(self, moveType):
+        typeList = ["", "Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
+                    "Mind", "Physical", "Mystical", "Ethereal"]
+        typeNumber = 0
+        for i in range(0,12):
+            if moveType == typeList[i]:
+                typeNumber = i
+        return typeNumber
     
-    def attack(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
+    
+    def isTypeWeak(self, mon1Type, mon2Type): 
+        typeList = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
+                    "Mind", "Physical", "Mystical", "Ethereal"]
+        offsetList = ["Fire", "Earth", "Wind", "Water", "Mind", "Light", "Darkness",
+                    "Cute", "Ethereal", "Physical", "Mystical"]
+        x = 0
+        bonus = 0
+        if mon1Type != "":
+            while mon1Type != offsetList[x]:
+                x = x + 1
+            if mon2Type == typeList[x]:
+                bonus = 1
+        return bonus
+    
+
+    def isTypeStrong(self, mon1Type, mon2Type): 
+        typeList = ["Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
+                    "Mind", "Physical", "Mystical", "Ethereal"]
+        offsetList = ["Wind", "Water", "Fire", "Earth", "Darkness", "Cute", "Mind",
+                    "Light", "Mystical", "Ethereal", "Physical"]
+        x = 0
+        bonus = 0
+        if mon1Type != "":
+            while mon1Type != typeList[x]:
+                x = x + 1
+            if mon2Type == offsetList[x]:
+                bonus = 1
+        return bonus
+        
+    
+    def attack(self, attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
         attackAmnt = 0
         defence = 0
         defBonus = 0
@@ -80,15 +122,16 @@ class Battle:
         defTypeBonus = 1
     
         for x in range(1,3):
-            atkTypeBonus = isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
+            atkTypeBonus = self.isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
         for x in range(1,3):
-            defTypeBonus = isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
+            defTypeBonus = self.isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
         damage = math.ceil((attackAmnt * atkTypeBonus)/3) - math.ceil((defence * defTypeBonus)/3)
         if damage <= 0:
             damage = 1
         return damage
         
-    def dodge(attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
+        
+    def dodge(self, attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
     
         dodgeBonus = 0
         attackAmnt = 0
@@ -111,42 +154,46 @@ class Battle:
         return hit
     
     
-    def staChk(mon2Chk):
-        if mon2Chk.attackList[self.battleBlock[curAtkSlct]].currentUses <= 0:
-            player.friends[0].statBlock['currentHealth'] = math.floor(player.friends[0].statBlock['currentHealth'] * 0.7)
+    def staChk(self, mon2Chk, atkSel):
+        if mon2Chk.attackList[self.battleBlock['curAtkSlct']].currentUses <= 0:
+            mon2Chk.statBlock['currentHealth'] = math.floor(mon2Chk.statBlock['currentHealth'] * 0.7)
             # display that mon is out of sta for move and that they took damage 
-        mon2Chk.attackList[mySelectedAttackNum].currentUses = mon2Chk.attackList[mySelectedAttackNum].currentUses -1                            
-        if player.friends[0].attackList[mySelectedAttackNum].currentUses < 0:
-            player.friends[0].attackList[mySelectedAttackNum].currentUses = 0
+        mon2Chk.attackList[atkSel].currentUses = mon2Chk.attackList[atkSel].currentUses -1                            
+        if mon2Chk.attackList[atkSel].currentUses < 0:
+            mon2Chk.attackList[atkSel].currentUses = 0
             
 
     
-    def battleCrunch(firstMon, secMon, firstAtk, SecAtk): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
-        firstDodge = btl.dodge(secMon, firstMon, secMon.attackList[SecAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
-        secDodge = btl.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
-        firstDmg = btl.attack(firstMon, nmeGuy.friends[0], firstMon.attackList[firstAtk]) #, btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
-        secDmg = btl.attack(secMon, firstMon, secMon.attackList[SecAtk]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
+    def battleCrunch(self, firstMon, secMon, firstAtk, SecAtk, firstTL, secTL): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
+        firstMonHP = firstMon.statBlock['currentHealth']
+        secMonHP = secMon.statBlock['currentHealth']
+        
+        firstDodge = self.dodge(secMon, firstMon, secMon.attackList[SecAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
+        secDodge = self.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
+        firstDmg = self.attack(firstMon, secMon, firstMon.attackList[firstAtk]) #, btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
+        secDmg = self.attack(secMon, firstMon, secMon.attackList[SecAtk]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
 
         if firstDodge > 0:
             secDmg = math.floor(secDmg / firstDodge)      
         if secDodge > 0: 
             firstDmg = math.floor(firstDmg / secDodge)
-        staChk(firstMon)
-        if player.friends[0].statBlock['currentHealth'] > 0:
-            nmePlayer.friends[0].statBlock['currentHealth'] = nmePlayer.friends[0].statBlock['currentHealth'] - firstDmg 
-            staChk(secMon)
-            if nmePlayer.friends[0].statBlock['currentHealth'] > 0:
+        self.staChk(firstMon, firstAtk)
+        if firstMon.statBlock['currentHealth'] > 0:
+            secMon.statBlock['currentHealth'] = secMon.statBlock['currentHealth'] - firstDmg 
+            self.staChk(secMon, SecAtk)
+            if secMon.statBlock['currentHealth'] > 0:
                 firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
+
     
-    def makeSlct(player, nmeFrens):
-        if self.battleBlock['curSelect'] == 31: # 31 = selection made so go on to see what happens
-            self.battleBlock['curSelect'] = self.battleBlock['prevSelect'] #reset curSelect to prevSelect so it's not 31 anymore
-            if self.options[self.battleBlock['curSelect']] == "Atk": # and myAttackRdy == 0: <-ignore comment
-                self.battleBlock['curAtkSlct'] = attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct']) #get the attack's number from user
+    def makeSlct(self, player, nmeFrens):
+        if curSelect == 31: # 31 = selection made so go on to see what happens
+            self.battleBlock['curSelect'] = prevSelect #reset curSelect to prevSelect so it's not 31 anymore
+            if self.options[prevSelect] == "Atk": # and myAttackRdy == 0: <-ignore comment
+                self.battleBlock['curAtkSlct'] = self.attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct']) #get the attack's number from user
                 if self.battleBlock['curAtkSlct'] < 30: # < 30 = an attack is selected, make prvAtkSlct = curAtkSlct
                     self.battleBlock['prvAtkSlct'] = self.battleBlock['curAtkSlct']
-                 else:
-                     self.battleBlock['curAtkSlct'] = 15 # 15 = no attack selected
+                else:
+                    self.battleBlock['curAtkSlct'] = 15 # 15 = no attack selected
                      
             elif self.options[self.battleBlock['curSelect']] == "Info": 
                 tempPlayer = Player()
@@ -159,14 +206,128 @@ class Battle:
         if self.battleBlock['curSelect'] == 30 or self.battleBlock['curSelect'] == 28 or self.battleBlock['curSelect'] == 29 :
             self.battleBlock['curSelect'] = self.battleBlock['prevSelect']    
             
-    def drawScreen(myAttackList):
+    def drawScreen(self, myAttackList): #need myAttackList?
+        myScroller = TextForScroller(self.battleBlock['textScroll']) #probs move this somewhere else and pass it in??
+        thumby.display.fill(0)
         self.battleBlock['curSelect'] = showOptions(self.options, self.battleBlock['curSelect'], "", 47)
         thumby.display.drawFilledRectangle(0, 31, 72, 10, 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
-    
-    def npcAtkSel(npcAtkList):
+        thumby.display.update()
+        
+        
+    def npcAtkSel(self, npcAtkList):
         self.battleBlock['nmeAtkSlct'] = random.randint(0,len(npcAtkList)) - 1
+        
+    def attackAnimation(self, playerBod, nmeBod, whoFirst, sOr, playerHP, playerAfterDmg, nmeHP, nmeAfterDmg, playerAtkElm, nmeAtkElm): #, nmeOos, playerOos):
+        # BITMAP: width: 8, height: 8
+        sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # ethereal
+        darkness = bytearray([0,36,66,8,16,66,36,0]) # darkness
+        maybeFireball = bytearray([20,42,62,99,69,89,99,62]) # fire
+        maybeWaterball = bytearray([16,68,16,40,68,76,56,0]) # water
+        windBlow = bytearray([68,85,85,34,8,138,170,68]) # wind
+        rock = bytearray([20,65,28,42,66,86,36,56]) # earth
+        punch =  bytearray([189,165,36,116,148,180,132,120])  # physical
+        spiral = bytearray([124,130,57,69,149,153,66,60]) # mind
+        fourFlowers = bytearray([32,82,37,2,64,164,74,4]) # light
+        heart = bytearray([28,62,126,252,252,126,62,28]) # cute
+        arrow = bytearray([4,60,39,114,90,78,120,0]) # mystic
+        basic = bytearray([56,108,130,162,138,154,130,124]) #basic
+        
+        BoltArray = [basic, rock, windBlow, maybeWaterball, maybeFireball, fourFlowers, darkness, heart, spiral, punch, arrow, sidewaySkull]
+        playerAttackTypeNum = self.typeAsNum(playerAtkElm)
+        nmeAttackTypeNum = self.typeAsNum(nmeAtkElm)
+        playerAtked = 0
+        playerAtkedChk = 0
+        nmeAtked = 0
+        nmeAtkedChk = 0
+        combatText = ""
+        #thingAquired("","in atk", "animation","",1,0,0)
+        playGo = 0
+        nmeGo = 0
+        showPlayerHP = playerHP
+        showNmeHP = nmeHP
+        if sOr == 0:
+            if whoFirst == 1:
+                whoFirst = 0
+            else: # whoFirst == 0:
+                whoFirst = 1
+        
+        if whoFirst == 1:
+            playGo = 1
+        else:
+            nmeGo = 1
+        while((playerAtkedChk + nmeAtkedChk) <= 1):
+            t0 = 0
+            ct0 = time.ticks_ms()
+            bobRate = 250
+            bobRange = 5
+            animateX = 0
+            playerAttacking = 0
             
+            thumby.display.setFPS(40)
+            while(t0 - ct0 < 4000):
+                t0 = time.ticks_ms()
+                bobOffset = math.sin(t0 / bobRate) * bobRange
+                if(t0 - ct0 >= 4000):
+                    combatText = ""
+                playerX = 8
+                nmeX = 42
+                y = 0
+                nmeY = 0
+                if (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and playerAttacking == 1:
+                    y = 5
+                elif (t0 - ct0 >= 2000) and (t0 - ct0 <= 3000) and playerAttacking == 2:
+                    nmeY = 5
+                else:
+                    pass
+                thumby.display.fill(0) 
+                printMon(playerBod, playerX + y, 1, 0)
+                printMon(nmeBod, nmeX - nmeY, 1, 1)
+                thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
+                thumby.display.drawText(str(showPlayerHP), 2, 30, 0)
+                thumby.display.drawText(str(showNmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
+                thumby.display.drawText(combatText, math.ceil(((72-(len(combatText))*6))/2)+1, 30, 0)
+                if nmeHP == nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and playerAtkedChk == 0 and playGo == 1: # player misses
+                    combatText = "Miss"
+                    playerAtked = 1
+                    playerAttacking = 1
+                elif nmeHP != nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and playerAtkedChk == 0 and playGo == 1 : # player hits
+                    thumby.display.blit(BoltArray[playerAttackTypeNum], (30 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
+                    showNmeHP = nmeAfterDmg
+                    combatText = "Hit!"
+                    playerAtked = 1
+                    playerAttacking = 1
+                elif playerHP == playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and nmeAtkedChk == 0 and nmeGo == 1: # nme misses
+                    #thumby.display.drawText("Miss", 25, 30, 0)
+                    combatText = "Miss"
+                    nmeAtked = 1
+                    playerAttacking = 2
+                elif playerHP != playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and nmeAtkedChk == 0 and nmeGo == 1: # nme hits
+                    thumby.display.blit(BoltArray[nmeAttackTypeNum], (36 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
+                    showPlayerHP = playerAfterDmg
+                    combatText = "Hit!"
+                    nmeAtked = 1
+                    playerAttacking = 2
+                else:
+                    pass
+                    #thumby.display.drawText("Pass"+str(playerAtkedChk + nmeAtkedChk), 25, 30, 0)
+                thumby.display.update()
+                y = 0
+                nmeY = 0
+                if (t0 - ct0) % 2 == 0 and (t0 - ct0) > 2000:
+                    animateX = animateX + 1 
+            if nmeAtked == 1:
+                nmeGo = 0
+                playGo = 1
+                nmeAtkedChk = 1
+            if playerAtked == 1:
+                nmeGo = 1
+                playGo = 0
+                playerAtkedChk = 1
+                
+            if nmeAfterDmg <= 0 or playerAfterDmg <= 0:
+                break
+'''            
 main:
     btl = Battle()
     setBattle(myGuy, nmeGuy)
@@ -185,3 +346,4 @@ main:
             self.battleBlock['curAtkSlct'] = 15
         
         tempSelect = self.battleBlock['curSelect']
+'''
