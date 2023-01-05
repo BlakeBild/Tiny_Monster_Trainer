@@ -382,8 +382,8 @@ class Battle:
             firstDmg = math.floor(firstDmg / secDodge)
         self.staChk(firstMon, firstAtk)
         if firstMon.statBlock['currentHealth'] > 0:
-            secMon.statBlock['currentHealth'] = secMon.statBlock['currentHealth'] - firstDmg 
             self.staChk(secMon, SecAtk)
+            secMon.statBlock['currentHealth'] = secMon.statBlock['currentHealth'] - firstDmg 
             self.chkBlw0(secMon)
             if secMon.statBlock['currentHealth'] > 0:
                 firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
@@ -596,13 +596,12 @@ while(1):
             btl.battleBlock['myB4hp'] = myGuy.friends[0].statBlock['currentHealth'] - 0
             btl.battleBlock['nmeB4hp'] = ghost.friends[0].statBlock['currentHealth'] - 0
 
-            #ok, make an equation with - 0 to try to copy something
 
             if btl.battleBlock['curAtkSlct'] != 15:
                 agileTie = random.randint(-2,1)
                 if (myGuy.friends[0].statBlock['Agility'] + myGuy.playerBlock['trainerLevel'] + agileTie) >= (ghost.friends[0].statBlock['Agility'] + ghost.playerBlock['trainerLevel']):
                     btl.npcAtkSel(ghost.friends[0].attackList)
-                    btl.battleCrunch(myGuy.friends[0], ghost.friends[0], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
+                    btl.battleCrunch(myGuy.friends[0], ghost.friends[0], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['myTL'], btl.battleBlock['nmeTL']) # take out the self stuff
                     whoGoesFirst = 0
                 else:
                     btl.npcAtkSel(ghost.friends[0].attackList)
