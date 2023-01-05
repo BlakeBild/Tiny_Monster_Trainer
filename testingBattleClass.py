@@ -161,6 +161,7 @@ def getTitle(rSeed):
     
     
 def wantToPlayAgain():
+    
     battleStartAnimation(0)
     waiting = True
     currentSelect = 0
@@ -190,8 +191,8 @@ class Battle:
                             'nmeTL' : 0,
                             'myDmg' : 0,
                             'nmeDmg' : 0,
-                            'myOutSta' : 0,
-                            'nmeOutSta' : 0,
+                            'myB4hp' : 0,
+                            'nmeB4hp' : 0,
                             'textScroll' : "",
                             'curAtkSlct' : 15,
                             'prvAtkSlct': 0,
@@ -207,8 +208,8 @@ class Battle:
                             'nmeTL' : nmePlayer.playerBlock['trainerLevel'],
                             'myDmg' : 0,
                             'nmeDmg' : 0,
-                            'myOutSta' : 0,
-                            'nmeOutSta' : 0,
+                            'myB4hp' : 0,
+                            'nmeB4hp' : 0,
                             'textScroll' : player.friends[0].statBlock['given_name'] + " has entered into battle with " + nmePlayer.friends[0].statBlock['given_name'] + "!",
                             'curAtkSlct' : 15,
                             'prvAtkSlct': 0,
@@ -330,16 +331,33 @@ class Battle:
     
     
     def staChk(self, mon2Chk, atkSel):
-        if mon2Chk.attackList[self.battleBlock['curAtkSlct']].currentUses <= 0:
-            mon2Chk.statBlock['currentHealth'] = math.floor(mon2Chk.statBlock['currentHealth'] * 0.7)
-            # display that mon is out of sta for move and that they took damage 
+        watMon = 0
+        if mon2Chk.statBlock['currentHealth'] == self.battleBlock['myB4hp'] and self.battleBlock['myB4hp'] != self.battleBlock['nmeB4hp']:
+            watMon = 1
+        elif mon2Chk.statBlock['currentHealth'] == self.battleBlock['nmeB4hp'] and self.battleBlock['myB4hp'] != self.battleBlock['nmeB4hp']:
+            watMon = 2
+        else:
+            print("in else")
+            #pass
+        if mon2Chk.attackList[atkSel].currentUses <= 0:
+            outStaHP = math.floor(mon2Chk.statBlock['currentHealth'] * 0.7)
+            print(str(outStaHP))
+            thingAquired(mon2Chk.statBlock['given_name'], "doesn't have", "enough", "stamina!", 2, 0, 0)
+            thingAquired(mon2Chk.statBlock['given_name'], "hurt itself", "and goes down", "to "+str(outStaHP)+" HP!", 2, 0, 0)
+            mon2Chk.statBlock['currentHealth'] = outStaHP
         mon2Chk.attackList[atkSel].currentUses = mon2Chk.attackList[atkSel].currentUses -1                            
         if mon2Chk.attackList[atkSel].currentUses < 0:
             mon2Chk.attackList[atkSel].currentUses = 0
+        if watMon == 1:
+            self.battleBlock['myB4hp'] = mon2Chk.statBlock['currentHealth'] 
+        elif watMon == 2:
+            self.battleBlock['nmeB4hp'] = mon2Chk.statBlock['currentHealth']
+        else:
+            print("Butts")
             
             
-    def damageTxt(self, player, nme, b4HP):
-        damage = b4HP - nme.friends[0].statBlock['currentHealth']
+    def damageTxt(self, player, nme):
+        damage = btl.battleBlock['nmeB4hp'] - nme.friends[0].statBlock['currentHealth']
         sOrNo = ""
         if damage > 0:
             if damage > 1:
@@ -350,8 +368,8 @@ class Battle:
 
 
     def battleCrunch(self, firstMon, secMon, firstAtk, SecAtk, firstTL, secTL): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
-        firstMonHP = firstMon.statBlock['currentHealth']
-        secMonHP = secMon.statBlock['currentHealth']
+        #firstMonHP = firstMon.statBlock['currentHealth']
+        #secMonHP = secMon.statBlock['currentHealth']
         
         firstDodge = self.dodge(secMon, firstMon, secMon.attackList[SecAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
         secDodge = self.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
@@ -369,8 +387,7 @@ class Battle:
             self.chkBlw0(secMon)
             if secMon.statBlock['currentHealth'] > 0:
                 firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
-        if firstMon.statBlock['currentHealth'] < 0:
-            firstMon.statBlock['currentHealth'] = 0
+         # something is happening around here that makes it so a monster goes to 1 hp from 2 then attacks and just dies?
         self.chkBlw0(firstMon)
         
         
@@ -404,7 +421,6 @@ class Battle:
     
     def drawScreen(self, myScroller, player, nme, CS, PS): 
         thumby.display.setFPS(40)
-        thumby.display.fill(0)
         CS = showOptions(self.options, curSelect, "", 47)
         if CS  > 27:
             CS = btl.makeSlct(myGuy, ghost.friends, CS, PS)
@@ -412,7 +428,7 @@ class Battle:
         printMon(nme.friends[0].bodyBlock, 25, 1, 1)
         thumby.display.drawFilledRectangle(0, 31, 72, 10, 0)
         thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
-        thumby.display.update()
+
         return CS
 
 
@@ -570,18 +586,17 @@ while(1):
         prevSelect = 1
         while(battle == 1):
             victory = 0
-            thumby.display.fill(0)
-
-            autoSwitchMon(ghost)
-            autoSwitchMon(myGuy)
+            #thumby.display.fill(0)
 
             prevSelect = curSelect
             curSelect = btl.drawScreen(myScroller, myGuy, ghost, curSelect, prevSelect)
 
             whoGoesFirst = 0
             sOr = 0
-            playerB4hp = myGuy.friends[0].statBlock['currentHealth']
-            nmeB4hp = ghost.friends[0].statBlock['currentHealth']
+            btl.battleBlock['myB4hp'] = myGuy.friends[0].statBlock['currentHealth'] - 0
+            btl.battleBlock['nmeB4hp'] = ghost.friends[0].statBlock['currentHealth'] - 0
+
+            #ok, make an equation with - 0 to try to copy something
 
             if btl.battleBlock['curAtkSlct'] != 15:
                 agileTie = random.randint(-2,1)
@@ -598,21 +613,24 @@ while(1):
                                 ghost.friends[0].bodyBlock,
                                 whoGoesFirst,
                                 sOr,
-                                playerB4hp,
+                                btl.battleBlock['myB4hp'],
                                 myGuy.friends[0].statBlock['currentHealth'],
-                                nmeB4hp,
+                                btl.battleBlock['nmeB4hp'],
                                 ghost.friends[0].statBlock['currentHealth'],
                                 myGuy.friends[0].attackList[btl.battleBlock['curAtkSlct']].moveElementType,
                                 ghost.friends[0].attackList[btl.battleBlock['nmeAtkSlct']].moveElementType) # need to actually get a monster attack
                 
-                
+                #reminder to reset scroller starting pos after an attack
+                #out of sta not removing hp
+                #
                 btl.battleBlock['prvAtkSlct'] = btl.battleBlock['curAtkSlct']
-                btl.damageTxt(myGuy, ghost, nmeB4hp)
+                btl.damageTxt(myGuy, ghost)
                 if myScroller.scrollingText != btl.battleBlock['textScroll']:
                     myScroller = TextForScroller(btl.battleBlock['textScroll'])
             btl.battleBlock['curAtkSlct'] = 15
 
-
+            autoSwitchMon(ghost)
+            autoSwitchMon(myGuy)
             if myGuy.friends[activeMon].statBlock['currentHealth'] == 0:
                 battle = 0
             if ghost.friends[activeMon].statBlock['currentHealth'] == 0:
