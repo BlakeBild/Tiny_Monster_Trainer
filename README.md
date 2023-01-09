@@ -197,10 +197,15 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
-  
-Updates as of 12/13/22:      
-added a jump rope animation, instead of barbells for training HP & Agility.  
 
+  
+Updates as of 01/09/23:  
+I moved the battle code to it's own *.py in an attempt to make things more organized and to make the game smaller. I've moved things from wilderness and ghost battles, but i still need to do the multiplayer.py. While moving the code around i was able to add a "Block" and "ZzZz..." text to the combat for different things that happen. These things happened before, but now I can let the player know what is going on. Block happens after a glancing blow, when the damage that get's through still isn't enough to hurt the other monster, it used to just say "miss". "ZzZz..." is when a monster runs out of stamina and lowers its own hitpoints to 0 while trying to attack.
+  
+
+
+Updates as of 12/13/22:      
+added a jump rope animation, instead of barbells for training HP & Agility and added a meditation animation for mysticism & tinfoil.
 
 Updates as of 11/30/22:    
 Fixed some bugs. Moved some code around to be better? probably added new bugs.
