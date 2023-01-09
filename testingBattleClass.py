@@ -185,7 +185,8 @@ def wantToPlayAgain():
 
 class Battle:
     def __init__(self):                                           
-        self.battleBlock = {'myMon' : "", #maybe just have an empty dict here
+        self.battleBlock = {}
+        '''{'myMon' : "", #maybe just have an empty dict here
                             'nmeMon' : "",
                             'myTL' : 0,
                             'nmeTL' : 0,
@@ -197,8 +198,11 @@ class Battle:
                             'curAtkSlct' : 15,
                             'prvAtkSlct': 0,
                             'nmeAtkSlct': 0,
-                            }
-        self.options = ["Info", "Atk", "Swap"] #add tame
+                            'whoFirst': 0,
+                            'myText' : "",
+                            'nmeText' : ""
+                            }'''
+        self.options = ["Info", "Atk", "Swap"] #add tame & run
     
     
     def setBattle(self, player, nmePlayer):
@@ -214,6 +218,9 @@ class Battle:
                             'curAtkSlct' : 15,
                             'prvAtkSlct': 0,
                             'nmeAtkSlct': 0,
+                            'whoFirst': 0,
+                            'myText' : "",
+                            'nmeText' : ""
                             }
     
 
@@ -343,7 +350,7 @@ class Battle:
             outStaHP = math.floor(mon2Chk.statBlock['currentHealth'] * 0.7)
             print(str(outStaHP))
             thingAquired(mon2Chk.statBlock['given_name'], "doesn't have", "enough", "stamina!", 2, 0, 0)
-            thingAquired(mon2Chk.statBlock['given_name'], "hurt itself", "and goes down", "to "+str(outStaHP)+" HP!", 2, 0, 0)
+            thingAquired(mon2Chk.statBlock['given_name'], "hurt itself", "& goes down", "to "+str(outStaHP)+" HP!", 2, 0, 0)
             mon2Chk.statBlock['currentHealth'] = outStaHP
         mon2Chk.attackList[atkSel].currentUses = mon2Chk.attackList[atkSel].currentUses -1                            
         if mon2Chk.attackList[atkSel].currentUses < 0:
@@ -366,20 +373,39 @@ class Battle:
         else:
             self.battleBlock['textScroll'] = player.friends[0].statBlock['given_name']+" missed "+nme.friends[0].statBlock['given_name']+"!"
 
+    
+    def getComTxt(self, dodge, damage):
+        print("dodge: "+str(dodge)+ ", dmg:" + str(damage) + ", whoFirst:" + str(self.battleBlock['whoFirst']))
+        if damage > 0 and dodge > 0:
+            if dodge == 1: 
+                print("hit")
+                return "Hit!"
+            elif dodge == 2:
+                print("glance")
+                return "Glance"
+        elif dodge != 0 and damage == 0:
+            print("block")
+            return "Block"
+        else:
+            print("miss")
+            return "Miss"
 
     def battleCrunch(self, firstMon, secMon, firstAtk, SecAtk, firstTL, secTL): #(should be able to use self.battleBlock['curAtkSlct']) and not send firstAtk
-        #firstMonHP = firstMon.statBlock['currentHealth']
-        #secMonHP = secMon.statBlock['currentHealth']
+        firstDmg = 0
+        secDmg = 0
         
         firstDodge = self.dodge(secMon, firstMon, secMon.attackList[SecAtk]) #, player.playerBlock['trainerLevel'], nmePlayer.playerBlock['trainerLevel'])  ########### remember to look at this to see if i'm doing the right mon's attack
+        
         secDodge = self.dodge(firstMon, secMon, firstMon.attackList[firstAtk]) #, nmePlayer.playerBlock['trainerLevel'], player.playerBlock['trainerLevel'])
-        firstDmg = self.attack(firstMon, secMon, firstMon.attackList[firstAtk]) #, btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
-        secDmg = self.attack(secMon, firstMon, secMon.attackList[SecAtk]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
 
         if firstDodge > 0:
-            secDmg = math.floor(secDmg / firstDodge)      
+            secDmg = self.attack(secMon, firstMon, secMon.attackList[SecAtk]) #, nmePlayer.playerBlock['trainerLevel'], firstMon.playerBlock['trainerLevel'])
+            secDmg = math.floor(secDmg / firstDodge)   
+            print("secDmg = "+ str( secDmg))
         if secDodge > 0: 
+            firstDmg = self.attack(firstMon, secMon, firstMon.attackList[firstAtk]) #, btl.battleBlock['myTL'], btl.battleBlock['nmeTL'])
             firstDmg = math.floor(firstDmg / secDodge)
+            print("firstDmg = " + str( firstDmg))
         self.staChk(firstMon, firstAtk)
         if firstMon.statBlock['currentHealth'] > 0:
             self.staChk(secMon, SecAtk)
@@ -387,10 +413,16 @@ class Battle:
             self.chkBlw0(secMon)
             if secMon.statBlock['currentHealth'] > 0:
                 firstMon.statBlock['currentHealth'] = firstMon.statBlock['currentHealth'] - secDmg
-         # something is happening around here that makes it so a monster goes to 1 hp from 2 then attacks and just dies?
         self.chkBlw0(firstMon)
-        
-        
+        if self.battleBlock['whoFirst'] == 0: 
+            self.battleBlock['myText'] = self.getComTxt(secDodge, firstDmg)
+        else:
+            self.battleBlock['nmeText'] = self.getComTxt(secDodge, firstDmg)
+        if self.battleBlock['whoFirst'] == 1: 
+            self.battleBlock['myText'] = self.getComTxt(firstDodge, secDmg)
+        else:
+            self.battleBlock['nmeText'] = self.getComTxt(firstDodge, secDmg)
+            
     def chkBlw0(self, monster):
         if monster.statBlock['currentHealth'] < 0:
             monster.statBlock['currentHealth'] = 0
@@ -436,7 +468,7 @@ class Battle:
         self.battleBlock['nmeAtkSlct'] = random.randint(0,len(npcAtkList)) - 1
 
 
-    def attackAnimation(self, playerBod, nmeBod, whoFirst, sOr, playerHP, playerAfterDmg, nmeHP, nmeAfterDmg, playerAtkElm, nmeAtkElm): #, nmeOos, playerOos):
+    def attackAnimation(self, playerBod, nmeBod, playerAfterDmg, nmeAfterDmg, playerAtkElm, nmeAtkElm, sOr=0): #, nmeOos, playerOos):
         # BITMAP: width: 8, height: 8
         sidewaySkull = bytearray([0,42,62,119,127,107,107,62]) # ethereal
         darkness = bytearray([0,36,66,8,16,66,36,0]) # darkness
@@ -462,15 +494,15 @@ class Battle:
         #thingAquired("","in atk", "animation","",1,0,0)
         playGo = 0
         nmeGo = 0
-        showPlayerHP = playerHP
-        showNmeHP = nmeHP
+        showPlayerHP = self.battleBlock['myB4hp']
+        showNmeHP = self.battleBlock['nmeB4hp']
         if sOr == 0:
-            if whoFirst == 1:
-                whoFirst = 0
+            if self.battleBlock['whoFirst'] == 1: 
+                self.battleBlock['whoFirst'] = 0
             else: # whoFirst == 0:
-                whoFirst = 1
+                self.battleBlock['whoFirst'] = 1
         
-        if whoFirst == 1:
+        if self.battleBlock['whoFirst'] == 1:
             playGo = 1
         else:
             nmeGo = 1
@@ -503,32 +535,30 @@ class Battle:
                 printMon(nmeBod, nmeX - nmeY, 1, 1)
                 thumby.display.drawFilledRectangle(0, 29, 72, 9, 1)
                 thumby.display.drawText(str(showPlayerHP), 2, 30, 0)
-                thumby.display.drawText(str(showNmeHP), 72 - len(str(nmeHP) * 7), 30, 0)
+                thumby.display.drawText(str(showNmeHP), 72 - len(str(self.battleBlock['nmeB4hp']) * 7), 30, 0)
                 thumby.display.drawText(combatText, math.ceil(((72-(len(combatText))*6))/2)+1, 30, 0)
-                if nmeHP == nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and playerAtkedChk == 0 and playGo == 1: # player misses
-                    combatText = "Miss"
+                if self.battleBlock['nmeB4hp'] == nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and playerAtkedChk == 0 and playGo == 1: # player misses
+                    combatText = self.battleBlock['myText']
                     playerAtked = 1
                     playerAttacking = 1
-                elif nmeHP != nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and playerAtkedChk == 0 and playGo == 1 : # player hits
+                elif self.battleBlock['nmeB4hp'] != nmeAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and playerAtkedChk == 0 and playGo == 1 : # player hits
                     thumby.display.blit(BoltArray[playerAttackTypeNum], (30 + animateX), math.floor(10+bobOffset), 8, 8, 0, 0, 0) #, flippy, 0)
                     showNmeHP = nmeAfterDmg
-                    combatText = "Hit!"
+                    combatText = self.battleBlock['myText']
                     playerAtked = 1
                     playerAttacking = 1
-                elif playerHP == playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and nmeAtkedChk == 0 and nmeGo == 1: # nme misses
-                    #thumby.display.drawText("Miss", 25, 30, 0)
-                    combatText = "Miss"
+                elif self.battleBlock['myB4hp'] == playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 3500) and nmeAtkedChk == 0 and nmeGo == 1: # nme misses
+                    combatText = self.battleBlock['nmeText']
                     nmeAtked = 1
                     playerAttacking = 2
-                elif playerHP != playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and nmeAtkedChk == 0 and nmeGo == 1: # nme hits
+                elif self.battleBlock['myB4hp'] != playerAfterDmg and (t0 - ct0) > 2000 and (t0 - ct0 <= 4000) and nmeAtkedChk == 0 and nmeGo == 1: # nme hits
                     thumby.display.blit(BoltArray[nmeAttackTypeNum], (36 - animateX), math.floor(10+bobOffset), 8, 8, 0, 1, 0) #, flippy, 0)
                     showPlayerHP = playerAfterDmg
-                    combatText = "Hit!"
+                    combatText = self.battleBlock['nmeText']
                     nmeAtked = 1
                     playerAttacking = 2
                 else:
                     pass
-                    #thumby.display.drawText("Pass"+str(playerAtkedChk + nmeAtkedChk), 25, 30, 0)
                 thumby.display.update()
                 y = 0
                 nmeY = 0
@@ -586,13 +616,11 @@ while(1):
         prevSelect = 1
         while(battle == 1):
             victory = 0
-            #thumby.display.fill(0)
 
             prevSelect = curSelect
             curSelect = btl.drawScreen(myScroller, myGuy, ghost, curSelect, prevSelect)
 
-            whoGoesFirst = 0
-            sOr = 0
+
             btl.battleBlock['myB4hp'] = myGuy.friends[0].statBlock['currentHealth'] - 0
             btl.battleBlock['nmeB4hp'] = ghost.friends[0].statBlock['currentHealth'] - 0
 
@@ -601,31 +629,39 @@ while(1):
                 agileTie = random.randint(-2,1)
                 if (myGuy.friends[0].statBlock['Agility'] + myGuy.playerBlock['trainerLevel'] + agileTie) >= (ghost.friends[0].statBlock['Agility'] + ghost.playerBlock['trainerLevel']):
                     btl.npcAtkSel(ghost.friends[0].attackList)
-                    btl.battleCrunch(myGuy.friends[0], ghost.friends[0], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['myTL'], btl.battleBlock['nmeTL']) # take out the self stuff
-                    whoGoesFirst = 0
+                    btl.battleBlock['whoFirst'] = 0
+                    btl.battleCrunch(myGuy.friends[0],
+                                    ghost.friends[0],
+                                    btl.battleBlock['curAtkSlct'],
+                                    btl.battleBlock['nmeAtkSlct'],
+                                    btl.battleBlock['myTL'],
+                                    btl.battleBlock['nmeTL']) # take out the self stuff
                 else:
                     btl.npcAtkSel(ghost.friends[0].attackList)
-                    btl.battleCrunch(ghost.friends[0], myGuy.friends[0], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeTL'], btl.battleBlock['myTL'])
-                    whoGoesFirst = 1
+                    btl.battleBlock['whoFirst'] = 1
+                    btl.battleCrunch(ghost.friends[0],
+                                    myGuy.friends[0],
+                                    btl.battleBlock['nmeAtkSlct'],
+                                    btl.battleBlock['curAtkSlct'],
+                                    btl.battleBlock['nmeTL'],
+                                    btl.battleBlock['myTL'])
 
-                btl.attackAnimation(myGuy.friends[0].bodyBlock,
-                                ghost.friends[0].bodyBlock,
-                                whoGoesFirst,
-                                sOr,
-                                btl.battleBlock['myB4hp'],
-                                myGuy.friends[0].statBlock['currentHealth'],
-                                btl.battleBlock['nmeB4hp'],
-                                ghost.friends[0].statBlock['currentHealth'],
-                                myGuy.friends[0].attackList[btl.battleBlock['curAtkSlct']].moveElementType,
-                                ghost.friends[0].attackList[btl.battleBlock['nmeAtkSlct']].moveElementType) # need to actually get a monster attack
+                if myGuy.friends[0].statBlock['currentHealth'] == 0 and myGuy.friends[0].attackList[btl.battleBlock['curAtkSlct']].currentUses == 0:
+                    btl.battleBlock['myText'] = "ZzZz..."
                 
-                #reminder to reset scroller starting pos after an attack
-                #out of sta not removing hp
-                #
+                btl.attackAnimation(myGuy.friends[0].bodyBlock,
+                                        ghost.friends[0].bodyBlock,
+                                        myGuy.friends[0].statBlock['currentHealth'],
+                                        ghost.friends[0].statBlock['currentHealth'],
+                                        myGuy.friends[0].attackList[btl.battleBlock['curAtkSlct']].moveElementType,
+                                        ghost.friends[0].attackList[btl.battleBlock['nmeAtkSlct']].moveElementType)
+                
+                btl.battleBlock['whoFirst'] = 0
                 btl.battleBlock['prvAtkSlct'] = btl.battleBlock['curAtkSlct']
                 btl.damageTxt(myGuy, ghost)
                 if myScroller.scrollingText != btl.battleBlock['textScroll']:
                     myScroller = TextForScroller(btl.battleBlock['textScroll'])
+                    myScroller.scroller = 0
             btl.battleBlock['curAtkSlct'] = 15
 
             autoSwitchMon(ghost)
