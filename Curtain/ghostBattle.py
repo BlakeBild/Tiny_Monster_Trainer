@@ -8,8 +8,8 @@ import ujson
 import sys 
 import machine
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
-from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove
-from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
+from classLib import Player, Monster, TextForScroller, Item, AttackMove
+from funcLib import thingAquired, battleStartAnimation, drawArrows, showOptions, buttonInput, switchActiveMon
 from battle import Battle
 
 def loadGame():
