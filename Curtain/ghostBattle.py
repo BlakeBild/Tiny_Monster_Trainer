@@ -123,10 +123,7 @@ def pickGhost():
 
 
 def drawIntro(player, ghost):
-    
     ghostTitle = getTitle(ghost.playerBlock['worldSeed'])
-    #thingAquired(player.playerBlock['name'], "Vs.", ghostTitle, ghost.playerBlock['name'],0,1,1)
-    
     t0 = 0
     ct0 = time.ticks_ms()
     x = 10 
@@ -237,7 +234,7 @@ while(1):
                                     btl.battleBlock['curAtkSlct'],
                                     btl.battleBlock['nmeAtkSlct'],
                                     btl.battleBlock['myTL'],
-                                    btl.battleBlock['nmeTL']) # take out the self stuff
+                                    btl.battleBlock['nmeTL']) 
                 else:
                     btl.npcAtkSel(ghost.friends[0].attackList)
                     btl.battleBlock['whoFirst'] = 1
