@@ -46,7 +46,7 @@ def battleStartAnimation(color):
     thumby.display.setFPS(40)
     
     
-def currentSelectCheckRange(optionAmount, currentSelect):
+def curSelChkRng(optionAmount, currentSelect):
     if optionAmount > 1 and optionAmount !=2:
         if currentSelect > optionAmount - 2 :
             currentSelect = currentSelect - optionAmount
@@ -81,8 +81,8 @@ def popItOff(theListofObjs, word):
 
 def showOptions(options, currentSelect, bottomText, x=0):
     optionAmount = len(options)
-    currentSelect = currentSelectCheckRange(optionAmount, currentSelect)
-    thumby.display.fill(0)
+    currentSelect = curSelChkRng(optionAmount, currentSelect)
+    thumby.display.fill(0) 
     thumby.display.drawFilledRectangle(0+x, 10, 72, 9, 1)
     if optionAmount > 1: 
         thumby.display.drawText(options[currentSelect - 1], 1+x, 2, 1) # prints top opt
@@ -249,7 +249,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
             currentSelect = 0
         if currentSelect == -1:
             currentSelect = 2
-        currentSelect = currentSelectCheckRange(10, currentSelect)
+        currentSelect = curSelChkRng(10, currentSelect)
         tempSelect2 = tempSelect
         tempSelect = currentSelect
         thumby.display.fill(0)
@@ -329,7 +329,7 @@ def showMonInfo(playerInfo, startOfgameCheck=0, combatCheck=0):
             left = 1
             right = -1
 
-    
+
 def obj_to_dict(obj):
     return obj.__dict__
 
@@ -342,6 +342,7 @@ def save(playerInfo):
     mutateDict = {}
     itemDict = {}
     bonusDict = {}
+    #whatHaps(playerInfo)
     for x in range(0, len(playerInfo.friends)):
         tempAttackDict = {}
         for y in range (0, len(playerInfo.friends[x].attackList)):
