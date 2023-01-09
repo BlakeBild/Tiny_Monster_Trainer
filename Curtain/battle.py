@@ -380,5 +380,5 @@ class Battle:
                 nmeGo = 1
                 playGo = 0
                 playerAtkedChk = 1
-            if nmeAfterDmg <= 0 or playerAfterDmg <= 0:
+            if (nmeAfterDmg <= 0 and playerAtkedChk == 1) or (playerAfterDmg <= 0 and nmeAtkedChk == 1):
                 break
