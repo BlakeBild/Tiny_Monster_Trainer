@@ -32,7 +32,8 @@ class Battle:
                             'whoFirst': 0,
                             'myText' : "",
                             'nmeText' : "",
-                            'othrOpt' : 0
+                            'othrOpt' : 0,
+                            'swap' : 0
                             }
                             
         if mode == 1:
@@ -48,7 +49,7 @@ class Battle:
         
         for attacksKnown in range(0, len(monAtkList)):
             playerOptionList.append(monAtkList[attacksKnown].name)
-            
+        
         while(currentSelect < 29):
             thumby.display.fill(0)
             tempSelect = currentSelect
@@ -64,6 +65,7 @@ class Battle:
                 return 30 
             elif currentSelect == 28 or currentSelect == 29:
                 currentSelect = tempSelect
+                
                 
     def typeAsNum(self, moveType):
         typeList = ["", "Earth", "Wind", "Water", "Fire", "Light", "Darkness", "Cute", 
@@ -105,52 +107,74 @@ class Battle:
         return bonus
         
     
-    def attack(self, attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
+    def attack(self, attackMon, defenceMon, activeAttack, attackTrainLevel=1, defTrainLevel=1): 
         attackAmnt = 0
         defence = 0
-        defBonus = 0
-        if activeAttack.magic == 1:
-            attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2) 
-            defBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 5)
-            defence =  defTrainLevel + defBonus
-        else:
-            attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
-            defBonus = defenceMon.statBlock['Endurance'] + random.randint(-1, 5)
-            defence = defTrainLevel + defBonus
         damage = 0
+        crit = 4
+        crtChnc = 150
         atkTypeBonus = 1
         defTypeBonus = 1
-    
+        
+        
+        if activeAttack.magic == 1:
+            attackAmnt = activeAttack.baseDamage + random.randint(math.ceil(attackMon.statBlock['Mysticism']/2)+math.ceil(attackTrainLevel/10), attackMon.statBlock['Mysticism']+math.ceil(attackTrainLevel/5))
+            defence = random.randint(-5, 5) + random.randint(-5, 5) + random.randint(math.ceil(attackMon.statBlock['Tinfoil']/2)+math.ceil(attackTrainLevel/10), attackMon.statBlock['Tinfoil']+math.ceil(attackTrainLevel/5))
+            crtChnc = crtChnc - (attackMon.statBlock['Mysticism'] + attackMon.statBlock['Agility'] + math.ceil(attackTrainLevel/10))
+        else:
+            attackAmnt = activeAttack.baseDamage + random.randint(math.ceil(attackMon.statBlock['Strength']/2)+math.ceil(attackTrainLevel/10), attackMon.statBlock['Strength']+math.ceil(attackTrainLevel/5))
+            defence = random.randint(-5, 5) + random.randint(-5, 5) + random.randint(math.ceil(attackMon.statBlock['Endurance']/2)+math.ceil(attackTrainLevel/10), attackMon.statBlock['Endurance']+math.ceil(attackTrainLevel/5))
+            crtChnc = crtChnc - (attackMon.statBlock['Strength'] + attackMon.statBlock['Agility'] + math.ceil(attackTrainLevel/10))
+        if defence < 0:
+            defence = 0
+        
+        doCrt = random.randint(0,crtChnc)
+        print(attackMon.statBlock['given_name'] + "'s doCrt/crtChnc  = " + str(doCrt)+"/"+str(crtChnc))
+        if doCrt == crtChnc:
+            crit = 1
+        elif doCrt >= crtChnc - 2:
+            crit = 2
+        elif doCrt >= crtChnc - 6:
+            crit = 3
+        else:
+            pass
+        
         for x in range(1,3):
             atkTypeBonus = self.isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
         for x in range(1,3):
             defTypeBonus = self.isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-        damage = math.ceil((attackAmnt * atkTypeBonus)/3) - math.ceil((defence * defTypeBonus)/3)
+        damage = math.ceil((attackAmnt * atkTypeBonus)/crit) - math.floor((defence * defTypeBonus)/4)
         if damage <= 0:
             damage = 1
         return damage
         
         
-    def dodge(self, attackMon, defenceMon, activeAttack, attackTrainLevel=0, defTrainLevel=0): 
-    
-        dodgeBonus = 0
-        attackAmnt = 0
-        if activeAttack.magic == 1:
-            attackAmnt = attackMon.statBlock['Mysticism'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
-            dodgeBonus = defenceMon.statBlock['Tinfoil'] + random.randint(-1, 5)
-        else:
-            attackAmnt = attackMon.statBlock['Strength'] + attackTrainLevel + math.ceil((attackTrainLevel + activeAttack.baseDamage) * .2)
-            dodgeBonus = defenceMon.statBlock['Endurance'] + random.randint(-1, 5)
-        dodge = defenceMon.statBlock['Agility'] + dodgeBonus 
+
+    def dodge(self, attackMon, defenceMon, activeAttack, attackTrainLevel=1, defTrainLevel=1): 
+        random.seed(time.ticks_ms())
+        dodgeCap = 0
+        atkCap = 0
         hit = 1
-        if defTrainLevel > 99: #temp fix ---- change this to be something like if the dif of both trainer lvls is greater than 100 then make only 99 more or something like that
-            defTrainLevel = 99
-        if (dodge + random.randint(-abs(attackTrainLevel),(100 - defTrainLevel)))+200 > (90 - defTrainLevel)+200: # check for dodge
-            glanceCheck = random.randint(-20, 20)
-            if ((math.ceil(attackAmnt/2) + attackMon.statBlock['Agility']) + glanceCheck) >= dodge+defTrainLevel: # check for glance
-                hit = 2
+        autoDo = random.randint(0,11)
+        if(autoDo == 11):
+            hit = 0
+            print("auto Miss")
+        elif(autoDo > 0):
+            dodgeCap = math.ceil(defenceMon.statBlock['Agility'])+math.ceil(defTrainLevel/10)
+            if activeAttack.magic == 1:
+                atkCap = math.ceil(attackMon.statBlock['Mysticism'])+math.ceil(attackTrainLevel/8)
             else:
-                hit = 0
+                atkCap = math.ceil(attackMon.statBlock['Strength'])+math.ceil(attackTrainLevel/8)
+            print(attackMon.statBlock['given_name'] + " atk range = " + str(math.ceil(atkCap/2))+"/"+str(atkCap) + " def range = " +str(math.floor(dodgeCap/2))+"/"+str(dodgeCap))
+            if ((random.randint(math.floor(dodgeCap/2) + random.randint(-2, 1), dodgeCap) > random.randint(math.ceil(atkCap/2), atkCap + 2)) ): # check for dodge
+                glanceCheck = random.randint(-5, 5)
+                if (atkCap + glanceCheck) >= dodgeCap: # check for glance
+                    hit = 2
+                else: 
+                    hit = 0
+        else:
+            print("auto Hit")
+            #pass
         return hit
     
     
@@ -228,6 +252,7 @@ class Battle:
             self.battleBlock['myText'] = self.getComTxt(firstDodge, secDmg)
         else:
             self.battleBlock['nmeText'] = self.getComTxt(firstDodge, secDmg)
+        self.battleBlock['swap'] = 0
         
             
     def chkBlw0(self, monster):
@@ -240,7 +265,7 @@ class Battle:
             CS = PS 
             if self.options[CS] == "Atk": 
                 self.battleBlock['curAtkSlct'] = self.attackOptionMenu(player.friends[0].attackList, self.battleBlock['prvAtkSlct']) #get the attack's number from user
-                if self.battleBlock['curAtkSlct'] < 30: 
+                if self.battleBlock['curAtkSlct'] < 15 : 
                     self.battleBlock['prvAtkSlct'] = self.battleBlock['curAtkSlct']
                 else:
                     self.battleBlock['curAtkSlct'] = 15 # 15 = no attack selected
@@ -251,7 +276,13 @@ class Battle:
                 showMonInfo(tempPlayer, 0, 1)
                 del tempPlayer
             elif self.options[CS] == "Swap":
-                showMonInfo(player, 0, 2)
+                if self.battleBlock['swap'] < 1:
+                    curMon = player.friends[0].statBlock['given_name']
+                    showMonInfo(player, 0, 2)
+                    if player.friends[0].statBlock['given_name'] != curMon:
+                        self.battleBlock['swap'] = 1
+                else:
+                    thingAquired("You've", "switched", "monsters", "already!", 2, 0, 0)
             elif self.options[CS] == "Tame":
                 self.battleBlock['othrOpt'] = 1
             elif self.options[CS] == "Run":
