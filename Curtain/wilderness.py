@@ -9,7 +9,6 @@ import sys
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
 from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove, NPC
 from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
-from battle import Battle
 #import micropython
 
 
@@ -266,7 +265,7 @@ def myMonSubMenu(playerInfo):
                 goBack = 1
             if extraMenu == 1:
                 if optionList[curSelect] == optionList[6]:
-                    if playerInfo.friends[0].bonusStats['trained'] < 40:
+                    if playerInfo.friends[0].bonusStats['trained'] < 20:
                         inspireActive(playerInfo.playerBlock, playerInfo.friends[0].statBlock, playerInfo.friends[0].bonusStats)   
                     else:
                         thingAquired(playerInfo.friends[0].statBlock['giveName'], "is already", "full of", "insperation!", 2, 0, 0)
@@ -678,6 +677,7 @@ def loss(curMon):
 
 def toBtl(myGuy, nme):
     gc.collect()
+    from battle import Battle 
     btl = Battle()
     battle=1
         
@@ -699,21 +699,11 @@ def toBtl(myGuy, nme):
             if (myGuy.friends[0].statBlock['Agility'] + myGuy.playerBlock['trainerLevel'] + agileTie) >= (nme.friends[0].statBlock['Agility'] + nme.playerBlock['trainerLevel']):
                 btl.npcAtkSel(nme.friends[0].attackList)
                 btl.battleBlock['whoFirst'] = 0
-                btl.battleCrunch(myGuy.friends[0],
-                                nme.friends[0],
-                                btl.battleBlock['curAtkSlct'],
-                                btl.battleBlock['nmeAtkSlct'],
-                                btl.battleBlock['myTL'],
-                                btl.battleBlock['nmeTL']) 
+                btl.battleCrunch(myGuy.friends[0], nme.friends[0], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['myTL'], btl.battleBlock['nmeTL']) 
             else:
                 btl.npcAtkSel(nme.friends[0].attackList)
                 btl.battleBlock['whoFirst'] = 1
-                btl.battleCrunch(nme.friends[0],
-                                myGuy.friends[0],
-                                btl.battleBlock['nmeAtkSlct'],
-                                btl.battleBlock['curAtkSlct'],
-                                btl.battleBlock['nmeTL'],
-                                btl.battleBlock['myTL'])
+                btl.battleCrunch(nme.friends[0], myGuy.friends[0], btl.battleBlock['nmeAtkSlct'], btl.battleBlock['curAtkSlct'], btl.battleBlock['nmeTL'], btl.battleBlock['myTL'])
 
             if myGuy.friends[0].statBlock['currentHealth'] == 0 and myGuy.friends[0].attackList[btl.battleBlock['curAtkSlct']].currentUses == 0:
                 btl.battleBlock['myText'] = "ZzZz..."
@@ -748,7 +738,7 @@ def toBtl(myGuy, nme):
             if len(myGuy.inventory) > 0:
                 for things in range(0, len(myGuy.inventory)):
                     if myGuy.inventory[things-1].name == "Crystals":
-                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + random.randint(1, myGuy.playerBlock['trainerLevel'])) > 15: 
+                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + math.ceil(myGuy.playerBlock['trainerLevel']/10)) > 15: 
                             thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "Yay!", 3)
                             tameMon(myGuy, npcMon)
                             myGuy.friends[-1].statBlock['currentHealth'] = myGuy.friends[-1].statBlock['Health']
@@ -787,6 +777,7 @@ def toBtl(myGuy, nme):
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
     else:
        battleStartAnimation(0) 
+    del sys.modules["battle"]
 
 
 ## Setting up the game ##
@@ -847,7 +838,7 @@ while(1):
             popItOff(myGuy.friends, "monsters, please let one go!")
 
         thumby.display.fill(0)
-        room = mapChangeCheck(myGuy, world[room], room) # draw world map
+        room = mapChangeCheck(myGuy, world[room], room)
         if tempRoom != room:
             npcMonRoaming.removeMonster()
             npcMonRoaming.placeMonster(world[room])
