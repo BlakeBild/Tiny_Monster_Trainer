@@ -216,7 +216,7 @@ def inspireActive(playerBlock, myMonStats, monsterBonus):
                 elif inspireOpt[curSelect] == inspireOpt[2]:
                     myMonStats['maxEndurance'] = myMonStats['maxEndurance'] + 1
                 elif inspireOpt[curSelect] == inspireOpt[3]:
-                    myMonStats['maxMysticism'] = myMonStats['maxTinfoil'] + 1
+                    myMonStats['maxMysticism'] = myMonStats['maxMysticism'] + 1
                 elif inspireOpt[curSelect] == inspireOpt[4]:
                     myMonStats['maxTinfoil'] = myMonStats['maxTinfoil'] + 1    
                 else: #"Nevermind"
@@ -613,15 +613,21 @@ def makeRandomStats(monToStat, trainerLevel):
     tempMon = monToStat
     tempMon.statBlock = tempMon.statBlock.copy()
     genStat = tempMon.makeStat
-    tempMon.bonusStats = {'trained' : 0}    
-    tempMon.statBlock['Health'] = genStat(0) + random.randint(0, trainerLevel) 
+    tempMon.bonusStats = {'trained' : math.floor(random.randint(0, math.floor(abs(trainerLevel)/2)))} 
+    tempMon.statBlock['Health'] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) 
     if tempMon.statBlock['Health'] > tempMon.statBlock['maxHealth']:
         tempMon.statBlock['Health'] = tempMon.statBlock['maxHealth']
-    tempMon.statBlock['currentHealth'] = tempMon.statBlock['Health']
+    for y in range (tempMon.bonusStats['trained']):
+        x = random.randrange(4,9)
+        tempMon.statBlock[tempMon.keyList[x]] = tempMon.statBlock[tempMon.keyList[x]] + 1
+        tempMon.statBlock['max' + tempMon.keyList[x]] = tempMon.statBlock['max' + tempMon.keyList[x]] + 1
+        tempMon.statBlock['Health'] = tempMon.statBlock['Health'] + 1
+        tempMon.statBlock['maxHealth'] = tempMon.statBlock['maxHealth'] + 1
     for x in range (4,9):
-        tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(0, trainerLevel)
+        tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(math.floor(trainerLevel/10), math.floor(trainerLevel/5))
         if tempMon.statBlock[tempMon.keyList[x]] > tempMon.statBlock['max' + tempMon.keyList[x]]:
             tempMon.statBlock[tempMon.keyList[x]] = tempMon.statBlock['max' + tempMon.keyList[x]]
+    tempMon.statBlock['currentHealth'] = tempMon.statBlock['Health']
     return tempMon
 
     
@@ -634,12 +640,14 @@ def makeRandomMon(roomElm):
     monsterJson = ujson.load(f)
     tempMon = Monster()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
+    justGetOne = random.randint(0,7)
     while(1):
         randomNumber = random.randint(0,numberOfMons-1)
         #micropython.mem_info()
         if (monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type1'] == spawnType[roomElm] 
             or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type2'] == spawnType[roomElm] 
-            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]):
+            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]
+            or justGetOne == 1):
             tempMon = Monster()
             tempMon.statBlock = monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat'].copy()
             tempMon.bodyBlock = monsterJson[0]['monsterInfo'][1]['mon' + str(randomNumber) + 'body'].copy()
