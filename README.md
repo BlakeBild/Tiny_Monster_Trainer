@@ -198,6 +198,11 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Rue"           | Mind       | Mysticism  
 
    
+Updates as of 01/17/23:   
+Changed how monster stats are generated to make monsters scale better.  
+Made it so that there tamable stats are different from their generated stats used in battle.  
+  
+ 
 Updates as of 01/17/23:  
 Finished adding the new battle code to multiplayer.py.  
 Fixed it so you can't give a name more than 12 characters.  
