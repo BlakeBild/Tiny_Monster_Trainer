@@ -200,7 +200,7 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
    
 Updates as of 01/17/23:   
 Changed how monster stats are generated to make monsters scale better.  
-Made it so that there tamable stats are different from their generated stats used in battle.  
+Made it so that their tamable stats are different from their generated stats used in battle.  
   
  
 Updates as of 01/17/23:  
