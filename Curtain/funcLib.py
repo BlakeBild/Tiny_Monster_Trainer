@@ -184,10 +184,10 @@ def giveName(beingNamed):
     return beingNamed
     
 
-def tameMon(playerInfo, npcMon):
+def tameMon(playerInfo, npcMon, sbToCopy):
     gc.collect()
     newMon = Monster()
-    newMon.statBlock = npcMon.statBlock.copy()
+    newMon.statBlock = sbToCopy.copy()
     newMon.bodyBlock = npcMon.bodyBlock.copy()
     newMon.attackList = npcMon.attackList.copy()
     newMon.mutateSeed = npcMon.mutateSeed.copy()
