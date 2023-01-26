@@ -613,21 +613,39 @@ def makeRandomStats(monToStat, trainerLevel):
     tempMon = monToStat
     tempMon.statBlock = tempMon.statBlock.copy()
     genStat = tempMon.makeStat
-    tempMon.bonusStats = {'trained' : math.floor(random.randint(0, math.floor(abs(trainerLevel)/2)))} 
-    tempMon.statBlock['Health'] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) 
-    if tempMon.statBlock['Health'] > tempMon.statBlock['maxHealth']:
-        tempMon.statBlock['Health'] = tempMon.statBlock['maxHealth']
-    for y in range (tempMon.bonusStats['trained']):
+    tempMon.bonusStats = {'trained' : math.ceil(random.randint(math.floor(abs(trainerLevel/10)), math.ceil(abs(trainerLevel)/2)))} 
+    print("This Monster:")
+    print("trained = "+str(tempMon.bonusStats['trained']))
+    for x in range (4,9): #reset stats
+        print(tempMon.keyList[x]+" = "+str(tempMon.statBlock[tempMon.keyList[x]]))
+        tempMon.statBlock[tempMon.keyList[x]] = 0
+        print(tempMon.keyList[x]+" = "+str(tempMon.statBlock[tempMon.keyList[x]]))
+    for y in range (tempMon.bonusStats['trained']): #simulate training to make monster equivilant in power to player
         x = random.randrange(4,9)
         tempMon.statBlock[tempMon.keyList[x]] = tempMon.statBlock[tempMon.keyList[x]] + 1
         tempMon.statBlock['max' + tempMon.keyList[x]] = tempMon.statBlock['max' + tempMon.keyList[x]] + 1
         tempMon.statBlock['Health'] = tempMon.statBlock['Health'] + 1
         tempMon.statBlock['maxHealth'] = tempMon.statBlock['maxHealth'] + 1
-    for x in range (4,9):
-        tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(math.floor(trainerLevel/10), math.floor(trainerLevel/5))
+        print(tempMon.keyList[x]+" = "+str(tempMon.statBlock[tempMon.keyList[x]]))
+    tempMon.statBlock['currentHealth'] = tempMon.statBlock['Health']
+    print("currentHealth = "+str(tempMon.statBlock['currentHealth']))
+    for x in range (4,9): #get base stat and add the simluated training to it
+        tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) + tempMon.statBlock[tempMon.keyList[x]]
+    if abs(trainerLevel) > 0: #simulates training with the automatic 7 TP a trainer starts with
+        for y in range(7): 
+            x = random.randrange(4,9)
+            tempMon.statBlock[tempMon.keyList[x]] = 1 + tempMon.statBlock[tempMon.keyList[x]]
+    for x in range (4,9): #makes sure stats aren't above max
         if tempMon.statBlock[tempMon.keyList[x]] > tempMon.statBlock['max' + tempMon.keyList[x]]:
             tempMon.statBlock[tempMon.keyList[x]] = tempMon.statBlock['max' + tempMon.keyList[x]]
-    tempMon.statBlock['currentHealth'] = tempMon.statBlock['Health']
+        print(tempMon.keyList[x]+" = "+str(tempMon.statBlock[tempMon.keyList[x]]))
+
+    
+    tempMon.statBlock['Health'] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) + tempMon.statBlock['Health']
+    if tempMon.statBlock['Health'] > tempMon.statBlock['maxHealth']:
+        tempMon.statBlock['Health'] = tempMon.statBlock['maxHealth']
+    print("currentHealth = "+str(tempMon.statBlock['currentHealth']))
+    
     return tempMon
 
     
@@ -640,14 +658,12 @@ def makeRandomMon(roomElm):
     monsterJson = ujson.load(f)
     tempMon = Monster()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
-    justGetOne = random.randint(0,7)
     while(1):
         randomNumber = random.randint(0,numberOfMons-1)
         #micropython.mem_info()
         if (monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type1'] == spawnType[roomElm] 
             or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type2'] == spawnType[roomElm] 
-            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]
-            or justGetOne == 1):
+            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]):
             tempMon = Monster()
             tempMon.statBlock = monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat'].copy()
             tempMon.bodyBlock = monsterJson[0]['monsterInfo'][1]['mon' + str(randomNumber) + 'body'].copy()
@@ -655,7 +671,7 @@ def makeRandomMon(roomElm):
             f.close()
             del monsterJson
             tempMon = makeRandomStats(tempMon, 0)
-            tempMon = makeRandomStats(tempMon, 0)
+            #tempMon = makeRandomStats(tempMon, 0) this was here on 1-26-23, i think this one was extra and commemented it out
             newMonAtk = AttackMove()
             newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
             tempMon.attackList.append(newMonAtk)
@@ -683,7 +699,7 @@ def loss(curMon):
     # else print that no TP left to lose
 
 
-def toBtl(myGuy, nme):
+def toBtl(myGuy, nme, mon2tame):
     gc.collect()
     from battle import Battle 
     btl = Battle()
@@ -746,9 +762,9 @@ def toBtl(myGuy, nme):
             if len(myGuy.inventory) > 0:
                 for things in range(0, len(myGuy.inventory)):
                     if myGuy.inventory[things-1].name == "Crystals":
-                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + math.ceil(myGuy.playerBlock['trainerLevel']/10)) > 15: 
-                            thingAquired(npcMon.statBlock['name'], "was", "Tamed!", "Yay!", 3)
-                            tameMon(myGuy, npcMon)
+                        if (random.randint(0,20) + myGuy.inventory[things-1].bonus + math.floor(myGuy.playerBlock['trainerLevel']/10)) > 15: 
+                            thingAquired(mon2tame['name'], "was", "Tamed!", "Yay!", 3)
+                            tameMon(myGuy, nme.friends[0], mon2tame)
                             myGuy.friends[-1].statBlock['currentHealth'] = myGuy.friends[-1].statBlock['Health']
                             myGuy.inventory.pop(things-1)
                             battle = 0
@@ -866,11 +882,12 @@ while(1):
             battleStartAnimation(1)
             
     npcMon = makeRandomMon(world[room].elementType)
+    tameStats = npcMon.statBlock.copy()
     nmeNPC.playerBlock['trainerLevel'] = random.randint(myGuy.playerBlock['trainerLevel'] - 3, myGuy.playerBlock['trainerLevel'] + 3) + random.randint(-2, 2)
     if nmeNPC.playerBlock['trainerLevel'] < 0:
         nmeNPC.playerBlock['trainerLevel'] = 0
-    battleMon = makeRandomStats(npcMon, random.randint(0, nmeNPC.playerBlock['trainerLevel']))
-    nmeNPC.friends.append(battleMon)
-    toBtl(myGuy, nmeNPC)
+    npcMon = makeRandomStats(npcMon, random.randint(0, nmeNPC.playerBlock['trainerLevel']))
+    nmeNPC.friends.append(npcMon)
+    toBtl(myGuy, nmeNPC, tameStats)
     nmeNPC.friends.pop(-1)
     battle = 0
