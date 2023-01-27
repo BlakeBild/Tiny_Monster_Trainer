@@ -124,6 +124,24 @@ def displayItems(playerInfo):
         pass
 
 
+def nameCheck(friendList):
+    chkDone = 0
+    allUnique = 0
+    nameChanged = 1
+    while(allUnique != 1 and chkDone < 6): # need to make sure that all given names are different for multiplayer battles
+        for x in range(len(friendList)):
+            for y in range(len(friendList)):
+                if friendList[x].statBlock['given_name'] == friendList[y].statBlock['given_name'] and x != y:
+                    thingAquired("Monsters", "need", "unique", "names", 2, 0, 0)
+                    friendList[y].statBlock['given_name'] = giveName(friendList[y].statBlock['given_name'])
+                if friendList[x].statBlock['given_name'] != friendList[y].statBlock['given_name'] and x != y:
+                    nameChanged = 1
+        if nameChanged == 1:
+            nameChanged = 0
+            allUnique = 1
+        chkDone = chkDone + 1
+
+
 def trainActiveMon(myMonStats, monsterBody):
     #gc.collect()
     thumby.display.fill(0)
@@ -258,6 +276,7 @@ def myMonSubMenu(playerInfo):
                     popItOff(playerInfo.friends[0].attackList, "moves! Please forget one!")
             if optionList[curSelect] == optionList[3]:
                 playerInfo.friends[0].statBlock['given_name'] = giveName(playerInfo.friends[0].statBlock['given_name'])
+                nameCheck(myGuy.friends)
             if optionList[curSelect] == optionList[4]:
                 mutateMon(playerInfo.friends[0])
             if optionList[curSelect] == optionList[5]:
@@ -658,12 +677,14 @@ def makeRandomMon(roomElm):
     monsterJson = ujson.load(f)
     tempMon = Monster()
     numberOfMons = len(monsterJson[0]['monsterInfo'][0])
+    justGetOne = random.randint(0,3)
     while(1):
         randomNumber = random.randint(0,numberOfMons-1)
         #micropython.mem_info()
         if (monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type1'] == spawnType[roomElm] 
             or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type2'] == spawnType[roomElm] 
-            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]):
+            or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]
+            or justGetOne == 1):
             tempMon = Monster()
             tempMon.statBlock = monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat'].copy()
             tempMon.bodyBlock = monsterJson[0]['monsterInfo'][1]['mon' + str(randomNumber) + 'body'].copy()
@@ -671,7 +692,6 @@ def makeRandomMon(roomElm):
             f.close()
             del monsterJson
             tempMon = makeRandomStats(tempMon, 0)
-            #tempMon = makeRandomStats(tempMon, 0) this was here on 1-26-23, i think this one was extra and commemented it out
             newMonAtk = AttackMove()
             newMonAtk.getAnAttackMove(random.randint(1,3), "Default")
             tempMon.attackList.append(newMonAtk)
@@ -839,25 +859,13 @@ for x in range(0, len(myGuy.friends)):
 
 ## Pretty much the game after this point :D ##
 
+
 while(1):
     gc.collect()
     #micropython.mem_info()
     
-    chkDone = 0
     while(battle != 1):
-        allUnique = 0
-        nameChanged = 1
-        while(allUnique != 1 and chkDone < 6): # need to make sure that all given names are different for multiplayer battles
-            for x in range(len(myGuy.friends)):
-                for y in range(len(myGuy.friends)):
-                    if myGuy.friends[x].statBlock['given_name'] == myGuy.friends[y].statBlock['given_name'] and x != y:
-                        nameChanged = 1
-                        thingAquired("Monsters", "need", "unique", "names", 2, 0, 0)
-                        myGuy.friends[y].statBlock['given_name'] = giveName(myGuy.friends[y].statBlock['given_name'])
-            if nameChanged == 1:
-                nameChanged = 0
-                allUnique = 1
-            chkDone = chkDone + 1
+        
         if len(myGuy.friends) > myGuy.playerBlock['friendMax']:
             popItOff(myGuy.friends, "monsters, please let one go!")
 
@@ -891,3 +899,4 @@ while(1):
     toBtl(myGuy, nmeNPC, tameStats)
     nmeNPC.friends.pop(-1)
     battle = 0
+    nameCheck(myGuy.friends)
