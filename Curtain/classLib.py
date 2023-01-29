@@ -28,41 +28,51 @@ class NPC:
         self.friends = []
 
 
-class Merchant(NPC):
+class Character:
     def __init__(self):
-        self.items2Sell = ["Stickers", "Vitamins", "Helium", "Pillows", "Stardust", "Tinfoil", "Bandaids", "PushPops", "Crystals"]
+        self.playerBlock = {'name' : "Monster",
+                        'trainerLevel' : 1,
+                        'friendMax' : 2,
+                        'inspire' : 0}
+        self.friends = []
+        self.items2Sell = []
+        self.optionList = []
+        self.sprite = []
+        self.scollerTxt =""
+        self.spar = 0
     
-    def PlayerBuy(playerMoney):
-        
-    def PlayerSell(playerItems, playerMoney): 
-    
-    def getLooks:
-        # BITMAP: width: 36, height: 29
-        bean = bytearray([0,0,0,0,0,0,128,224,48,136,12,36,2,138,194,194,226,242,242,226,226,230,196,132,36,12,8,120,192,0,0,0,0,0,0,0,
-            0,0,0,0,0,254,3,128,0,48,252,255,255,253,241,241,255,127,31,255,241,241,253,255,255,60,128,252,7,0,0,0,0,0,0,0,
-            0,0,0,0,0,199,124,0,0,136,96,7,15,31,31,191,243,247,247,179,31,31,207,103,57,4,3,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,7,28,12,6,2,2,2,3,3,7,12,31,12,7,3,3,3,3,2,6,28,16,0,0,0,0,0,0,0,0])
-        beanM = bytearray([0,0,0,0,0,0,128,224,240,248,252,252,254,254,254,254,254,254,254,254,254,254,252,252,252,252,248,248,192,0,0,0,0,0,0,0,
-            0,0,0,0,0,254,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,7,0,0,0,0,0,0,0,
-            0,0,0,0,0,199,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,127,63,7,3,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,1,7,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,30,28,16,0,0,0,0,0,0,0,0])
-        # BITMAP: width: 40, height: 32
-        firstB = bytearray([255,255,3,3,3,3,3,3,3,131,195,35,51,147,11,43,11,11,139,203,203,139,139,155,19,19,147,51,35,227,3,3,3,3,3,3,3,3,255,255,
-            255,255,0,0,0,0,0,248,14,3,0,194,240,252,252,246,199,199,255,255,127,255,199,199,247,254,252,240,0,241,31,0,0,0,0,0,0,0,255,255,
-            255,255,0,0,0,0,0,31,240,2,0,32,131,31,63,127,127,255,207,221,220,207,127,127,63,159,231,16,14,3,0,0,0,0,0,0,0,0,255,255,
-            255,255,128,128,128,128,128,135,157,240,176,154,137,136,136,140,140,158,179,255,179,158,140,140,143,141,136,152,240,192,128,128,128,128,128,128,128,128,255,255])
-    def drawScreen:
-        #maybe just do some retangles for the box
-        # BITMAP: width: 40, height: 32
-        box = bytearray([255,255,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,255,255,
-            255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,
-            255,255,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,
-            255,255,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,255,255])
-        # BITMAP: width: 36, height: 29
-        blahTest = bytearray([0,100,10,196,10,100,10,196,10,100,10,196,10,100,10,196,10,100,10,196,10,100,10,196,10,100,10,196,10,100,10,196,10,100,10,0,
-            0,27,0,54,0,27,0,54,0,155,0,54,0,27,0,182,0,27,0,54,0,27,64,54,0,27,0,54,0,155,0,54,0,27,0,0,
-            0,73,0,0,68,0,0,145,0,0,32,2,0,0,128,8,0,0,132,0,0,32,2,0,0,2,132,0,0,16,0,0,0,2,128,0,
-            0,0,0,0,2,0,0,0,4,0,2,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,4,0,0,1,0,0,0,0,0])    
+    def getCharacter(self, who=1):
+        # BITMAP: width: 36, height: 29 = All Merchant sprites
+        if who == 1:
+            bean1 = bytearray([0,0,0,0,0,0,0,192,112,24,12,4,2,2,130,2,132,230,2,194,130,2,134,6,4,12,24,224,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,255,1,0,0,0,0,126,251,247,227,231,255,159,123,247,226,231,254,0,0,128,255,0,0,0,0,0,0,0,0,
+                        0,0,0,0,112,144,32,33,25,142,128,64,33,7,15,159,251,247,182,186,31,15,195,96,56,12,7,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,3,2,2,28,6,2,18,11,7,7,12,27,12,7,7,11,19,6,24,0,0,0,0,0,0,0,0,0,0,0])
+            bean2 = bytearray([0,0,0,0,0,0,0,192,112,24,12,4,2,2,2,130,196,102,130,194,130,2,134,6,4,24,48,192,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,255,1,0,0,0,192,254,251,247,227,231,255,159,123,246,227,231,62,0,0,240,31,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,128,64,33,25,142,128,64,33,7,15,159,251,247,182,154,15,135,97,48,24,15,3,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,3,2,2,2,2,28,6,2,18,11,7,7,12,27,12,7,7,11,19,6,24,0,0,0,0,0,0,0,0,0,0,0])
+            beanM1 = bytearray([0,0,0,0,0,0,0,192,240,248,252,252,254,254,254,254,252,254,254,254,254,254,254,254,252,252,248,224,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,0,0,0,0,0,0,0,0,
+                        0,0,0,0,112,240,224,225,249,255,255,255,255,255,255,255,255,255,255,255,255,255,255,127,63,15,7,0,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,1,3,3,3,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,24,0,0,0,0,0,0,0,0,0,0,0])
+            beanM2 = bytearray([0,0,0,0,0,0,0,192,240,248,252,252,254,254,254,254,252,254,254,254,254,254,254,254,252,248,240,192,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,0,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,31,0,0,0,0,0,0,0,0,
+                        0,0,0,0,0,128,192,225,249,255,255,255,255,255,255,255,255,255,255,255,255,255,127,63,31,15,3,0,0,0,0,0,0,0,0,0,
+                0,0,0,0,3,3,3,3,3,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,24,0,0,0,0,0,0,0,0,0,0,0])
+            sprite = thumby.Sprite(36, 29, bean1 + bean2)
+            sprite.x = 0
+            sprite.y = 1
+            spriteM = thumby.Sprite(36, 29, beanM1 + beanM2)
+            self.sprite = [sprite, spriteM]
+            self.items2Sell = ["Stickers", "Vitamins", "Helium", "Pillows", "Stardust", "Tinfoil"]
+            self.optionList = ["Buy", "Sell", "Leave"]
+            self.sprite = [sprite, spriteM]
+            self.scollerTxt ="Greetings! I'm Bean, the traveling merchant! Would you like to Buy, Sell, or Spar?"
+            self.playerBlock['name'] = "Bean"
+            self.playerBlock['trainerLevel'] = 80
+            
+            
 
 class Player:
     def __init__(self):                                           
@@ -71,7 +81,8 @@ class Player:
                             'experience' : 0,
                             'friendMax' : 2,
                             'worldSeed' : 0,
-                            'inspire' : 0}
+                            'inspire' : 0,
+                            'money' : 0}
         self.lOrR = 0    
         self.friends = []
         self.inventory = []
@@ -144,6 +155,7 @@ class RoamingMonster:
     def __init__ (self, currentPos=0, position=[]):
         self.currentPos = currentPos
         self.position = position
+        self.char = 0
         for i in range(9 * 5):
             self.position.append(0)
     
@@ -151,9 +163,10 @@ class RoamingMonster:
     def drawMonster(self):
         for x in range(0, 9):
             for y in range(0, 5):
-                if self.position[y*9+x] == 1 :
+                if self.position[y*9+x] == 1 and self.char == 1:
+                    thumby.display.blit(bytearray([0,46,251,127,127,251,46,0]), x*8 ,y*8 , 8, 8, -1, 0, 0) 
+                elif self.position[y*9+x] == 1:
                     thumby.display.blit(bytearray([56,124,124,54,62,116,124,56]), x*8 ,y*8 , 8, 8, -1, 0, 0)
-    
     
     def placeMonster(self, map):
         random.seed(time.ticks_ms())
@@ -172,36 +185,37 @@ class RoamingMonster:
     
     
     def moveMonster(self, playerPos, currentRoom, monsterMovement=0):
-        if monsterMovement == 0:
-            if math.ceil(self.currentPos/9) > math.ceil(playerPos/9): 
-                if currentRoom.floor[self.currentPos-9].isObjectHere >= 1:  # check for blocked
+        if self.char != 1:
+            if monsterMovement == 0:
+                if math.ceil(self.currentPos/9) > math.ceil(playerPos/9): 
+                    if currentRoom.floor[self.currentPos-9].isObjectHere >= 1:  # check for blocked
+                        self.position[self.currentPos] = 0
+                        self.currentPos = self.currentPos - 9
+                        self.position[self.currentPos] = 1
+                elif math.ceil(self.currentPos/9) < math.ceil(playerPos/9): # move monster down
+                    if currentRoom.floor[self.currentPos+9].isObjectHere >= 1: # check for blocked
+                        self.position[self.currentPos] = 0
+                        self.currentPos = self.currentPos + 9
+                        self.position[self.currentPos] = 1
+                elif self.currentPos == playerPos: # if monster is on same tile as player, don't move
+                    pass
+                elif self.currentPos >= playerPos: # move monster left
+                    if currentRoom.floor[self.currentPos-1].isObjectHere >= 1: # check for blocked 
+                        self.position[self.currentPos] = 0
+                        self.currentPos = self.currentPos - 1
+                        self.position[self.currentPos] = 1
+                elif self.currentPos <= playerPos: # move monster right
+                    if currentRoom.floor[self.currentPos+1].isObjectHere >= 1: # check for blocked
+                        self.position[self.currentPos] = 0
+                        self.currentPos = self.currentPos + 1
+                        self.position[self.currentPos] = 1
+            else:
+                randomDirList = [-9, -1, 0, 1, 9]
+                x = random.randint(0,4)
+                if currentRoom.floor[self.currentPos + randomDirList[x]].isObjectHere == 1: # check for blocked
                     self.position[self.currentPos] = 0
-                    self.currentPos = self.currentPos - 9
+                    self.currentPos = self.currentPos + randomDirList[x]
                     self.position[self.currentPos] = 1
-            elif math.ceil(self.currentPos/9) < math.ceil(playerPos/9): # move monster down
-                if currentRoom.floor[self.currentPos+9].isObjectHere >= 1: # check for blocked
-                    self.position[self.currentPos] = 0
-                    self.currentPos = self.currentPos + 9
-                    self.position[self.currentPos] = 1
-            elif self.currentPos == playerPos: # if monster is on same tile as player, don't move
-                pass
-            elif self.currentPos >= playerPos: # move monster left
-                if currentRoom.floor[self.currentPos-1].isObjectHere >= 1: # check for blocked 
-                    self.position[self.currentPos] = 0
-                    self.currentPos = self.currentPos - 1
-                    self.position[self.currentPos] = 1
-            elif self.currentPos <= playerPos: # move monster right
-                if currentRoom.floor[self.currentPos+1].isObjectHere >= 1: # check for blocked
-                    self.position[self.currentPos] = 0
-                    self.currentPos = self.currentPos + 1
-                    self.position[self.currentPos] = 1
-        else:
-            randomDirList = [-9, -1, 0, 1, 9]
-            x = random.randint(0,4)
-            if currentRoom.floor[self.currentPos + randomDirList[x]].isObjectHere == 1: # check for blocked
-                self.position[self.currentPos] = 0
-                self.currentPos = self.currentPos + randomDirList[x]
-                self.position[self.currentPos] = 1
 
 
 class Monster:
@@ -459,8 +473,11 @@ class Item():
             pass
 
 
-    def getItem(self):
-        randoNum = random.randint(0,12)
+    def getItem(self, bypassRandom=0, getItem=0):
+        if bypassRandom == 0:
+            randoNum = random.randint(0,12)
+        else:
+            randoNum = getItem
         self.key = 2
         
         if randoNum == 0:
