@@ -79,10 +79,13 @@ def popItOff(theListofObjs, word):
         thumby.display.update()
 
 
-def showOptions(options, currentSelect, bottomText, x=0):
+def showOptions(options, currentSelect, bottomText, x=0, skipFill=0):
     optionAmount = len(options)
     currentSelect = chkRng(optionAmount, currentSelect)
-    thumby.display.fill(0)
+    if skipFill == 0:
+        thumby.display.fill(0)
+    else:
+        thumby.display.drawFilledRectangle(0+x, 0, 72, 40, 0)
     thumby.display.drawFilledRectangle(0+x, 10, 72, 9, 1)
     if optionAmount > 1: 
         thumby.display.drawText(options[currentSelect - 1], 1+x, 2, 1) # prints top opt
