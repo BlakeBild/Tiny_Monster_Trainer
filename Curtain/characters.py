@@ -34,6 +34,8 @@ def buy(itemList, player):
                     if tempSelect < 0:
                         tempSelect += 6
                     newItem = Item("GenHeal", 1)
+                    if itemList[tempSelect] == "Crystals":
+                        tempSelect = 14
                     newItem.getItem(1, tempSelect)
                     player.inventory.append(newItem)
                     player.playerBlock['money'] -= 10 
@@ -122,7 +124,7 @@ def stay(player, tempPlayer):
             tameMon(tempPlayer, player.friends[0], player.friends[0].statBlock)
             player.friends.pop(0)
         while(len(tempPlayer.friends) == tempPlayer.playerBlock['friendMax']):
-            thingAquired("The Camp", "is full!", "Bring", "a monster!", 2, 0, 0)
+            thingAquired("The Camp", "is full!", "Take a", "monster!", 2, 0, 0)
             bring(player, tempPlayer)
 
 
@@ -136,11 +138,15 @@ def release(tempPlayer):
 
 def drawCharScreen(chair, player):
     myScroller = TextForScroller(chair.scollerTxt)
-    BG = bytearray([0,0,48,40,36,44,40,40,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,96,80,80,80,72,72,88,80,112,32,
+    # BITMAP: width: 20, height: 8
+    BG = bytearray([96,80,72,72,80,80,96,0,0,16,40,36,36,36,40,40,40,48,0,0]) 
+    
+    '''#36x29
+    bytearray([0,0,48,40,36,44,40,40,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,96,80,80,80,72,72,88,80,112,32,
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
             0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    background = thumby.Sprite(36, 29, BG)  
+            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])'''
+    background = thumby.Sprite(20, 8, BG)  
     background.x = 0
     background.y = 2
     curSelect = 1
@@ -166,15 +172,15 @@ def drawCharScreen(chair, player):
                 buy(chair.items2Sell, player)
             elif chair.optionList[curSelect] == "Sell":
                 sell(player)
-            elif chair.optionList[curSelect] == "Stay":
+            elif chair.optionList[curSelect] == "Leave":
                 stayBring(player, 0)
             elif chair.optionList[curSelect] == "Bring":
                 stayBring(player, 1)
             elif chair.optionList[curSelect] == "Spar":
-                stay(player)
+                pass
             elif chair.optionList[curSelect] == "Let Go":
                 stayBring(player, 2)
-            elif chair.optionList[curSelect] == "Leave":
+            elif chair.optionList[curSelect] == "Bye":
                 cancelCheck = 1
             
                 
@@ -192,7 +198,7 @@ def drawCharScreen(chair, player):
             if bgCtr == 3:
                 background.x -= 1
                 bgCtr = 0
-                if background.x < -37:
+                if background.x < -22:
                     background.x = 36
     return 0
 
@@ -268,8 +274,11 @@ class Character:
                         0,0,0,0,0,128,192,225,249,255,255,255,255,255,255,255,255,255,255,255,255,255,127,63,31,15,3,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,3,3,3,3,3,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,24,0,0,0,0,0,0,0,0,0,0,0])
 
-            self.items2Sell = ["Stickers", "Vitamins", "Helium", "Pillows", "Stardust", "Tinfoil"]
-            self.optionList = ["Buy", "Sell", "Leave"]
+            if random.randint(0,2) == 1:
+                self.items2Sell = ["Crystals"]
+            else:
+                self.items2Sell = ["Stickers", "Vitamins", "Helium", "Pillows", "Stardust", "Tinfoil"]
+            self.optionList = ["Buy", "Sell", "Bye"]
             self.scollerTxt ="Greetings! I'm Bean, the traveling merchant! Would you like to Buy, Sell, or Spar?"
             self.playerBlock['name'] = "Bean"
             self.playerBlock['trainerLevel'] = 80
@@ -291,8 +300,8 @@ class Character:
                         0,0,0,0,0,0,0,0,0,0,0,0,224,248,252,254,255,255,255,255,255,254,248,0,0,0,0,0,0,0,0,0,0,0,0,0,
                         0,0,0,0,0,0,0,0,0,0,0,30,127,255,255,255,255,255,255,255,255,127,15,0,0,0,0,0,0,0,0,0,0,0,0,0,
                         16,16,16,16,24,24,24,24,28,30,31,31,31,31,31,31,31,31,31,31,31,31,31,31,30,28,24,24,24,24,24,16,16,16,16,16])
-            self.optionList = ["Stay", "Bring", "Let Go", "Leave"]
-            self.scollerTxt ="You are at your camp. Would you like to have a monster stay here, or bring one with you?"
+            self.optionList = ["Leave", "Bring", "Let Go", "Bye"]
+            self.scollerTxt ="You are at your camp. Would you like to leave a monster, or bring one with you?"
         
         sprite = thumby.Sprite(36, 29, frame1 + frame2)
         sprite.x = 0
