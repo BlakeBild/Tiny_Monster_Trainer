@@ -68,14 +68,28 @@ If you inspire a monster through running, their max trainable endurance goes up 
 If you inspire a monster through meditation, their max trainable mysticism goes up by one
 If you inspire a monster through origami, their max trainable tinfoil goes up by one  
 
+  
+  
+############ **Campfire** #############    
+    
+ **Leave** : Allows you to select and leave a monster at the campfire.  
+ **Bring** : Allows you to select a monster that is already at the campfire to come with you.  
+ **Let Go** : Select a Monster at the campfire to release permanently.      
+ **Bye** : Leaves the camp  
+ 
+ Only three monsters can stay at the camp at a time.
+ A camp can be found by going back to the same screen you started on.  
+ A camp can be found randomly by exploring, it is mystically connected to the camp you store your monsters at. (SpOoKy!~)
 
+############ **Bean, The Traveling Merchant** #############  
 
-**Training Point (TP) Costs**  
-
-Training:     1 TP  
-Learn Attack: 3 TP  
-Mutate:       5 TP  
-
+**Buy** : You can purchase items for sale, everything cost 10 Tiny Coins.   
+**Sell**  : Sell your items, everything can be bought for 5 Tiny Coins.  
+**Bye** : Leave the merchant.  
+  
+The only way to get Tiny Coins is to sell items.    
+The merchant can be found by exploring.    
+  
 ############# **Items** ##############  
 Items are not usable during combat.  
   
@@ -197,7 +211,17 @@ Monster Type | Attack Name | Element Type | Damage based on Strength/Mysticism
 ------- |"Obscurity"     | Darkness   | Mysticism  
 ------- |"Rue"           | Mind       | Mysticism  
 
-   
+  
+Updates as of 01/30/23:  
+Added a merchant - Merchant will either be selling items that can increase a stat's maximum amount, or will only be selling crystals.  
+Added a campfire - You can leave up to three monsters at the campfire. 
+Game automatically saves after interacting with the merchant or campfire.
+(I would like to store more monsters at a campfire, but I need to do more testing than I'm able to do right now. :p)  
+Changed how roaming monster's stats are generated.  
+Changed combat damage so that more damage is applied if a monster is hit with an attack it's weak against.  
+
+
+
 Updates as of 01/17/23:   
 Changed how monster stats are generated to make monsters scale better.  
 Made it so that their tamable stats are different from their generated stats used in battle.  
