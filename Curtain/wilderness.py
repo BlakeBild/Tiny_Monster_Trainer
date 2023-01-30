@@ -83,8 +83,10 @@ def playerInformation(playerInfo):
         if back == 0:
             thumby.display.drawText(playerInfo.playerBlock['name'], 1, 1 ,1)
             thumby.display.blit(bytearray(playerInfo.sprite), 60, 27, 8, 8, 0, 0, 0)
-            thumby.display.drawText("Lvl: " + str(playerInfo.playerBlock['trainerLevel']), 1, 10, 1)
-            thumby.display.drawText("Exp: " + str(playerInfo.playerBlock['experience']), 1, 19, 1)
+            thumby.display.drawText("Lvl:" + str(playerInfo.playerBlock['trainerLevel']), 1, 10, 1)
+            thumby.display.drawText("T", 48, 10, 1)
+            thumby.display.drawText("C:" + str(playerInfo.playerBlock['money']), 48, 10, 1)
+            thumby.display.drawText("Exp:" + str(playerInfo.playerBlock['experience']), 1, 19, 1)
             thumby.display.drawText("Mons: " + str(len(playerInfo.friends)) + "/" + str(playerInfo.playerBlock['friendMax']), 1, 28, 1)
             thumby.display.update()
             back = buttonInput(back)
@@ -651,7 +653,11 @@ def makeRandomStats(monToStat, trainerLevel):
     for x in range (4,9): #get base stat and add the simluated training to it
         tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) + tempMon.statBlock[tempMon.keyList[x]]
     if abs(trainerLevel) > 0: #simulates training with the automatic 7 TP a trainer starts with
-        for y in range(7): 
+        extraTrain = 0
+        if(random.randint(0,3) == 1):
+            extraTrain = random.randint(0,math.ceil(trainerLevel/2)) + 5
+            print("extraTrain: " + str(extraTrain))
+        for y in range(7 + extraTrain): 
             x = random.randrange(4,9)
             tempMon.statBlock[tempMon.keyList[x]] = 1 + tempMon.statBlock[tempMon.keyList[x]]
     for x in range (4,9): #makes sure stats aren't above max
@@ -873,6 +879,8 @@ for x in range(0, len(myGuy.friends)):
             pass
     except:
         myGuy.playerBlock['money'] = 0
+        
+        
 ## Pretty much the game after this point :D ##
 
 
@@ -889,7 +897,7 @@ while(1):
         room = mapChangeCheck(myGuy, world[room], room)
         if tempRoom != room:
             if room != 13:
-                npcMonRoaming.char = random.randint(0,11)
+                npcMonRoaming.char = random.randint(-2,10) 
                 npcMonRoaming.removeMonster()
                 npcMonRoaming.placeMonster(world[room])
 
