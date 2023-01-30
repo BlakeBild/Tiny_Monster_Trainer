@@ -88,7 +88,8 @@ class Battle:
             while mon1Type != offsetList[x]:
                 x = x + 1
             if mon2Type == typeList[x]:
-                bonus = 1
+                bonus = 2 
+        print("bonus Type Weak" + str(bonus))
         return bonus
     
 
@@ -103,7 +104,8 @@ class Battle:
             while mon1Type != typeList[x]:
                 x = x + 1
             if mon2Type == offsetList[x]:
-                bonus = 1
+                bonus = 2
+        print("bonus Type Strong: "+ str(bonus))
         return bonus
         
     
@@ -111,7 +113,7 @@ class Battle:
         attackAmnt = 0
         defence = 0
         damage = 0
-        crit = 4
+        crit = 3
         crtChnc = 150
         atkTypeBonus = 1
         defTypeBonus = 1
@@ -131,18 +133,17 @@ class Battle:
         doCrt = random.randint(0,crtChnc)
         if doCrt == crtChnc:
             crit = 1
-        elif doCrt >= crtChnc - 2:
+        elif doCrt >= crtChnc - 7:
             crit = 2
-        elif doCrt >= crtChnc - 6:
-            crit = 3
-        else:
-            pass
-        
+
         for x in range(1,3):
             atkTypeBonus = self.isTypeStrong(activeAttack.moveElementType, defenceMon.statBlock[defenceMon.keyList[x]]) + atkTypeBonus
+            print("bonus Type Weak " + str(atkTypeBonus))
         for x in range(1,3):
             defTypeBonus = self.isTypeWeak(defenceMon.statBlock[defenceMon.keyList[x]], activeAttack.moveElementType) + defTypeBonus
-        damage = math.ceil((attackAmnt * atkTypeBonus)/crit) - math.floor((defence * defTypeBonus)/4)
+            print("bonus Type def: "+ str(defTypeBonus))
+        damage = math.ceil((attackAmnt * atkTypeBonus)/crit) - math.floor((defence * defTypeBonus)/3)
+        print(str(math.ceil((attackAmnt * atkTypeBonus)/crit))+" Vs. "+str(math.floor((defence * defTypeBonus)/3)))
         if damage <= 0:
             damage = 1
         return damage
