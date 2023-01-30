@@ -7,10 +7,11 @@ import random
 import ujson
 import sys 
 sys.path.append("/Games/Tiny_Monster_Trainer/Curtain/")
-from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove, NPC, Character
+from classLib import Player, Map, Monster, Tile, RoamingMonster, TextForScroller, Item, AttackMove, NPC
 from funcLib import thingAquired, battleStartAnimation, printMon, drawArrows, showOptions, popItOff, buttonInput, noDupAtk, giveName, tameMon, switchActiveMon, save, showMonInfo
-#import micropython
-
+import micropython
+from battle import Battle
+import characters
 
 def worldRangeCheck(test):
     if test >= 19:
@@ -318,7 +319,7 @@ def optionScreen(playerInfo):
                 if optionList[curSelect] == optionList[2]:
                     displayItems(playerInfo)
                 if optionList[curSelect] == optionList[3]:
-                    save(playerInfo)
+                    save(playerInfo, "tmt")
                     thingAquired("","Game","Saved","", 0, 1, 0)
                     thumby.display.drawRectangle(15, 7, 41, 22, 1)
                     thumby.display.update()
@@ -590,10 +591,10 @@ def trainCandles(monsterBody):
         thumby.display.update()
 
 
-def loadGame():
+def loadGame(name="tmt"):
     gc.collect()
     tempPlayer = Player()
-    f = open('/Games/Tiny_Monster_Trainer/Curtain/tmt.ujson')
+    f = open('/Games/Tiny_Monster_Trainer/Curtain/'+name+'.ujson')
     bigJson = ujson.load(f)
     tempPlayer.playerBlock = bigJson[0]['player'].copy()
     if bigJson[0]['items'] != [{}]:
@@ -650,7 +651,7 @@ def makeRandomStats(monToStat, trainerLevel):
     for x in range (4,9): #get base stat and add the simluated training to it
         tempMon.statBlock[tempMon.keyList[x]] = genStat(0) + random.randint(0, math.floor(trainerLevel/10)) + tempMon.statBlock[tempMon.keyList[x]]
     if abs(trainerLevel) > 0: #simulates training with the automatic 7 TP a trainer starts with
-        for y in range(7+math.floor(trainerLevel/10)):  #added TL/10 on 1/28 for testing
+        for y in range(7): 
             x = random.randrange(4,9)
             tempMon.statBlock[tempMon.keyList[x]] = 1 + tempMon.statBlock[tempMon.keyList[x]]
     for x in range (4,9): #makes sure stats aren't above max
@@ -678,7 +679,7 @@ def makeRandomMon(roomElm):
     justGetOne = random.randint(0,3)
     while(1):
         randomNumber = random.randint(0,numberOfMons-1)
-        #micropython.mem_info()
+        micropython.mem_info()
         if (monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type1'] == spawnType[roomElm] 
             or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type2'] == spawnType[roomElm] 
             or monsterJson[0]['monsterInfo'][0]['mon' + str(randomNumber) + 'stat']['Type3'] == spawnType[roomElm]
@@ -719,7 +720,7 @@ def loss(curMon):
 
 def toBtl(myGuy, nme, mon2tame):
     gc.collect()
-    from battle import Battle 
+    micropython.mem_info()
     btl = Battle()
     battle=1
         
@@ -819,141 +820,22 @@ def toBtl(myGuy, nme, mon2tame):
                 findAnItem(myGuy.inventory, myGuy.maxHelditems)
     else:
        battleStartAnimation(0) 
-    del sys.modules["battle"]
-
-
-def buy(itemList, player):
-    if len(player.inventory) >= player.maxHelditems:
-        thingAquired("Your", "inventory", "is already", "full!", 2, 0, 0)
-    else:
-        thingAquired("Everything", "is on", "sale for 10", "Tiny Coins!", 1, 0, 0)
-        bottomScreenText = "Tiny Coins: " + str(player.playerBlock['money'])
-        curSelect = 0
-        tempSelect = curSelect
-        optionList = []
-        i = 0
-        for items in itemList:
-            i = i+1
-            optionList.append(str(i) + ". " + itemList[i-1])
-        while curSelect < 11:
-            bottomScreenText = "TinyCoins:" + str(player.playerBlock['money'])
-            tempSelect = curSelect
-            curSelect = showOptions(optionList, curSelect, bottomScreenText)
-            if curSelect == 31:
-                if player.playerBlock['money'] > 9:
-                    if tempSelect < 0:
-                        tempSelect += 6
-                    newItem = Item("GenHeal", 1)
-                    newItem.getItem(1, tempSelect)
-                    player.inventory.append(newItem)
-                    player.playerBlock['money'] -= 10 
-                    thingAquired("You", "purchased", newItem.name, "", 2)
-                else:
-                    thingAquired("You", "don't have", "enough", "Tiny Coins!", 1,0,0)
-            elif curSelect == 30:
-                pass
-            elif curSelect > 11:
-                curSelect = tempSelect
-            thumby.display.update()
-    thumby.display.fill(0)
-
-
-def sell(player):
-    if len(player.inventory) <= 0:
-        thingAquired("You", "don't have", "anything", "to sell!", 2, 0, 0)
-    else:
-        thingAquired("I will", "buy any", "item for 5", "Tiny Coins!", 1, 0, 0)
-        bottomScreenText = "Tiny Coins: " + str(player.playerBlock['money'])
-        curSelect = 0
-        tempSelect = curSelect
-        optionList = []
-        i = 0
-        for items in player.inventory:
-            i = i+1
-            optionList.append(str(i) + ". " + items.name)
-        while curSelect < 11:
-            bottomScreenText = "TinyCoins:" + str(player.playerBlock['money'])
-            tempSelect = curSelect
-            curSelect = showOptions(optionList, curSelect, bottomScreenText)
-            if curSelect ==  31:
-                itemName = player.inventory[tempSelect].name
-                player.inventory.pop(tempSelect)
-                player.playerBlock['money'] += 5
-                thingAquired("You sold", itemName, "for 5", "Tiny Coins!", 1, 0, 0)
-            elif curSelect == 30:
-                pass
-            elif curSelect > 11:
-                curSelect = tempSelect
-            thumby.display.update()
-    thumby.display.fill(0)
-
-
-def drawCharScreen(chair, player):
-    myScroller = TextForScroller(chair.scollerTxt)
-    BG = bytearray([0,0,48,40,36,44,40,40,48,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,96,80,80,80,72,72,88,80,112,32,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-            0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0])
-    background = thumby.Sprite(36, 29, BG)  
-    background.x = 0
-    background.y = 2
-    curSelect = 1
-    tempSelect = curSelect
-    cancelCheck = 0
-    spriteCtr = 0
-    bgCtr = 0
-    c0 = time.ticks_ms()
-    while cancelCheck != 1:
-        thumby.display.fill(0)
-        thumby.display.drawSprite(background)
-        t0 = time.ticks_ms()
-        bottomScreenText = ""
-        tempSelect = curSelect
-        curSelect = showOptions(chair.optionList, curSelect, bottomScreenText, 36, 1)
-        if curSelect == 28 or curSelect == 29:
-            curSelect = tempSelect
-        if curSelect == 30:
-            cancelCheck = 1
-        if curSelect == 31:
-            curSelect = tempSelect
-            if chair.optionList[curSelect] == "Buy":
-                buy(chair.items2Sell, player)
-            if chair.optionList[curSelect] == "Sell":
-                sell(player)
-            if chair.optionList[curSelect] == "Spar":
-                pass
-            if chair.optionList[curSelect] == "Leave":
-                thingAquired("See", "ya", "around!", "", 0,0,1)
-                cancelCheck = 1
-        thumby.display.drawFilledRectangle(0, 30, 72, 10, 0)    
-        thumby.display.drawText(myScroller.scrollingText, -abs(myScroller.moveScroll())+80, 31, 1)
-        thumby.display.drawSpriteWithMask(chair.sprite[0], chair.sprite[1])
-        thumby.display.drawRectangle(0, 0, 36, 30, 1)
-        thumby.display.update()
-        if t0 - c0 > 300:
-            c0 = time.ticks_ms()
-            spriteCtr += 1
-            chair.sprite[0].setFrame(spriteCtr)
-            chair.sprite[1].setFrame(spriteCtr)
-            bgCtr += 1
-            if bgCtr == 3:
-                background.x -= 1
-                bgCtr = 0
-                if background.x < -37:
-                    background.x = 36
-    return 0
-                    
-                
 
 
 def actWChar(whoChar, player):
-    chair = Character()
+    gc.collect()
+    micropython.mem_info()
+    chair = characters.Character()
     chair.getCharacter(whoChar)
     interacting = 1
     while(interacting == 1):
-        interacting = drawCharScreen(chair, player)
+        interacting = characters.drawCharScreen(chair, player)
     del chair
     battleStartAnimation(0)
+    nameCheck(player.friends)
+    save(player, "tmt")
+    
+    
 
 ## Setting up the game ##
 
@@ -996,7 +878,7 @@ for x in range(0, len(myGuy.friends)):
 
 while(1):
     gc.collect()
-    #micropython.mem_info()
+    micropython.mem_info()
     
     while(battle != 1):
         
@@ -1006,11 +888,18 @@ while(1):
         thumby.display.fill(0)
         room = mapChangeCheck(myGuy, world[room], room)
         if tempRoom != room:
-            npcMonRoaming.char = random.randint(0,14)
-            npcMonRoaming.removeMonster()
-            npcMonRoaming.placeMonster(world[room])
+            if room != 13:
+                npcMonRoaming.char = random.randint(0,11)
+                npcMonRoaming.removeMonster()
+                npcMonRoaming.placeMonster(world[room])
+
+            else:
+                npcMonRoaming.char = -1
+                npcMonRoaming.removeMonster()
+                npcMonRoaming.placeCamp(world[room])
             tempRoom = room
             monsterMovement = random.randint(0,2)
+                
         myGuy.movePlayer(world[room], npcMonRoaming, monsterMovement)
         if myGuy.currentPos != tempPlayerPos:
             npcMonRoaming.moveMonster(myGuy.currentPos, world[room], monsterMovement)
@@ -1019,7 +908,7 @@ while(1):
         optionScreen(myGuy)
         thumby.display.update()
         
-        if myGuy.currentPos == npcMonRoaming.currentPos and npcMonRoaming.char == 1:
+        if myGuy.currentPos == npcMonRoaming.currentPos and npcMonRoaming.char <= 0:
             npcMonRoaming.removeMonster()
             battleStartAnimation(0)
             actWChar(npcMonRoaming.char, myGuy)
